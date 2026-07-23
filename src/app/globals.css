@@ -1,0 +1,212 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-jakarta);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-success: var(--success);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px rgb(15 23 42 / 0.06);
+  --shadow-elevated: 0 4px 6px rgb(15 23 42 / 0.04), 0 20px 40px rgb(15 23 42 / 0.08);
+  --shadow-glow: 0 0 0 1px rgb(15 118 110 / 0.12), 0 12px 40px rgb(15 118 110 / 0.18);
+}
+
+:root {
+  --background: #fafafa;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #0f766e;
+  --primary-foreground: #f8fffe;
+  --secondary: #f1f5f4;
+  --secondary-foreground: #134e4a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f8f4ea;
+  --accent-foreground: #7a5b0a;
+  --destructive: #ef4444;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #0f766e;
+  --brand: #0f766e;
+  --brand-foreground: #f8fffe;
+  --gold: #d4a017;
+  --gold-foreground: #1c1505;
+  --success: #10b981;
+  --chart-1: #0f766e;
+  --chart-2: #d4a017;
+  --chart-3: #0d9488;
+  --chart-4: #64748b;
+  --chart-5: #134e4a;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #0f766e;
+  --sidebar-primary-foreground: #f8fffe;
+  --sidebar-accent: #f0fdfa;
+  --sidebar-accent-foreground: #134e4a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #0f766e;
+}
+
+.dark {
+  --background: #0b1220;
+  --foreground: #f1f5f9;
+  --card: #111827;
+  --card-foreground: #f1f5f9;
+  --popover: #111827;
+  --popover-foreground: #f1f5f9;
+  --primary: #14b8a6;
+  --primary-foreground: #042f2e;
+  --secondary: #1e293b;
+  --secondary-foreground: #e2e8f0;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #2a2416;
+  --accent-foreground: #f5e6b8;
+  --destructive: #f87171;
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 12%);
+  --ring: #14b8a6;
+  --brand: #14b8a6;
+  --brand-foreground: #042f2e;
+  --gold: #e5b82e;
+  --gold-foreground: #1c1505;
+  --success: #34d399;
+  --chart-1: #14b8a6;
+  --chart-2: #e5b82e;
+  --chart-3: #2dd4bf;
+  --chart-4: #94a3b8;
+  --chart-5: #5eead4;
+  --sidebar: #0f172a;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #14b8a6;
+  --sidebar-primary-foreground: #042f2e;
+  --sidebar-accent: #134e4a;
+  --sidebar-accent-foreground: #ccfbf1;
+  --sidebar-border: rgb(255 255 255 / 10%);
+  --sidebar-ring: #14b8a6;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply border border-white/40 bg-white/70 shadow-[var(--shadow-soft)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5;
+  }
+
+  .glass-strong {
+    @apply border border-white/50 bg-white/85 shadow-[var(--shadow-elevated)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/80;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .gradient-mesh {
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgb(15 118 110 / 0.14), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, rgb(212 160 23 / 0.12), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 70% 90%, rgb(15 118 110 / 0.08), transparent 55%),
+      linear-gradient(180deg, #fafafa 0%, #f3f7f6 100%);
+  }
+
+  .dark .gradient-mesh {
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgb(20 184 166 / 0.16), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, rgb(229 184 46 / 0.1), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 70% 90%, rgb(20 184 166 / 0.08), transparent 55%),
+      linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
+  }
+
+  .editorial-grid {
+    background-image:
+      linear-gradient(rgb(15 118 110 / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(15 118 110 / 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .dark .editorial-grid {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+  }
+}
