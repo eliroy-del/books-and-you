@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { AtSign, BookOpen, Globe2, Share2 } from "lucide-react";
+import { AtSign, Globe2, Share2 } from "lucide-react";
 import { categories, siteConfig } from "@/data/mock";
+import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -10,14 +11,9 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Link href="/" className="inline-flex items-center gap-2">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-teal-700 text-white">
-                <BookOpen className="size-5" />
-              </span>
-              <span className="font-heading text-xl font-bold text-white">
-                Books <span className="text-teal-400">&</span> You
-              </span>
-            </Link>
+            <div className="inline-flex rounded-2xl bg-white/95 px-3 py-2">
+              <BrandLogo size="md" />
+            </div>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
               A premium bookstore for curious minds—discover, purchase, and build a library
               you&apos;ll love.

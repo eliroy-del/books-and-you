@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BookOpen,
   Heart,
   Menu,
   ShoppingBag,
@@ -11,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SmartSearch } from "@/components/search/smart-search";
@@ -53,7 +53,8 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px] sm:w-[340px]">
             <SheetHeader>
-              <SheetTitle className="font-heading text-left text-xl">Books & You</SheetTitle>
+              <SheetTitle className="sr-only">Books & You</SheetTitle>
+              <BrandLogo size="md" href={null} className="mx-auto" />
             </SheetHeader>
             <nav className="mt-6 flex flex-col gap-1">
               {nav.map((item) => (
@@ -89,14 +90,8 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <Link href="/" className="group flex shrink-0 items-center gap-2">
-          <span className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-xl shadow-glow transition-transform group-hover:scale-105">
-            <BookOpen className="size-4" />
-          </span>
-          <span className="font-heading hidden text-lg font-bold tracking-tight sm:inline">
-            Books <span className="text-primary">&</span> You
-          </span>
-        </Link>
+        <BrandLogo size="sm" priority className="sm:hidden" />
+        <BrandLogo size="md" priority className="hidden sm:inline-flex" />
 
         <nav className="ml-2 hidden items-center gap-1 lg:flex">
           {nav.map((item) => (

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { BookOpen } from "lucide-react";
 import { toast } from "sonner";
+import { BrandLogo } from "@/components/brand-logo";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,11 +51,8 @@ function AuthForm() {
       <div className="pointer-events-none absolute inset-0 gradient-mesh opacity-80" />
       <div className="glass-strong relative w-full max-w-md rounded-3xl p-8">
         <div className="mb-6 flex flex-col items-center text-center">
-          <span className="bg-primary text-primary-foreground flex size-12 items-center justify-center rounded-2xl shadow-glow">
-            <BookOpen className="size-5" />
-          </span>
-          <h1 className="font-heading mt-4 text-2xl font-bold">Books & You</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Sign in to sync your library</p>
+          <BrandLogo size="lg" href={null} />
+          <p className="text-muted-foreground mt-4 text-sm">Sign in to sync your library</p>
           {!isSupabaseConfigured() && (
             <p className="bg-accent text-accent-foreground mt-3 rounded-full px-3 py-1 text-[11px] font-medium">
               Demo auth · add Supabase keys for production
