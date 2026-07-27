@@ -3,45 +3,81 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type BrandLogoProps = {
-  className?: string;
+  /** Pass `null` to render without a link */
   href?: string | null;
-  /** Visual size of the full wordmark */
+  showWordmark?: boolean;
   size?: "sm" | "md" | "lg";
+  className?: string;
+  wordmarkClassName?: string;
+  /** Inverse for dark backgrounds (footer) */
+  tone?: "default" | "inverse";
   priority?: boolean;
 };
 
-const heights = {
-  sm: 28,
-  md: 36,
-  lg: 48,
-} as const;
+const sizes = {
+  sm: { box: "size-9", px: 36 },
+  md: { box: "size-11", px: 44 },
+  lg: { box: "size-16", px: 64 },
+};
 
 export function BrandLogo({
-  className,
   href = "/",
-  size = "md",
+  showWordmark = true,
+  size = "sm",
+  className,
+  wordmarkClassName,
+  tone = "default",
   priority = false,
 }: BrandLogoProps) {
-  const height = heights[size];
-  const width = Math.round(height * (520 / 140));
+  const dim = sizes[size];
 
   const mark = (
-    <Image
-      src="/brand/logo.png"
-      alt="Books & You"
-      width={width}
-      height={height}
-      priority={priority}
-      className={cn("h-auto w-auto object-contain", className)}
-      style={{ height, width: "auto" }}
-    />
+    <span
+      className={cn(
+        "relative inline-flex shrink-0 overflow-hidden rounded-xl bg-black shadow-soft ring-1 ring-black/20",
+        dim.box,
+        className
+      )}
+    >
+      <Image
+        src="/brand/logo.png"
+        alt="Books & You"
+        width={dim.px}
+        height={dim.px}
+        className="object-contain p-0.5"
+        priority={priority}
+      />
+    </span>
   );
 
-  if (href === null) return mark;
+  const content = (
+    <>
+      {mark}
+      {showWordmark ? (
+        <span
+          className={cn(
+            "font-heading text-lg font-bold tracking-tight",
+            tone === "inverse" && "text-white",
+            wordmarkClassName
+          )}
+        >
+          Books{" "}
+          <span className={tone === "inverse" ? "text-teal-400" : "text-primary"}>
+            &
+          </span>{" "}
+          You
+        </span>
+      ) : null}
+    </>
+  );
+
+  if (href === null) {
+    return <span className="inline-flex items-center gap-2.5">{content}</span>;
+  }
 
   return (
-    <Link href={href} className="inline-flex shrink-0 items-center" aria-label="Books & You home">
-      {mark}
+    <Link href={href ?? "/"} className="group inline-flex items-center gap-2.5">
+      {content}
     </Link>
   );
 }

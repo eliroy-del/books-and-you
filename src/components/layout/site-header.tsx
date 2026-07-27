@@ -53,8 +53,9 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px] sm:w-[340px]">
             <SheetHeader>
-              <SheetTitle className="sr-only">Books & You</SheetTitle>
-              <BrandLogo size="md" href={null} className="mx-auto" />
+              <SheetTitle className="font-heading text-left">
+                <BrandLogo href="/" size="sm" showWordmark className="rounded-lg" />
+              </SheetTitle>
             </SheetHeader>
             <nav className="mt-6 flex flex-col gap-1">
               {nav.map((item) => (
@@ -90,8 +91,13 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <BrandLogo size="sm" priority className="sm:hidden" />
-        <BrandLogo size="md" priority className="hidden sm:inline-flex" />
+        <BrandLogo
+          href="/"
+          size="sm"
+          showWordmark
+          priority
+          wordmarkClassName="hidden sm:inline"
+        />
 
         <nav className="ml-2 hidden items-center gap-1 lg:flex">
           {nav.map((item) => (
