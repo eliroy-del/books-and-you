@@ -11,7 +11,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <BrandLogo href="/" size="md" showWordmark tone="inverse" />
+            <BrandLogo href="/" size="md" showWordmark={false} />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
               A premium bookstore for curious minds—discover, purchase, and build a library
               you&apos;ll love.

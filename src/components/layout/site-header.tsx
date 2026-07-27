@@ -54,7 +54,7 @@ export function SiteHeader() {
           <SheetContent side="left" className="w-[300px] sm:w-[340px]">
             <SheetHeader>
               <SheetTitle className="font-heading text-left">
-                <BrandLogo href="/" size="sm" showWordmark className="rounded-lg" />
+                <BrandLogo href="/" size="sm" showWordmark={false} className="rounded-lg" />
               </SheetTitle>
             </SheetHeader>
             <nav className="mt-6 flex flex-col gap-1">
@@ -91,13 +91,7 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <BrandLogo
-          href="/"
-          size="sm"
-          showWordmark
-          priority
-          wordmarkClassName="hidden sm:inline"
-        />
+        <BrandLogo href="/" size="sm" showWordmark={false} priority />
 
         <nav className="ml-2 hidden items-center gap-1 lg:flex">
           {nav.map((item) => (
