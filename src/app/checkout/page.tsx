@@ -318,7 +318,7 @@ function CheckoutInner() {
         </div>
 
         <aside className="lg:col-span-5">
-          <div className="glass-strong sticky top-24 rounded-3xl p-6">
+          <div className="glass-strong sticky top-28 rounded-3xl p-6">
             <h2 className="font-heading text-lg font-semibold">Summary</h2>
             <ul className="mt-4 space-y-3">
               {lines.length === 0 ? (

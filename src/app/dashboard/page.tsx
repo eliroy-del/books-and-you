@@ -31,7 +31,7 @@ const links = [
   { href: "/library", label: "Library", icon: BookMarked },
   { href: "/orders", label: "Orders", icon: Package },
   { href: "/wishlist", label: "Wishlist", icon: Gift },
-  { href: "/subscriptions", label: "Subscriptions", icon: Sparkles },
+  { href: "/blog", label: "Blog", icon: Sparkles },
   { href: "/support", label: "Support", icon: Bell },
   { href: "/auth", label: "Account", icon: Settings },
 ];

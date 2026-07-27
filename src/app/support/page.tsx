@@ -102,8 +102,8 @@ export default function SupportPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/subscriptions" className="hover:text-primary">
-                  Managing a subscription
+                <Link href="/blog" className="hover:text-primary">
+                  Reading tips on the blog
                 </Link>
               </li>
             </ul>

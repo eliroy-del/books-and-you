@@ -1,21 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SmartSearch } from "@/components/search/smart-search";
-import { BookCover } from "@/components/books/book-cover";
-import { books } from "@/data/mock";
 
 export function HeroSection() {
-  const featured = books.filter((b) => b.featured).slice(0, 3);
-
   return (
     <section className="relative overflow-hidden gradient-mesh">
       <div className="pointer-events-none absolute inset-0 editorial-grid opacity-60" />
-      <div className="relative mx-auto grid min-h-[calc(100vh-6.5rem)] max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8 lg:py-20">
-        <div className="lg:col-span-6 xl:col-span-5">
+      <div className="relative mx-auto grid min-h-[calc(100vh-7.5rem)] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8 lg:py-20">
+        <div className="lg:col-span-5 xl:col-span-5">
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,42 +62,43 @@ export function HeroSection() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.96, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="relative lg:col-span-6 xl:col-span-7"
+          className="relative lg:col-span-7 xl:col-span-7"
         >
-          <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-teal-600/15 via-transparent to-amber-400/10 blur-2xl" />
-          <div className="relative flex items-end justify-center gap-3 sm:gap-5 lg:justify-end">
-            {featured.map((book, i) => (
-              <motion.div
-                key={book.id}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.25 + i * 0.1 }}
-                className={
-                  i === 1
-                    ? "z-10 w-[42%] max-w-[220px] -translate-y-4 sm:w-[38%]"
-                    : i === 0
-                      ? "w-[30%] max-w-[160px] rotate-[-8deg] opacity-90"
-                      : "w-[30%] max-w-[160px] rotate-[8deg] opacity-90"
-                }
-              >
-                <Link href={`/book/${book.slug}`}>
-                  <BookCover book={book} size="xl" className="w-full shadow-elevated" />
-                </Link>
-              </motion.div>
-            ))}
+          <div className="pointer-events-none absolute -inset-8 rounded-[2.5rem] bg-gradient-to-br from-teal-600/20 via-amber-400/10 to-transparent blur-3xl" />
+          <div className="relative mx-auto w-full max-w-[640px] lg:ml-auto lg:max-w-none">
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.28 }}
+              className="relative"
+            >
+              <Image
+                src="/brand/hero-textbooks.png"
+                alt="Ghana curriculum textbooks — English and Mathematics for Basic and Junior High School"
+                width={984}
+                height={512}
+                priority
+                sizes="(max-width: 1024px) 92vw, 58vw"
+                className="h-auto w-full select-none object-contain"
+                style={{
+                  filter:
+                    "drop-shadow(0 28px 40px rgba(11, 18, 32, 0.28)) drop-shadow(0 8px 14px rgba(11, 18, 32, 0.14))",
+                }}
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="glass absolute right-1 bottom-1 flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium sm:right-3 sm:bottom-3 sm:text-sm"
+            >
+              <Sparkles className="text-gold size-3.5" />
+              Textbooks for curious minds
+            </motion.div>
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="glass absolute right-2 bottom-2 hidden items-center gap-2 rounded-full px-3 py-2 text-xs font-medium sm:flex"
-          >
-            <Sparkles className="text-gold size-3.5" />
-            Curated for curious readers
-          </motion.div>
         </motion.div>
       </div>
 

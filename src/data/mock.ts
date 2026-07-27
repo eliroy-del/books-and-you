@@ -21,6 +21,25 @@ export const siteConfig = {
   supportEmail: "hello@booksandyou.com",
   supportPhone: "+233 30 123 4567",
   whatsapp: "+233201234567",
+  address: {
+    line1: "Books & You Bookstore",
+    line2: "Near 5°45'43.0\"N 0°19'24.9\"W",
+    city: "Greater Accra, Ghana",
+  },
+  hours: {
+    weekdays: "Monday – Saturday",
+    open: "6:00 AM",
+    close: "5:00 PM",
+    sunday: "Closed",
+  },
+  maps: {
+    lat: 5.761951,
+    lng: -0.323578,
+    placeUrl:
+      "https://www.google.com/maps/place/5%C2%B045'43.0%22N+0%C2%B019'24.9%22W/@5.7619376,-0.3243178,222m/data=!3m1!1e3!4m4!3m3!8m2!3d5.761951!4d-0.323578?entry=ttu",
+    embedUrl:
+      "https://www.google.com/maps?q=5.761951,-0.323578&hl=en&z=16&output=embed",
+  },
 };
 
 export const categories: Category[] = [

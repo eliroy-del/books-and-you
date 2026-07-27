@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { notFound, useParams } from "next/navigation";
 import {
   Gift,
   Heart,
@@ -16,49 +18,76 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LiveInventoryBadge } from "@/components/books/live-inventory-badge";
-import { formatMoney, getReviewsForBook } from "@/data/mock";
+import { formatMoney } from "@/data/mock";
 import { useCartStore, useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
 import type { Book, BookFormat } from "@/types";
 import { cn } from "@/lib/utils";
 
-export default function BookDetailClient({
-  book,
-  related,
-}: {
-  book: Book;
-  related: Book[];
-}) {
+export default function BookDetailClient() {
+  const { slug } = useParams<{ slug: string }>();
+  const [book, setBook] = useState<Book | null | undefined>(undefined);
+  const [related, setRelated] = useState<Book[]>([]);
   const addItem = useCartStore((s) => s.addItem);
   const toggleRemote = useWishlistStore((s) => s.toggleRemote);
-  const wished = useWishlistStore((s) => s.bookIds.includes(book.id));
+  const wished = useWishlistStore((s) => (book ? s.bookIds.includes(book.id) : false));
   const addRecent = useRecentlyViewedStore((s) => s.add);
 
-  const [format, setFormat] = useState<BookFormat | null>(book.formats[0]?.format ?? null);
+  const [format, setFormat] = useState<BookFormat | null>(null);
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
-    addRecent(book.id);
-  }, [book.id, addRecent]);
+    let cancelled = false;
+    async function load() {
+      const res = await fetch(`/api/catalog?resource=books&slug=${encodeURIComponent(slug)}`);
+      const json = await res.json();
+      if (cancelled) return;
+      setBook(json.book ?? null);
+
+      if (json.book) {
+        const relatedRes = await fetch("/api/catalog?resource=books&limit=8");
+        const relatedJson = await relatedRes.json();
+        const others = ((relatedJson.books || []) as Book[])
+          .filter((b) => b.id !== json.book.id)
+          .slice(0, 4);
+        setRelated(others);
+      }
+    }
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  useEffect(() => {
+    if (book) addRecent(book.id);
+  }, [book, addRecent]);
 
   const selected = useMemo(() => {
-    return book.formats.find((f) => f.format === format) ?? book.formats[0];
+    if (!book) return null;
+    return book.formats.find((f) => f.format === format) ?? book.formats[0] ?? null;
   }, [book, format]);
 
-  if (!selected) return null;
+  if (book === undefined) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-16">
+        <div className="bg-muted/50 h-96 animate-pulse rounded-3xl" />
+      </div>
+    );
+  }
 
-  const currentBook = book;
-  const currentFormat = selected;
-  const reviews = getReviewsForBook(currentBook.id);
-  const stock = currentFormat.inStock;
+  if (!book || !selected) {
+    notFound();
+    return null;
+  }
+
+  const stock = selected.inStock;
   const releaseCountdown =
-    currentBook.preorder && currentBook.releaseDate
-      ? daysUntil(currentBook.releaseDate)
-      : null;
+    book.preorder && book.releaseDate ? daysUntil(book.releaseDate) : null;
 
   function addToCart(buyNow = false) {
-    addItem(currentBook.id, currentFormat.format, qty);
+    addItem(book!.id, selected!.format, qty);
     toast.success(buyNow ? "Added — continue to checkout" : "Added to cart", {
-      description: `${currentBook.title} (${currentFormat.format})`,
+      description: `${book!.title} (${selected!.format})`,
     });
     if (buyNow) window.location.href = "/checkout";
   }
@@ -67,156 +96,137 @@ export default function BookDetailClient({
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-10 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <div className="sticky top-24">
-            <BookCover book={currentBook} size="xl" className="mx-auto w-full max-w-md" />
+          <div className="sticky top-28">
+            <BookCover book={book} size="xl" className="mx-auto w-full max-w-md" />
           </div>
         </div>
 
         <div className="lg:col-span-7">
           <div className="flex flex-wrap gap-2">
-            {currentBook.bestseller && (
-              <Badge className="bg-gold text-gold-foreground border-0">Bestseller</Badge>
-            )}
-            {currentBook.newArrival && <Badge>New arrival</Badge>}
-            {currentBook.staffPick && <Badge variant="secondary">Staff pick</Badge>}
+            {book.bestseller ? <Badge>Bestseller</Badge> : null}
+            {book.newArrival ? <Badge variant="secondary">New</Badge> : null}
+            {book.staffPick ? <Badge variant="outline">Staff pick</Badge> : null}
+            {book.preorder ? <Badge variant="secondary">Preorder</Badge> : null}
           </div>
 
           <h1 className="font-heading mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
-            {currentBook.title}
+            {book.title}
           </h1>
+          {book.subtitle ? (
+            <p className="text-muted-foreground mt-2 text-lg">{book.subtitle}</p>
+          ) : null}
           <p className="mt-3 text-sm">
-            by <span className="text-primary font-medium">{currentBook.authorName}</span>
-            <span className="text-muted-foreground"> · {currentBook.publisherName}</span>
+            by{" "}
+            <Link
+              href={book.authorSlug ? `/authors/${book.authorSlug}` : "/authors"}
+              className="text-primary font-medium hover:underline"
+            >
+              {book.authorName}
+            </Link>
+            <span className="text-muted-foreground"> · {book.publisherName}</span>
           </p>
 
-          <p className="text-muted-foreground mt-6 leading-relaxed">{currentBook.description}</p>
-
-          <div className="mt-8">
-            <p className="mb-3 text-xs font-semibold tracking-wide uppercase">Format</p>
-            <div className="flex flex-wrap gap-2">
-              {currentBook.formats.map((f) => (
-                <button
-                  key={f.format}
-                  type="button"
-                  onClick={() => setFormat(f.format)}
-                  className={cn(
-                    "rounded-xl border px-4 py-3 text-left transition",
-                    (format ?? currentBook.formats[0]?.format) === f.format
-                      ? "border-primary bg-primary/5 shadow-glow"
-                      : "border-border hover:border-primary/40"
-                  )}
-                >
-                  <p className="text-sm font-medium capitalize">{f.format}</p>
-                  <p className="font-heading text-sm font-semibold">{formatMoney(f.price)}</p>
-                </button>
-              ))}
-            </div>
+          <div className="mt-4 flex items-center gap-2 text-sm">
+            <Star className="size-4 fill-amber-400 text-amber-400" />
+            <span className="font-medium">{book.rating.toFixed(1)}</span>
+            <span className="text-muted-foreground">({book.reviewCount} reviews)</span>
+            <LiveInventoryBadge bookId={book.id} />
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-4">
+          <Separator className="my-6" />
+
+          <div className="flex flex-wrap gap-2">
+            {book.formats.map((f) => (
+              <Button
+                key={f.format}
+                size="sm"
+                variant={(format ?? selected.format) === f.format ? "default" : "outline"}
+                className="capitalize"
+                onClick={() => setFormat(f.format)}
+              >
+                {f.format} · {formatMoney(f.price)}
+              </Button>
+            ))}
+          </div>
+
+          <p className="font-heading mt-6 text-3xl font-bold">{formatMoney(selected.price)}</p>
+          <p className={cn("mt-1 text-sm", stock > 0 ? "text-teal-700" : "text-destructive")}>
+            {stock > 0 ? `${stock} in stock` : "Out of stock"}
+            {releaseCountdown != null ? ` · Ships in ${releaseCountdown} days` : null}
+          </p>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <div className="flex items-center rounded-xl border border-border">
-              <Button variant="ghost" size="icon" className="rounded-none" onClick={() => setQty((q) => Math.max(1, q - 1))}>−</Button>
-              <span className="w-10 text-center text-sm font-medium">{qty}</span>
-              <Button variant="ghost" size="icon" className="rounded-none" onClick={() => setQty((q) => q + 1)}>+</Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setQty((n) => Math.max(1, n - 1))}
+              >
+                −
+              </Button>
+              <span className="w-8 text-center text-sm font-medium">{qty}</span>
+              <Button variant="ghost" size="sm" onClick={() => setQty((n) => n + 1)}>
+                +
+              </Button>
             </div>
-            <p className="text-muted-foreground flex items-center gap-1.5 text-sm">
-              <Truck className="size-4" />
-              {stock > 0 ? `In stock · ${stock} available` : "Out of stock"}
-              <LiveInventoryBadge bookId={currentBook.id} />
-            </p>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button size="lg" className="h-12 rounded-xl shadow-glow" onClick={() => addToCart(true)}>Buy Now</Button>
-            <Button size="lg" variant="outline" className="h-12 rounded-xl" onClick={() => addToCart(false)}>
-              <ShoppingBag className="size-4" /> Add to Cart
+            <Button onClick={() => addToCart(false)} disabled={stock <= 0}>
+              <ShoppingBag className="size-4" />
+              Add to cart
+            </Button>
+            <Button variant="secondary" onClick={() => addToCart(true)} disabled={stock <= 0}>
+              Buy now
             </Button>
             <Button
-              size="lg"
-              variant="ghost"
-              className={cn("h-12 rounded-xl", wished && "text-destructive")}
-              onClick={() => {
-                void toggleRemote(currentBook.id);
-                toast.success(wished ? "Removed from wishlist" : "Saved to wishlist");
-              }}
+              variant="outline"
+              size="icon"
+              onClick={() => void toggleRemote(book.id)}
+              aria-label="Wishlist"
             >
-              <Heart className={cn("size-4", wished && "fill-current")} /> Wishlist
+              <Heart className={cn("size-4", wished && "fill-rose-500 text-rose-500")} />
             </Button>
-            <Button size="lg" variant="ghost" className="h-12 rounded-xl"><Gift className="size-4" /> Gift</Button>
             <Button
-              size="lg"
-              variant="ghost"
-              className="h-12 rounded-xl"
+              variant="outline"
+              size="icon"
               onClick={() => {
-                navigator.clipboard?.writeText(window.location.href);
+                void navigator.clipboard.writeText(window.location.href);
                 toast.success("Link copied");
               }}
             >
-              <Share2 className="size-4" /> Share
+              <Share2 className="size-4" />
             </Button>
           </div>
 
-          <Separator className="my-10" />
-
-          <div className="grid gap-8 sm:grid-cols-2">
-            <div>
-              <h2 className="font-heading text-lg font-semibold">Synopsis</h2>
-              <p className="text-muted-foreground mt-3 text-sm leading-relaxed">{currentBook.synopsis}</p>
-            </div>
-            <div>
-              <h2 className="font-heading text-lg font-semibold">Details</h2>
-              <dl className="mt-3 space-y-2 text-sm">
-                {[
-                  ["ISBN", currentBook.isbn],
-                  ["Pages", String(currentBook.pages)],
-                  ["Language", currentBook.language],
-                  ["Publisher", currentBook.publisherName],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between gap-4 border-b border-border/60 py-2">
-                    <dt className="text-muted-foreground">{k}</dt>
-                    <dd className="font-medium">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
+          <div className="text-muted-foreground mt-6 grid gap-3 text-sm sm:grid-cols-3">
+            <p className="flex items-center gap-2">
+              <Truck className="text-primary size-4" /> Fast delivery
+            </p>
+            <p className="flex items-center gap-2">
+              <Gift className="text-primary size-4" /> Gift wrap available
+            </p>
+            <p className="flex items-center gap-2">
+              <Star className="text-primary size-4" /> Verified reviews
+            </p>
           </div>
 
-          <div className="mt-10">
-            <h2 className="font-heading text-lg font-semibold">Reviews</h2>
-            {reviews.length === 0 ? (
-              <p className="text-muted-foreground mt-3 text-sm">No reviews yet for this title.</p>
-            ) : (
-              <div className="mt-4 space-y-4">
-                {reviews.map((r) => (
-                  <div key={r.id} className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="font-medium">{r.userName}</p>
-                      <div className="flex items-center gap-0.5">
-                        {Array.from({ length: r.rating }).map((_, i) => (
-                          <Star key={i} className="fill-gold text-gold size-3.5" />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="mt-2 text-sm font-semibold">{r.title}</p>
-                    <p className="text-muted-foreground mt-1 text-sm">{r.body}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Separator className="my-8" />
+
+          <h2 className="font-heading text-xl font-semibold">About this book</h2>
+          <p className="text-muted-foreground mt-3 text-sm leading-relaxed whitespace-pre-line">
+            {book.description || book.synopsis}
+          </p>
         </div>
       </div>
 
-      {related.length > 0 && (
+      {related.length > 0 ? (
         <section className="mt-16">
-          <h2 className="font-heading text-2xl font-bold">Related books</h2>
+          <h2 className="font-heading text-2xl font-bold">You may also like</h2>
           <div className="mt-6 grid grid-cols-2 gap-5 md:grid-cols-4">
             {related.map((b, i) => (
               <BookCard key={b.id} book={b} index={i} />
             ))}
           </div>
         </section>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -57,8 +57,8 @@ export function SiteFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/subscriptions" className="hover:text-teal-300">
-                    Subscriptions
+                  <Link href="/blog" className="hover:text-teal-300">
+                    Blog
                   </Link>
                 </li>
                 <li>
@@ -72,8 +72,8 @@ export function SiteFooter() {
               <h3 className="font-heading text-sm font-semibold text-white">Company</h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
                 <li>
-                  <Link href="/authors" className="hover:text-teal-300">
-                    Authors
+                  <Link href="/contact" className="hover:text-teal-300">
+                    Contact Us
                   </Link>
                 </li>
                 <li>

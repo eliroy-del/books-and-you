@@ -16,7 +16,7 @@ type BrandLogoProps = {
 
 const sizes = {
   sm: { box: "size-9", px: 36 },
-  md: { box: "size-11", px: 44 },
+  md: { box: "size-12", px: 48 },
   lg: { box: "size-16", px: 64 },
 };
 

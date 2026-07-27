@@ -13,7 +13,7 @@ import { useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { SmartSearch } from "@/components/search/smart-search";
+import { HeaderSearch } from "@/components/search/header-search";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useCartStore, useWishlistStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
@@ -28,8 +28,8 @@ import {
 const nav = [
   { href: "/books", label: "Books" },
   { href: "/categories", label: "Categories" },
-  { href: "/authors", label: "Authors" },
-  { href: "/subscriptions", label: "Subscriptions" },
+  { href: "/contact", label: "Contact Us" },
+  { href: "/blog", label: "Blog" },
   { href: "/library", label: "Library" },
 ];
 
@@ -42,11 +42,11 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-3 pl-2 pr-4 sm:gap-4 sm:pl-3 sm:pr-6 lg:h-24 lg:gap-5 lg:pl-4 lg:pr-8">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={
-              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu" />
+              <Button variant="ghost" size="icon" className="-ml-1 size-11 lg:hidden" aria-label="Open menu" />
             }
           >
             <Menu className="size-5" />
@@ -54,7 +54,7 @@ export function SiteHeader() {
           <SheetContent side="left" className="w-[300px] sm:w-[340px]">
             <SheetHeader>
               <SheetTitle className="font-heading text-left">
-                <BrandLogo href="/" size="sm" showWordmark={false} className="rounded-lg" />
+                <BrandLogo href="/" size="md" showWordmark={false} className="rounded-lg" />
               </SheetTitle>
             </SheetHeader>
             <nav className="mt-6 flex flex-col gap-1">
@@ -64,7 +64,7 @@ export function SiteHeader() {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
                     pathname.startsWith(item.href)
                       ? "bg-primary/10 text-primary"
                       : "hover:bg-muted"
@@ -76,14 +76,14 @@ export function SiteHeader() {
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="hover:bg-muted rounded-xl px-3 py-2.5 text-sm font-medium"
+                className="hover:bg-muted rounded-xl px-3 py-3 text-[15px] font-medium"
               >
                 Dashboard
               </Link>
               <Link
                 href="/support"
                 onClick={() => setOpen(false)}
-                className="hover:bg-muted rounded-xl px-3 py-2.5 text-sm font-medium"
+                className="hover:bg-muted rounded-xl px-3 py-3 text-[15px] font-medium"
               >
                 Support
               </Link>
@@ -91,15 +91,15 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <BrandLogo href="/" size="sm" showWordmark={false} priority />
+        <BrandLogo href="/" size="md" showWordmark={false} priority />
 
-        <nav className="ml-2 hidden items-center gap-1 lg:flex">
+        <nav className="ml-1 hidden items-center gap-0.5 lg:flex">
           {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "rounded-xl px-3.5 py-2.5 text-[15px] font-medium transition-colors",
                 pathname.startsWith(item.href)
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
@@ -110,35 +110,32 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="mx-auto hidden max-w-md flex-1 md:block lg:mx-8">
-          <SmartSearch />
-        </div>
-
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-1.5 pl-4 sm:gap-2 sm:pl-6 lg:pr-1">
+          <HeaderSearch />
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="relative size-9" asChild>
+          <Button variant="ghost" size="icon" className="relative size-11" asChild>
             <Link href="/wishlist" aria-label="Wishlist">
-              <Heart className="size-4" />
+              <Heart className="size-5" />
               {wishlistCount > 0 && (
-                <span className="bg-gold text-gold-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold">
+                <span className="bg-gold text-gold-foreground absolute top-1 right-1 flex size-5 items-center justify-center rounded-full text-[10px] font-bold">
                   {wishlistCount}
                 </span>
               )}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="relative size-9" asChild>
+          <Button variant="ghost" size="icon" className="relative size-11" asChild>
             <Link href="/cart" aria-label="Cart">
-              <ShoppingBag className="size-4" />
+              <ShoppingBag className="size-5" />
               {cartCount > 0 && (
-                <span className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold">
+                <span className="bg-primary text-primary-foreground absolute top-1 right-1 flex size-5 items-center justify-center rounded-full text-[10px] font-bold">
                   {cartCount}
                 </span>
               )}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="size-9" asChild>
+          <Button variant="ghost" size="icon" className="size-11" asChild>
             <Link href="/dashboard" aria-label="Account">
-              <User className="size-4" />
+              <User className="size-5" />
             </Link>
           </Button>
           {!loading && user ? (
@@ -155,9 +152,6 @@ export function SiteHeader() {
             </Button>
           )}
         </div>
-      </div>
-      <div className="border-t border-border/40 px-4 py-2 md:hidden">
-        <SmartSearch />
       </div>
     </header>
   );

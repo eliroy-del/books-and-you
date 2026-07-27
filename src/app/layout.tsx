@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { WishlistSync } from "@/components/wishlist/wishlist-sync";
 import { Toaster } from "@/components/ui/sonner";
+import { siteDescription, siteKeywords, siteName, siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 const inter = Inter({
@@ -25,12 +26,73 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Books & You — Discover Your Next Favorite Book",
-    template: "%s · Books & You",
+    default: `${siteName} — Discover Your Next Favorite Book`,
+    template: `%s · ${siteName}`,
   },
-  description:
-    "A premium digital bookstore for discovering, purchasing, and managing physical and digital books—with AI recommendations, subscriptions, and a personal library.",
+  description: siteDescription,
+  applicationName: siteName,
+  keywords: siteKeywords,
+  authors: [{ name: siteName, url: siteUrl }],
+  creator: siteName,
+  publisher: siteName,
+  category: "shopping",
+  alternates: {
+    canonical: "/",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName,
+    title: `${siteName} — Discover Your Next Favorite Book`,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteName} — Discover Your Next Favorite Book`,
+    description: siteDescription,
+    creator: "@booksandyou",
+  },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: siteName,
+  url: siteUrl,
+  logo: `${siteUrl}/icon.png`,
+  sameAs: [] as string[],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteName,
+  url: siteUrl,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${siteUrl}/books?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({
@@ -43,6 +105,14 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jakarta.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <AuthProvider>
             <WishlistSync />
