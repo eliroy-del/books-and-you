@@ -1,3 +1,5 @@
+import { siteUrl as resolvedSiteUrl } from "@/lib/seo";
+
 export type PaymentProviderId = "paystack" | "flutterwave" | "stripe";
 
 export type PaymentCurrency = "GHS" | "USD" | "NGN" | "EUR" | "GBP";
@@ -71,6 +73,6 @@ export function isPaymentConfigured(provider: PaymentProviderId) {
 }
 
 export function siteUrl(path = "") {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const base = resolvedSiteUrl;
   return `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
 }

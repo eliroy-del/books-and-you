@@ -3,9 +3,18 @@ import { createClient } from "@supabase/supabase-js";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/supabase/env";
 import { authors as mockAuthors, books as mockBooks, categories as mockCategories } from "@/data/mock";
 import { getAllBlogPosts } from "@/data/blog";
-import { siteUrl } from "@/lib/seo";
+import { PRODUCTION_SITE_URL } from "@/lib/seo";
 
 export const revalidate = 3600;
+
+/** Public sitemap always uses the live domain, never localhost. */
+function sitemapBase() {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (fromEnv && !/localhost|127\.0\.0\.1/.test(fromEnv)) {
+    return fromEnv;
+  }
+  return PRODUCTION_SITE_URL;
+}
 
 type SlugRow = { slug: string; updated_at?: string | null };
 
@@ -44,42 +53,43 @@ async function fetchSlugs(): Promise<{
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const base = sitemapBase();
   const now = new Date();
   const { books, authors, categories } = await fetchSlugs();
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${siteUrl}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${siteUrl}/books`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: `${siteUrl}/categories`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${siteUrl}/authors`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${siteUrl}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${siteUrl}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${siteUrl}/support`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${base}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
+    { url: `${base}/books`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${base}/categories`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/authors`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${base}/support`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
   ];
 
   const bookRoutes: MetadataRoute.Sitemap = books.map((b) => ({
-    url: `${siteUrl}/book/${b.slug}`,
+    url: `${base}/book/${b.slug}`,
     lastModified: b.updated_at ? new Date(b.updated_at) : now,
     changeFrequency: "weekly",
     priority: 0.8,
   }));
 
   const authorRoutes: MetadataRoute.Sitemap = authors.map((a) => ({
-    url: `${siteUrl}/authors/${a.slug}`,
+    url: `${base}/authors/${a.slug}`,
     lastModified: now,
     changeFrequency: "weekly",
-    priority: 0.6,
+    priority: 0.55,
   }));
 
   const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
-    url: `${siteUrl}/books?category=${c.slug}`,
+    url: `${base}/books?category=${encodeURIComponent(c.slug)}`,
     lastModified: now,
     changeFrequency: "weekly",
     priority: 0.5,
   }));
 
   const blogRoutes: MetadataRoute.Sitemap = getAllBlogPosts().map((p) => ({
-    url: `${siteUrl}/blog/${p.slug}`,
+    url: `${base}/blog/${p.slug}`,
     lastModified: new Date(p.publishedAt),
     changeFrequency: "monthly",
     priority: 0.65,

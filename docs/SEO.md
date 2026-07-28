@@ -96,6 +96,6 @@ eligible, without hurting Core Web Vitals. Follow these rules exactly.
 | Shared SEO constants (siteUrl, name, description, keywords) | `src/lib/seo.ts` |
 
 ### Production reminders
-- Set `NEXT_PUBLIC_SITE_URL` to the real production domain in Vercel — the sitemap, canonicals, and OG URLs all derive from it.
-- After deploy: submit `https://yourdomain.com/sitemap.xml` in Google Search Console, and validate a book URL in the Facebook Sharing Debugger.
+- Set `NEXT_PUBLIC_SITE_URL=https://booksandyou.shop` in Vercel — the sitemap, canonicals, and OG URLs all derive from it.
+- After deploy: submit `https://booksandyou.shop/sitemap.xml` in Google Search Console, and validate a book URL in the Facebook Sharing Debugger.
 - Update the `creator: "@booksandyou"` Twitter handle in `src/app/layout.tsx` if the real handle differs.

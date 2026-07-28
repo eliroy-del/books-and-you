@@ -1,7 +1,15 @@
 import type { MetadataRoute } from "next";
-import { siteUrl } from "@/lib/seo";
+import { PRODUCTION_SITE_URL, siteUrl } from "@/lib/seo";
+
+function publicHost() {
+  if (/localhost|127\.0\.0\.1/.test(siteUrl)) {
+    return PRODUCTION_SITE_URL;
+  }
+  return siteUrl;
+}
 
 export default function robots(): MetadataRoute.Robots {
+  const host = publicHost();
   return {
     rules: [
       {
@@ -24,7 +32,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
+    sitemap: `${host}/sitemap.xml`,
+    host,
   };
 }
