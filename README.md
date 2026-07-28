@@ -51,4 +51,6 @@ Demo staff (after seed): `superadmin@booksandyou.test` / `Password123!`
 - [Deployment](docs/DEPLOYMENT.md)
 - [Security](docs/SECURITY.md)
 - [Testing](docs/TESTING.md)
+- [SEO](docs/SEO.md)
+- [Moolre payments](docs/MOOLRE.md)
 - [Supabase](supabase/README.md)
