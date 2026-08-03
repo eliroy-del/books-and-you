@@ -11,9 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { formatMoney, getBookById, savedAddresses, siteConfig } from "@/data/mock";
+import { formatMoney, savedAddresses, siteConfig } from "@/data/mock";
 import { useCartStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
+import type { Book } from "@/types";
 
 const providers = [
   { id: "moolre", name: "Moolre", hint: "Mobile Money · Cards" },
@@ -25,6 +26,9 @@ function CheckoutInner() {
   const { user, profile, configured, loading: authLoading } = useAuth();
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
+  const pruneInvalid = useCartStore((s) => s.pruneInvalid);
+  const [catalog, setCatalog] = useState<Book[]>([]);
+  const [catalogLoaded, setCatalogLoaded] = useState(false);
   const [addressId, setAddressId] = useState(savedAddresses[0]?.id);
   const [provider, setProvider] = useState<(typeof providers)[number]["id"]>("moolre");
   const [coupon, setCoupon] = useState("");
@@ -38,19 +42,53 @@ function CheckoutInner() {
 
   const address = savedAddresses.find((a) => a.id === addressId) ?? savedAddresses[0];
 
-  const lines = items
-    .map((item) => {
-      const book = getBookById(item.bookId);
-      const format = book?.formats.find((f) => f.format === item.format);
-      if (!book || !format) return null;
-      return { book, format, quantity: item.quantity, lineTotal: format.price * item.quantity };
-    })
-    .filter(Boolean) as {
-    book: NonNullable<ReturnType<typeof getBookById>>;
-    format: { format: string; price: number };
-    quantity: number;
-    lineTotal: number;
-  }[];
+  useEffect(() => {
+    pruneInvalid();
+  }, [pruneInvalid]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/catalog?resource=books&limit=100")
+      .then((r) => r.json())
+      .then((json) => {
+        if (cancelled) return;
+        setCatalog((json.books || []) as Book[]);
+        setCatalogLoaded(true);
+      })
+      .catch(() => {
+        if (!cancelled) setCatalogLoaded(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const byId = useMemo(() => new Map(catalog.map((b) => [b.id, b])), [catalog]);
+
+  const lines = useMemo(
+    () =>
+      items
+        .map((item) => {
+          const book = byId.get(item.bookId);
+          const format = book?.formats.find((f) => f.format === item.format);
+          if (!book || !format) return null;
+          return {
+            book,
+            format,
+            quantity: item.quantity,
+            lineTotal: format.price * item.quantity,
+          };
+        })
+        .filter(Boolean) as {
+        book: Book;
+        format: { format: string; price: number };
+        quantity: number;
+        lineTotal: number;
+      }[],
+    [items, byId]
+  );
+
+  const staleCart = catalogLoaded && items.length > 0 && lines.length === 0;
 
   const subtotal = useMemo(() => lines.reduce((s, l) => s + l.lineTotal, 0), [lines]);
   const total = Math.max(0, subtotal + shippingCents - discount);
@@ -126,7 +164,12 @@ function CheckoutInner() {
 
   async function placeOrder() {
     if (lines.length === 0) {
-      toast.error("Your cart is empty");
+      toast.error(
+        staleCart
+          ? "Your cart had outdated demo items. Browse the catalog and add books again."
+          : "Your cart is empty"
+      );
+      if (staleCart) clear();
       return;
     }
 
@@ -320,7 +363,13 @@ function CheckoutInner() {
             <h2 className="font-heading text-lg font-semibold">Summary</h2>
             <ul className="mt-4 space-y-3">
               {lines.length === 0 ? (
-                <li className="text-muted-foreground text-sm">No items in cart.</li>
+                <li className="text-muted-foreground text-sm">
+                  {staleCart
+                    ? "Cart items were from an old demo catalog. Clear cart and add books from the store."
+                    : !catalogLoaded
+                      ? "Loading cart…"
+                      : "No items in cart."}
+                </li>
               ) : (
                 lines.map((l) => (
                   <li
@@ -375,8 +424,22 @@ function CheckoutInner() {
             >
               {submitting ? "Processing…" : `Pay ${formatMoney(total)} with ${providers.find((p) => p.id === provider)?.name}`}
             </Button>
+            {staleCart ? (
+              <Button
+                variant="outline"
+                className="mt-2 w-full"
+                onClick={() => {
+                  clear();
+                  toast.success("Cart cleared");
+                }}
+              >
+                Clear outdated cart
+              </Button>
+            ) : null}
             <Button variant="ghost" className="mt-2 w-full" asChild>
-              <Link href="/cart">Back to cart</Link>
+              <Link href={staleCart ? "/books" : "/cart"}>
+                {staleCart ? "Browse books" : "Back to cart"}
+              </Link>
             </Button>
           </div>
         </aside>

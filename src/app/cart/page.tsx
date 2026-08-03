@@ -14,12 +14,23 @@ export default function CartPage() {
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
+  const clear = useCartStore((s) => s.clear);
+  const pruneInvalid = useCartStore((s) => s.pruneInvalid);
   const [books, setBooks] = useState<Book[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    pruneInvalid();
+  }, [pruneInvalid]);
 
   useEffect(() => {
     void fetch("/api/catalog?resource=books&limit=100")
       .then((r) => r.json())
-      .then((json) => setBooks(json.books || []));
+      .then((json) => {
+        setBooks(json.books || []);
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
   }, []);
 
   const byId = useMemo(() => new Map(books.map((b) => [b.id, b])), [books]);
@@ -49,9 +60,25 @@ export default function CartPage() {
         Free nationwide delivery above {formatMoney(siteConfig.freeDeliveryThreshold)}.
       </p>
 
-      {items.length > 0 && lines.length === 0 ? (
+      {items.length > 0 && lines.length === 0 && !loaded ? (
         <div className="mt-12 rounded-3xl border border-dashed border-border p-12 text-center">
           <p className="font-heading text-xl font-semibold">Loading cart…</p>
+        </div>
+      ) : items.length > 0 && lines.length === 0 && loaded ? (
+        <div className="mt-12 rounded-3xl border border-dashed border-border p-12 text-center">
+          <p className="font-heading text-xl font-semibold">Cart needs a refresh</p>
+          <p className="text-muted-foreground mt-2 text-sm">
+            These items came from an old demo catalog and can&apos;t be checked out. Clear the cart
+            and add books from the live store.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Button variant="outline" onClick={() => clear()}>
+              Clear cart
+            </Button>
+            <Button asChild>
+              <Link href="/books">Browse books</Link>
+            </Button>
+          </div>
         </div>
       ) : lines.length === 0 ? (
         <div className="mt-12 rounded-3xl border border-dashed border-border p-12 text-center">

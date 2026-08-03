@@ -102,11 +102,48 @@ function calcTotals(
   return { subtotalCents, discountCents, shippingCents, totalCents, rate };
 }
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 export async function placeOrderWithClient(
   supabase: SupabaseClient,
   input: PlaceOrderInput
 ): Promise<PlaceOrderResult> {
   const client = db(supabase);
+
+  if (!input.lines.length) {
+    return { ok: false, error: "Your cart is empty" };
+  }
+
+  const invalid = input.lines.filter((l) => !UUID_RE.test(l.bookId));
+  if (invalid.length) {
+    return {
+      ok: false,
+      error:
+        "Your cart has outdated items. Clear the cart and add books again from the catalog.",
+    };
+  }
+
+  const bookIds = [...new Set(input.lines.map((l) => l.bookId))];
+  const { data: catalogBooks, error: catalogError } = await client
+    .from("books")
+    .select("id")
+    .in("id", bookIds);
+
+  if (catalogError) {
+    return { ok: false, error: catalogError.message };
+  }
+
+  const found = new Set((catalogBooks ?? []).map((b) => String(b.id)));
+  const missing = bookIds.filter((id) => !found.has(id));
+  if (missing.length) {
+    return {
+      ok: false,
+      error:
+        "One or more books are no longer available. Remove them from your cart and try again.",
+    };
+  }
+
   const { subtotalCents, discountCents, shippingCents, totalCents, rate } = calcTotals(
     input.lines,
     input.shippingAddress,

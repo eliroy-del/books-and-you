@@ -2,23 +2,29 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { BookFormat, CartItem } from "@/types";
 
+/** Catalog IDs are Supabase UUIDs; drop legacy mock ids like "bk-2". */
+export function isCatalogBookId(id: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    id
+  );
+}
+
 interface CartState {
   items: CartItem[];
   addItem: (bookId: string, format: BookFormat, quantity?: number) => void;
   removeItem: (bookId: string, format: BookFormat) => void;
   updateQuantity: (bookId: string, format: BookFormat, quantity: number) => void;
   clear: () => void;
+  pruneInvalid: () => void;
   itemCount: () => number;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
-      items: [
-        { bookId: "bk-2", format: "paperback", quantity: 1 },
-        { bookId: "bk-8", format: "paperback", quantity: 1 },
-      ],
+      items: [],
       addItem: (bookId, format, quantity = 1) => {
+        if (!isCatalogBookId(bookId)) return;
         set((state) => {
           const existing = state.items.find(
             (i) => i.bookId === bookId && i.format === format
@@ -54,9 +60,22 @@ export const useCartStore = create<CartState>()(
         }));
       },
       clear: () => set({ items: [] }),
+      pruneInvalid: () =>
+        set((state) => ({
+          items: state.items.filter((i) => isCatalogBookId(i.bookId)),
+        })),
       itemCount: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
-    { name: "books-and-you-cart" }
+    {
+      name: "books-and-you-cart",
+      version: 2,
+      migrate: (persisted) => {
+        const state = persisted as { items?: CartItem[] } | undefined;
+        return {
+          items: (state?.items ?? []).filter((i) => isCatalogBookId(i.bookId)),
+        };
+      },
+    }
   )
 );
 
@@ -71,7 +90,7 @@ interface WishlistState {
 export const useWishlistStore = create<WishlistState>()(
   persist(
     (set, get) => ({
-      bookIds: ["bk-1", "bk-6", "bk-16", "bk-19"],
+      bookIds: [],
       setBookIds: (ids) => set({ bookIds: ids }),
       toggle: (bookId) => {
         set((state) => ({
@@ -113,7 +132,16 @@ export const useWishlistStore = create<WishlistState>()(
       },
       has: (bookId) => get().bookIds.includes(bookId),
     }),
-    { name: "books-and-you-wishlist" }
+    {
+      name: "books-and-you-wishlist",
+      version: 2,
+      migrate: (persisted) => {
+        const state = persisted as { bookIds?: string[] } | undefined;
+        return {
+          bookIds: (state?.bookIds ?? []).filter((id) => isCatalogBookId(id)),
+        };
+      },
+    }
   )
 );
 
@@ -125,8 +153,9 @@ interface RecentlyViewedState {
 export const useRecentlyViewedStore = create<RecentlyViewedState>()(
   persist(
     (set, get) => ({
-      bookIds: ["bk-10", "bk-4", "bk-3"],
+      bookIds: [],
       add: (bookId) => {
+        if (!isCatalogBookId(bookId)) return;
         const next = [bookId, ...get().bookIds.filter((id) => id !== bookId)].slice(
           0,
           12
@@ -134,6 +163,15 @@ export const useRecentlyViewedStore = create<RecentlyViewedState>()(
         set({ bookIds: next });
       },
     }),
-    { name: "books-and-you-recent" }
+    {
+      name: "books-and-you-recent",
+      version: 2,
+      migrate: (persisted) => {
+        const state = persisted as { bookIds?: string[] } | undefined;
+        return {
+          bookIds: (state?.bookIds ?? []).filter((id) => isCatalogBookId(id)),
+        };
+      },
+    }
   )
 );
