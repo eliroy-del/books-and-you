@@ -4,8 +4,7 @@
 
 - Supabase project with migrations + seed applied (`supabase/README.md`)
 - Resend domain verified (optional for email)
-- Paystack keys (optional; demo auto-captures without secrets)
-- Moolre VAS key + approved Sender ID for SMS (optional; console demo without secrets)
+- Moolre payment + SMS keys (optional; demo auto-captures without payment secrets)
 
 ## 2. Environment
 
@@ -21,10 +20,10 @@ Required for production:
 Recommended:
 
 - `RESEND_API_KEY`, `RESEND_FROM_EMAIL`
-- `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`, `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY`
-- `MOOLRE_SMS_API_KEY`, `MOOLRE_SMS_SENDER_ID` (SMS)
-- `ADMIN_EMAIL` (contact / support inbox)
-- Moolre payment keys if/when the payment adapter is enabled (see `docs/MOOLRE.md`)
+- `ADMIN_EMAIL`
+- `MOOLRE_API_USER`, `MOOLRE_API_PUBKEY`, `MOOLRE_ACCOUNT_NUMBER`, `MOOLRE_CALLBACK_SECRET`
+- `MOOLRE_SMS_API_KEY`, `MOOLRE_SMS_SENDER_ID`
+- `MOOLRE_API_KEY` (private key — needed for MoMo push / transfers, not hosted checkout links)
 
 ## 3. Deploy
 
@@ -39,14 +38,13 @@ Or connect the GitHub repo in the Vercel dashboard (framework: Next.js). `vercel
 
 ## 4. Webhooks / callbacks
 
-Point providers to:
+Point Moolre wallet callback URL to:
 
 ```
-https://booksandyou.shop/api/webhooks/paystack
 https://booksandyou.shop/api/webhooks/moolre?secret=<MOOLRE_CALLBACK_SECRET>
 ```
 
-Set the Moolre wallet **callback URL** in the dashboard to the second URL (include the secret query param). The handler rejects unsigned callbacks when `MOOLRE_CALLBACK_SECRET` is set, then re-verifies the payment via Moolre’s status API before fulfilling an order.
+The handler rejects unsigned callbacks when `MOOLRE_CALLBACK_SECRET` is set, then re-verifies the payment via Moolre’s status API before fulfilling an order.
 
 Connectivity probe:
 
@@ -59,8 +57,7 @@ node --env-file=.env.local scripts/check-comms.mjs
 1. `/` loads
 2. `/auth` sign-in with seeded staff user
 3. `/admin` + `/superadmin` accessible for `super_admin`
-4. Checkout creates order (demo or live Paystack)
-5. Paystack webhook verify path returns 200 on test event
-6. `GET /api/webhooks/moolre` returns `{ ok: true }`
-7. SMS with Moolre keys set delivers to a Ghana number
-8. Set `ADMIN_EMAIL` so contact/support and email probes use your inbox
+4. Checkout creates a Moolre payment link and redirects to POS
+5. `GET /api/webhooks/moolre` returns `{ ok: true }`
+6. SMS with Moolre keys set delivers to a Ghana number
+7. Set `ADMIN_EMAIL` so contact/support and email probes use your inbox

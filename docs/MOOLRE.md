@@ -79,13 +79,11 @@ SMS still requires `X-API-VASKEY` (your `MOOLRE_SMS_API_KEY`) even in sandbox.
 **The "Public API Key" is not browser-safe.** Despite the name, it is a server-side
 credential used to create payment links and read transaction status. Do **not** prefix it
 with `NEXT_PUBLIC_` and never ship it to the client — anyone holding it could enumerate your
-transactions. All four Moolre payment values stay server-only, unlike the Paystack
-publishable key already in `.env.example`.
+transactions. All Moolre payment values stay server-only — never use a `NEXT_PUBLIC_` prefix.
 
 **Moolre amounts are in major units.** Moolre expects `"amount": "50"` to mean GHS 50.00.
-This codebase passes money around in minor units (`amountCents`), matching Paystack.
-Any payment adapter must divide by 100 on the way out and multiply by 100 on the way back,
-or every charge will be 100× too small.
+This codebase stores money in minor units (`amountCents`). The Moolre provider converts at
+the boundary (`/100` out, `*100` in) so charges are not under- or overstated by 100×.
 
 ---
 
@@ -347,9 +345,25 @@ inbox shown on the site.
 Callers (`notifyUser`, shipping advance, etc.) do not need to know about Moolre — they keep
 calling `sendSms({ to, body })`.
 
-## 10. Payment adapter status
+## 10. Checkout (live)
 
-Flutterwave and Stripe have been removed. Checkout currently uses **Paystack** only.
-A Moolre payment adapter is still optional; the payment keys above are ready for when you
-want `/embed/link` wired into `src/lib/providers/`. Until then, payments do not go through
-Moolre.
+Checkout uses **Moolre** exclusively via `src/lib/providers/moolre.ts`:
+
+1. `POST /embed/link` creates a hosted POS payment page (public key + account number).
+2. Customer pays on `pos.moolre.com`.
+3. Moolre hits `https://booksandyou.shop/api/webhooks/moolre?secret=…`.
+4. The webhook re-checks `POST /open/transact/status` before fulfilling the order.
+5. Return redirect lands on `/checkout?paid=1&ref=…&provider=moolre`.
+
+Required for live checkout:
+
+```env
+MOOLRE_API_USER=
+MOOLRE_API_PUBKEY=
+MOOLRE_ACCOUNT_NUMBER=
+MOOLRE_CALLBACK_SECRET=
+ADMIN_EMAIL=
+```
+
+`MOOLRE_API_KEY` (private) is optional for hosted-link checkout; it is required for direct
+mobile-money push and transfers.

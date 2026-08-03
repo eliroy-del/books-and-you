@@ -128,31 +128,65 @@ async function checkEmail() {
 
 async function checkCallbacks() {
   // Local route existence is verified by import/build; probe production URLs
-  for (const path of ["/api/webhooks/moolre", "/api/webhooks/paystack"]) {
-    try {
-      const res = await fetch(`${site}${path}`, { method: "GET" });
-      // paystack may not have GET — 405/404 still informative
-      if (path.includes("moolre")) {
-        if (res.status === 200) {
-          const json = await res.json();
-          report(
-            "callback.moolre.live",
-            Boolean(json.ok),
-            `GET ${res.status} · secretConfigured=${json.secretConfigured} · paymentCreds=${json.paymentCredsConfigured}`
-          );
-        } else {
-          report("callback.moolre.live", false, `GET ${res.status} (route missing or not deployed)`);
-        }
-      } else {
-        report(
-          "callback.paystack.live",
-          res.status !== 404,
-          `GET ${res.status}`
-        );
-      }
-    } catch (e) {
-      report(`callback.${path}`, false, e.message);
+  try {
+    const res = await fetch(`${site}/api/webhooks/moolre`, { method: "GET" });
+    if (res.status === 200) {
+      const json = await res.json();
+      report(
+        "callback.moolre.live",
+        Boolean(json.ok),
+        `GET ${res.status} · secretConfigured=${json.secretConfigured} · paymentCreds=${json.paymentCredsConfigured}`
+      );
+    } else {
+      report("callback.moolre.live", false, `GET ${res.status} (route missing or not deployed)`);
     }
+  } catch (e) {
+    report("callback.moolre.live", false, e.message);
+  }
+
+  // Hosted checkout link probe (does not charge — creates a short-lived POS URL)
+  if (
+    required("MOOLRE_API_USER") &&
+    required("MOOLRE_API_PUBKEY") &&
+    required("MOOLRE_ACCOUNT_NUMBER")
+  ) {
+    try {
+      const ref = `probe-${Date.now()}`;
+      const res = await fetch(`${base}/embed/link`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-USER": process.env.MOOLRE_API_USER,
+          "X-API-PUBKEY": process.env.MOOLRE_API_PUBKEY,
+        },
+        body: JSON.stringify({
+          type: 1,
+          amount: "1",
+          email:
+            process.env.ADMIN_EMAIL ||
+            process.env.RESEND_FROM_EMAIL?.match(/<([^>]+)>/)?.[1] ||
+            "hello@booksandyou.shop",
+          externalref: ref,
+          reusable: "0",
+          expiration_time: 5,
+          currency: process.env.MOOLRE_CURRENCY || "GHS",
+          accountnumber: process.env.MOOLRE_ACCOUNT_NUMBER,
+        }),
+      });
+      const json = await res.json();
+      const ok = res.ok && Number(json.status) === 1 && Boolean(json.data?.authorization_url);
+      report(
+        "payment.link",
+        ok,
+        ok
+          ? `POS link created · code=${json.code}`
+          : `failed · http=${res.status} · code=${json.code || "?"} · msg=${json.message || "?"}`
+      );
+    } catch (e) {
+      report("payment.link", false, e.message);
+    }
+  } else {
+    report("payment.link", false, "Moolre payment credentials incomplete");
   }
 
   // Local secret gate simulation for moolre handler logic
@@ -172,7 +206,7 @@ async function checkCallbacks() {
     required("MOOLRE_API_KEY")
       ? "user/account/pubkey present (private key also set)"
       : required("MOOLRE_API_USER") && required("MOOLRE_ACCOUNT_NUMBER") && required("MOOLRE_API_PUBKEY")
-        ? "user/account/pubkey present — private MOOLRE_API_KEY still missing (needed for initiate payment, not status)"
+        ? "user/account/pubkey present — private MOOLRE_API_KEY optional for hosted checkout"
         : "incomplete Moolre payment credentials for status re-verify"
   );
 }

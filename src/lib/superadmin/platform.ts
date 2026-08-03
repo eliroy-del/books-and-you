@@ -90,7 +90,7 @@ const demoSettings: SiteSetting[] = [
   },
   {
     key: "payments",
-    value: { providers: ["paystack"] },
+    value: { providers: ["moolre"] },
     description: "Enabled payment providers",
   },
   {
@@ -142,8 +142,8 @@ const demoTemplates: NotificationTemplate[] = [
 const demoWebhooks: WebhookLog[] = [
   {
     id: "wh-1",
-    provider: "paystack",
-    event_type: "charge.success",
+    provider: "moolre",
+    event_type: "P01",
     status: "processed",
     error: null,
     created_at: "2026-07-23T14:02:11Z",
@@ -307,7 +307,12 @@ export function getPlatformHealth(): PlatformHealth {
 
 export function getPaymentProviderHealth() {
   return listPaymentProviders().map((p) => {
-    const configured = Boolean(process.env.PAYSTACK_SECRET_KEY) || p.configured;
+    const configured =
+      Boolean(
+        process.env.MOOLRE_API_USER &&
+          process.env.MOOLRE_API_PUBKEY &&
+          process.env.MOOLRE_ACCOUNT_NUMBER
+      ) || p.configured;
     return {
       id: p.id,
       label: p.label,
@@ -369,7 +374,7 @@ export function getApiMonitoring() {
       { path: "/api/checkout", p50: 120, p95: 280, errorRate: 0.2 },
       { path: "/api/payments/verify", p50: 90, p95: 210, errorRate: 0.1 },
       { path: "/api/admin/inventory", p50: 45, p95: 110, errorRate: 0 },
-      { path: "/api/webhooks/paystack", p50: 30, p95: 80, errorRate: 0.4 },
+      { path: "/api/webhooks/moolre", p50: 30, p95: 80, errorRate: 0.4 },
       { path: "/api/wishlist", p50: 35, p95: 95, errorRate: 0 },
     ],
     webhooks: demoWebhooks,

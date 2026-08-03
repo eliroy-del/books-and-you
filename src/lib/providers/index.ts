@@ -1,4 +1,4 @@
-import { paystackProvider } from "@/lib/providers/paystack";
+import { moolreProvider } from "@/lib/providers/moolre";
 import type {
   InitializePaymentInput,
   PaymentProvider,
@@ -8,7 +8,7 @@ import type {
 import { isPaymentConfigured } from "@/lib/providers/types";
 
 const providers: Record<PaymentProviderId, PaymentProvider> = {
-  paystack: paystackProvider,
+  moolre: moolreProvider,
 };
 
 export function getPaymentProvider(id: PaymentProviderId): PaymentProvider {
@@ -19,7 +19,7 @@ export function listPaymentProviders() {
   return (Object.keys(providers) as PaymentProviderId[]).map((id) => ({
     id,
     configured: isPaymentConfigured(id),
-    label: "Paystack",
+    label: "Moolre",
   }));
 }
 
@@ -45,4 +45,4 @@ export async function refundPayment(
 }
 
 export * from "@/lib/providers/types";
-export { paystackProvider };
+export { moolreProvider };

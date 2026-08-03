@@ -464,7 +464,7 @@ w(
   `insert into public.site_settings (key, value, description) values
     ('brand', '{"name":"Books & You","primary":"#0F766E","accent":"#D4A017"}'::jsonb, 'Brand tokens'),
     ('shipping', '{"free_delivery_threshold_cents":30000,"currency":"GHS","default_shipping_cents":2500}'::jsonb, 'Shipping rules'),
-    ('payments', '{"providers":["paystack"]}'::jsonb, 'Enabled payment providers')
+    ('payments', '{"providers":["moolre"]}'::jsonb, 'Enabled payment providers')
    on conflict (key) do update set value = excluded.value;`
 );
 
@@ -665,7 +665,7 @@ orderSpecs.forEach((spec, oi) => {
   const txId = uuidFrom(`tx:${oi + 1}`);
   w(
     `insert into public.transactions (id, order_id, user_id, provider, provider_reference, amount_cents, currency, status)
-     values (${sqlStr(txId)}, ${sqlStr(orderId)}, ${sqlStr(userId)}, 'paystack', ${sqlStr(`PSK_${number}`)}, ${spec.total}, 'GHS', 'succeeded')
+     values (${sqlStr(txId)}, ${sqlStr(orderId)}, ${sqlStr(userId)}, 'moolre', ${sqlStr(`MLR_${number}`)}, ${spec.total}, 'GHS', 'succeeded')
      on conflict (id) do nothing;`
   );
   w(

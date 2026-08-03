@@ -172,7 +172,7 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "refunded";
-      payment_provider: "paystack" | "moolre" | "wallet" | "manual";
+      payment_provider: "moolre" | "wallet" | "manual";
     };
     CompositeTypes: Record<string, never>;
   };

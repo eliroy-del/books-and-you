@@ -18,7 +18,7 @@ const META: Record<string, { title: string; description: string; section: string
   },
   payments: {
     title: "Payment providers",
-    description: "Paystack and Moolre configuration health.",
+    description: "Moolre payments and SMS configuration health.",
     section: "payments",
   },
   shipping: {

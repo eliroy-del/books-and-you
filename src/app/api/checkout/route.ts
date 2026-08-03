@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
     const payload = {
       lines,
-      provider: provider ?? "paystack",
+      provider: provider ?? "moolre",
       shippingAddress: shippingAddress ?? {},
       couponCode,
       discountCedis,
@@ -91,7 +91,13 @@ export async function POST(request: Request) {
     }
 
     // Demo capture when provider keys missing — still creates DB order
-    const shouldAuto = autoCapture || !process.env.PAYSTACK_SECRET_KEY;
+    const shouldAuto =
+      autoCapture ||
+      !(
+        process.env.MOOLRE_API_USER &&
+        process.env.MOOLRE_API_PUBKEY &&
+        process.env.MOOLRE_ACCOUNT_NUMBER
+      );
 
     const result = await placeOrderWithClient(supabase, {
       userId: user.id,

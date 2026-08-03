@@ -1,6 +1,6 @@
 import { siteUrl as resolvedSiteUrl } from "@/lib/seo";
 
-export type PaymentProviderId = "paystack";
+export type PaymentProviderId = "moolre";
 
 export type PaymentCurrency = "GHS" | "USD" | "NGN" | "EUR" | "GBP";
 
@@ -61,8 +61,12 @@ export interface PaymentProvider {
 
 export function isPaymentConfigured(provider: PaymentProviderId) {
   switch (provider) {
-    case "paystack":
-      return Boolean(process.env.PAYSTACK_SECRET_KEY);
+    case "moolre":
+      return Boolean(
+        process.env.MOOLRE_API_USER &&
+          process.env.MOOLRE_API_PUBKEY &&
+          process.env.MOOLRE_ACCOUNT_NUMBER
+      );
     default:
       return false;
   }

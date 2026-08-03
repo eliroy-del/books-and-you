@@ -16,7 +16,7 @@ import { useCartStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
 
 const providers = [
-  { id: "paystack", name: "Paystack", hint: "Cards · Mobile Money" },
+  { id: "moolre", name: "Moolre", hint: "Mobile Money · Cards" },
 ] as const;
 
 function CheckoutInner() {
@@ -26,7 +26,7 @@ function CheckoutInner() {
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
   const [addressId, setAddressId] = useState(savedAddresses[0]?.id);
-  const [provider, setProvider] = useState<(typeof providers)[number]["id"]>("paystack");
+  const [provider, setProvider] = useState<(typeof providers)[number]["id"]>("moolre");
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [placed, setPlaced] = useState(false);
@@ -249,7 +249,7 @@ function CheckoutInner() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-heading text-3xl font-bold tracking-tight">Checkout</h1>
       <p className="text-muted-foreground mt-2 text-sm">
-        Paystack · free delivery above{" "}
+        Moolre · free delivery above{" "}
         {formatMoney(siteConfig.freeDeliveryThreshold)}
       </p>
 

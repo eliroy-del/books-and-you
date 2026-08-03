@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { timingSafeEqual } from "crypto";
 import { createServiceClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { verifyPayment } from "@/lib/providers";
 import { fulfillPaidOrder } from "@/lib/services/orders";
 import { db } from "@/lib/supabase/typed";
 import { clientIpFromHeaders, rateLimit } from "@/lib/security/rate-limit";
@@ -15,17 +16,12 @@ type MoolreCallbackBody = {
     transactionid?: string | number;
     txstatus?: number | string;
     amount?: string | number;
-    value?: string | number;
-    thirdpartyref?: string;
+    reference?: string;
     [key: string]: unknown;
   };
   secret?: string;
   externalref?: string;
 };
-
-function moolreBaseUrl() {
-  return (process.env.MOOLRE_BASE_URL || "https://api.moolre.com").replace(/\/$/, "");
-}
 
 function extractSecret(request: Request, body: MoolreCallbackBody) {
   const url = new URL(request.url);
@@ -48,57 +44,6 @@ function secretsMatch(provided: string | null, expected: string) {
   } catch {
     return false;
   }
-}
-
-async function verifyMoolrePayment(externalRef: string) {
-  const user = process.env.MOOLRE_API_USER;
-  const pubKey = process.env.MOOLRE_API_PUBKEY;
-  const account = process.env.MOOLRE_ACCOUNT_NUMBER;
-  if (!user || !account) {
-    return { ok: false as const, error: "Moolre payment credentials incomplete" };
-  }
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    "X-API-USER": user,
-  };
-  // Live requires pubkey; sandbox may not
-  if (pubKey) headers["X-API-PUBKEY"] = pubKey;
-
-  const res = await fetch(`${moolreBaseUrl()}/open/transact/status`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      type: 1,
-      idtype: "1",
-      id: externalRef,
-      accountnumber: account,
-    }),
-  });
-
-  const json = (await res.json()) as {
-    status?: number | string;
-    code?: string;
-    message?: string;
-    data?: { txstatus?: number | string; transactionid?: string | number; amount?: string };
-  };
-
-  if (!res.ok || Number(json.status) !== 1) {
-    return {
-      ok: false as const,
-      error: json.message || json.code || "Moolre status lookup failed",
-      raw: json,
-    };
-  }
-
-  const txstatus = Number(json.data?.txstatus);
-  return {
-    ok: txstatus === 1,
-    status: txstatus === 1 ? ("succeeded" as const) : ("pending" as const),
-    providerReference: json.data?.transactionid != null ? String(json.data.transactionid) : undefined,
-    amount: json.data?.amount,
-    raw: json,
-  };
 }
 
 export async function POST(request: Request) {
@@ -129,9 +74,7 @@ export async function POST(request: Request) {
   const externalRef =
     body.data?.externalref ||
     body.externalref ||
-    (typeof body.data === "object" && body.data && "reference" in body.data
-      ? String((body.data as { reference?: string }).reference || "")
-      : "");
+    (body.data?.reference ? String(body.data.reference) : "");
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json({
@@ -145,38 +88,21 @@ export async function POST(request: Request) {
   const supabase = createServiceClient();
   const client = db(supabase);
 
-  const logStatus =
-    Number(body.status) === 1 && (body.code === "P01" || !body.code) ? "received" : "received";
-
   await client.from("webhook_logs").insert({
     provider: "moolre",
     event_type: body.code || "payment.callback",
     payload: body,
-    status: logStatus,
+    status: "received",
   });
 
   if (!externalRef) {
     return NextResponse.json({ ok: true, received: true, note: "No externalref to process" });
   }
 
-  // Never trust callback alone — re-verify with Moolre status API
-  let verification: Awaited<ReturnType<typeof verifyMoolrePayment>>;
-  try {
-    verification = await verifyMoolrePayment(externalRef);
-  } catch (error) {
-    await client.from("webhook_logs").insert({
-      provider: "moolre",
-      event_type: "payment.verify_error",
-      payload: {
-        externalRef,
-        error: error instanceof Error ? error.message : "verify failed",
-      },
-      status: "failed",
-    });
-    return NextResponse.json({ ok: true, received: true, verified: false });
-  }
+  // Never trust the callback body alone — re-verify with Moolre status API
+  const verification = await verifyPayment("moolre", externalRef);
 
-  if (!verification.ok) {
+  if (!verification.ok || verification.status !== "succeeded") {
     await client.from("webhook_logs").insert({
       provider: "moolre",
       event_type: "payment.unverified",
@@ -208,7 +134,6 @@ export async function POST(request: Request) {
   });
 }
 
-/** Lightweight health check for dashboard/callback URL validation. */
 export async function GET() {
   return NextResponse.json({
     ok: true,
