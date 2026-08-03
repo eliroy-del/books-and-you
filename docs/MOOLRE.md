@@ -27,7 +27,8 @@ You need four values before you can take a single payment.
    - a **Public API Key** — used for payment links and status lookups
 4. Note your **Moolre username** — this is the `X-API-USER` value, not your email.
 5. Set your **Callback (webhook) URL** on the wallet/API settings to:
-   `https://booksandyou.shop/api/webhooks/moolre`
+   `https://booksandyou.shop/api/webhooks/moolre?secret=<MOOLRE_CALLBACK_SECRET>`
+   (use the same value as `MOOLRE_CALLBACK_SECRET` in Vercel / `.env.local`)
 6. Repeat in the **sandbox** dashboard for test credentials.
 
 ### The four values you need

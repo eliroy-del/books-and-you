@@ -37,12 +37,21 @@ vercel --prod
 
 Or connect the GitHub repo in the Vercel dashboard (framework: Next.js). `vercel.json` sets region + baseline headers.
 
-## 4. Webhooks
+## 4. Webhooks / callbacks
 
 Point providers to:
 
 ```
 https://booksandyou.shop/api/webhooks/paystack
+https://booksandyou.shop/api/webhooks/moolre?secret=<MOOLRE_CALLBACK_SECRET>
+```
+
+Set the Moolre wallet **callback URL** in the dashboard to the second URL (include the secret query param). The handler rejects unsigned callbacks when `MOOLRE_CALLBACK_SECRET` is set, then re-verifies the payment via Moolre’s status API before fulfilling an order.
+
+Connectivity probe:
+
+```bash
+node --env-file=.env.local scripts/check-comms.mjs
 ```
 
 ## 5. Post-deploy smoke
@@ -52,4 +61,6 @@ https://booksandyou.shop/api/webhooks/paystack
 3. `/admin` + `/superadmin` accessible for `super_admin`
 4. Checkout creates order (demo or live Paystack)
 5. Paystack webhook verify path returns 200 on test event
-6. SMS with Moolre keys set delivers to a Ghana number
+6. `GET /api/webhooks/moolre` returns `{ ok: true }`
+7. SMS with Moolre keys set delivers to a Ghana number
+8. Set `ADMIN_EMAIL` so contact/support and email probes use your inbox

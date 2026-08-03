@@ -1,0 +1,224 @@
+import { NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
+import { createServiceClient } from "@/lib/supabase/admin";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { fulfillPaidOrder } from "@/lib/services/orders";
+import { db } from "@/lib/supabase/typed";
+import { clientIpFromHeaders, rateLimit } from "@/lib/security/rate-limit";
+
+type MoolreCallbackBody = {
+  status?: number | string;
+  code?: string;
+  message?: string;
+  data?: {
+    externalref?: string;
+    transactionid?: string | number;
+    txstatus?: number | string;
+    amount?: string | number;
+    value?: string | number;
+    thirdpartyref?: string;
+    [key: string]: unknown;
+  };
+  secret?: string;
+  externalref?: string;
+};
+
+function moolreBaseUrl() {
+  return (process.env.MOOLRE_BASE_URL || "https://api.moolre.com").replace(/\/$/, "");
+}
+
+function extractSecret(request: Request, body: MoolreCallbackBody) {
+  const url = new URL(request.url);
+  return (
+    request.headers.get("x-moolre-secret") ||
+    request.headers.get("x-callback-secret") ||
+    url.searchParams.get("secret") ||
+    body.secret ||
+    null
+  );
+}
+
+function secretsMatch(provided: string | null, expected: string) {
+  if (!provided) return false;
+  try {
+    const a = Buffer.from(provided);
+    const b = Buffer.from(expected);
+    if (a.length !== b.length) return false;
+    return timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
+
+async function verifyMoolrePayment(externalRef: string) {
+  const user = process.env.MOOLRE_API_USER;
+  const pubKey = process.env.MOOLRE_API_PUBKEY;
+  const account = process.env.MOOLRE_ACCOUNT_NUMBER;
+  if (!user || !account) {
+    return { ok: false as const, error: "Moolre payment credentials incomplete" };
+  }
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "X-API-USER": user,
+  };
+  // Live requires pubkey; sandbox may not
+  if (pubKey) headers["X-API-PUBKEY"] = pubKey;
+
+  const res = await fetch(`${moolreBaseUrl()}/open/transact/status`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      type: 1,
+      idtype: "1",
+      id: externalRef,
+      accountnumber: account,
+    }),
+  });
+
+  const json = (await res.json()) as {
+    status?: number | string;
+    code?: string;
+    message?: string;
+    data?: { txstatus?: number | string; transactionid?: string | number; amount?: string };
+  };
+
+  if (!res.ok || Number(json.status) !== 1) {
+    return {
+      ok: false as const,
+      error: json.message || json.code || "Moolre status lookup failed",
+      raw: json,
+    };
+  }
+
+  const txstatus = Number(json.data?.txstatus);
+  return {
+    ok: txstatus === 1,
+    status: txstatus === 1 ? ("succeeded" as const) : ("pending" as const),
+    providerReference: json.data?.transactionid != null ? String(json.data.transactionid) : undefined,
+    amount: json.data?.amount,
+    raw: json,
+  };
+}
+
+export async function POST(request: Request) {
+  const ip = clientIpFromHeaders(request.headers);
+  const limited = rateLimit(`moolre-webhook:${ip}`, { limit: 60, windowMs: 60_000 });
+  if (!limited.ok) {
+    return NextResponse.json(
+      { ok: false, error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } }
+    );
+  }
+
+  let body: MoolreCallbackBody;
+  try {
+    body = (await request.json()) as MoolreCallbackBody;
+  } catch {
+    return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const expectedSecret = process.env.MOOLRE_CALLBACK_SECRET;
+  if (expectedSecret) {
+    const provided = extractSecret(request, body);
+    if (!secretsMatch(provided, expectedSecret)) {
+      return NextResponse.json({ ok: false, error: "Invalid callback secret" }, { status: 401 });
+    }
+  }
+
+  const externalRef =
+    body.data?.externalref ||
+    body.externalref ||
+    (typeof body.data === "object" && body.data && "reference" in body.data
+      ? String((body.data as { reference?: string }).reference || "")
+      : "");
+
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({
+      ok: true,
+      received: true,
+      demo: true,
+      externalRef: externalRef || null,
+    });
+  }
+
+  const supabase = createServiceClient();
+  const client = db(supabase);
+
+  const logStatus =
+    Number(body.status) === 1 && (body.code === "P01" || !body.code) ? "received" : "received";
+
+  await client.from("webhook_logs").insert({
+    provider: "moolre",
+    event_type: body.code || "payment.callback",
+    payload: body,
+    status: logStatus,
+  });
+
+  if (!externalRef) {
+    return NextResponse.json({ ok: true, received: true, note: "No externalref to process" });
+  }
+
+  // Never trust callback alone — re-verify with Moolre status API
+  let verification: Awaited<ReturnType<typeof verifyMoolrePayment>>;
+  try {
+    verification = await verifyMoolrePayment(externalRef);
+  } catch (error) {
+    await client.from("webhook_logs").insert({
+      provider: "moolre",
+      event_type: "payment.verify_error",
+      payload: {
+        externalRef,
+        error: error instanceof Error ? error.message : "verify failed",
+      },
+      status: "failed",
+    });
+    return NextResponse.json({ ok: true, received: true, verified: false });
+  }
+
+  if (!verification.ok) {
+    await client.from("webhook_logs").insert({
+      provider: "moolre",
+      event_type: "payment.unverified",
+      payload: { externalRef, verification },
+      status: "failed",
+    });
+    return NextResponse.json({ ok: true, received: true, verified: false });
+  }
+
+  const { data: tx } = await client
+    .from("transactions")
+    .select("order_id")
+    .eq("provider_reference", externalRef)
+    .maybeSingle();
+
+  if (tx?.order_id) {
+    await fulfillPaidOrder(supabase, {
+      orderId: tx.order_id,
+      paymentReference: externalRef,
+      providerReference: verification.providerReference || externalRef,
+    });
+  }
+
+  return NextResponse.json({
+    ok: true,
+    received: true,
+    verified: true,
+    fulfilled: Boolean(tx?.order_id),
+  });
+}
+
+/** Lightweight health check for dashboard/callback URL validation. */
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    provider: "moolre",
+    callback: "/api/webhooks/moolre",
+    secretConfigured: Boolean(process.env.MOOLRE_CALLBACK_SECRET),
+    paymentCredsConfigured: Boolean(
+      process.env.MOOLRE_API_USER &&
+        process.env.MOOLRE_ACCOUNT_NUMBER &&
+        process.env.MOOLRE_API_PUBKEY
+    ),
+  });
+}
