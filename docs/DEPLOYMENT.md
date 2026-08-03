@@ -4,7 +4,8 @@
 
 - Supabase project with migrations + seed applied (`supabase/README.md`)
 - Resend domain verified (optional for email)
-- Paystack / Flutterwave / Stripe keys (optional; demo auto-captures without secrets)
+- Paystack keys (optional; demo auto-captures without secrets)
+- Moolre VAS key + approved Sender ID for SMS (optional; console demo without secrets)
 
 ## 2. Environment
 
@@ -20,8 +21,9 @@ Required for production:
 Recommended:
 
 - `RESEND_API_KEY`, `RESEND_FROM_EMAIL`
-- Payment secrets + public keys
-- `STRIPE_WEBHOOK_SECRET`, `FLUTTERWAVE_SECRET_HASH`
+- `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`, `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY`
+- `MOOLRE_VAS_KEY`, `MOOLRE_SMS_SENDER_ID` (SMS)
+- Moolre payment keys if/when the payment adapter is enabled (see `docs/MOOLRE.md`)
 
 ## 3. Deploy
 
@@ -39,9 +41,7 @@ Or connect the GitHub repo in the Vercel dashboard (framework: Next.js). `vercel
 Point providers to:
 
 ```
-https://<domain>/api/webhooks/paystack
-https://<domain>/api/webhooks/flutterwave
-https://<domain>/api/webhooks/stripe
+https://booksandyou.shop/api/webhooks/paystack
 ```
 
 ## 5. Post-deploy smoke
@@ -49,5 +49,6 @@ https://<domain>/api/webhooks/stripe
 1. `/` loads
 2. `/auth` sign-in with seeded staff user
 3. `/admin` + `/superadmin` accessible for `super_admin`
-4. Checkout creates order (demo or live provider)
-5. Webhook verify path returns 200 on test event
+4. Checkout creates order (demo or live Paystack)
+5. Paystack webhook verify path returns 200 on test event
+6. SMS with Moolre keys set delivers to a Ghana number

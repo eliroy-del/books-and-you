@@ -9,8 +9,8 @@ Books & You is a Next.js App Router bookstore with Supabase-backed auth/data, mu
 | UI | Next.js 16, React 19, Tailwind 4, shadcn/ui, Framer Motion |
 | State | Zustand (cart/wishlist), Supabase Auth session |
 | Data | Supabase Postgres + RLS + Realtime + Storage |
-| Payments | Paystack · Flutterwave · Stripe (`src/lib/providers`) |
-| Email / SMS | Resend + SMS provider abstraction |
+| Payments | Paystack (`src/lib/providers`) |
+| Email / SMS | Resend + Moolre SMS (`src/lib/services/sms.ts`) |
 | Hosting | Vercel |
 
 ## Route map

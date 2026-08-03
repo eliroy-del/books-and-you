@@ -53,6 +53,10 @@ MOOLRE_API_PUBKEY=
 MOOLRE_ACCOUNT_NUMBER=
 MOOLRE_BASE_URL=https://api.moolre.com
 MOOLRE_CURRENCY=GHS
+
+# SMS — separate VAS key + approved Sender ID (max 11 chars)
+MOOLRE_VAS_KEY=
+MOOLRE_SMS_SENDER_ID=BooksNYou
 ```
 
 For sandbox testing, point the base URL at sandbox instead:
@@ -61,17 +65,19 @@ For sandbox testing, point the base URL at sandbox instead:
 MOOLRE_BASE_URL=https://sandbox.moolre.com
 ```
 
+SMS still requires `X-API-VASKEY` even in sandbox.
+
 ### Two things to be careful about
 
 **The "Public API Key" is not browser-safe.** Despite the name, it is a server-side
 credential used to create payment links and read transaction status. Do **not** prefix it
 with `NEXT_PUBLIC_` and never ship it to the client — anyone holding it could enumerate your
-transactions. All four Moolre values stay server-only, unlike the Paystack/Stripe publishable
-keys already in `.env.example`.
+transactions. All four Moolre payment values stay server-only, unlike the Paystack
+publishable key already in `.env.example`.
 
 **Moolre amounts are in major units.** Moolre expects `"amount": "50"` to mean GHS 50.00.
-This codebase passes money around in minor units (`amountCents`), matching Paystack and
-Stripe. Any adapter must divide by 100 on the way out and multiply by 100 on the way back,
+This codebase passes money around in minor units (`amountCents`), matching Paystack.
+Any payment adapter must divide by 100 on the way out and multiply by 100 on the way back,
 or every charge will be 100× too small.
 
 ---
@@ -293,23 +299,48 @@ Because `externalref` must be globally unique, derive it from the order ID plus 
 
 ---
 
-## 9. Current integration status
+## 9. SMS (live in codebase)
 
-The environment variables above are documented and scaffolded in `.env.example`, but **no
-Moolre provider adapter exists in the codebase yet**. `src/lib/providers/` currently ships
-`paystack.ts`, `flutterwave.ts`, and `stripe.ts` only, and `PaymentProviderId` in
-`src/lib/providers/types.ts` does not include `moolre`.
+SMS is implemented in `src/lib/services/sms.ts` against:
 
-To wire it up, an implementation needs to:
+```
+POST {MOOLRE_BASE_URL}/open/sms/send
+X-API-VASKEY: <MOOLRE_VAS_KEY>
+```
 
-1. Add `"moolre"` to `PaymentProviderId` and to `isPaymentConfigured()`.
-2. Create `src/lib/providers/moolre.ts` implementing `initialize`, `verify`, and `refund`
-   against the `PaymentProvider` interface — mapping `authorization_url` into
-   `InitializePaymentResult.authorizationUrl` and `txstatus` into the
-   `succeeded | failed | pending | abandoned` union.
-3. Register it in the `providers` map in `src/lib/providers/index.ts`.
-4. Add `src/app/api/webhooks/moolre/route.ts` following the verification rules in §5.
-5. Convert between `amountCents` and Moolre's major units at the boundary.
+Body:
 
-Until that adapter is added, selecting Moolre at checkout will not charge anyone — the
-existing providers fall back to demo mode when their keys are absent.
+```json
+{
+  "type": 1,
+  "senderid": "BooksNYou",
+  "messages": [
+    { "recipient": "233201234567", "message": "Your order is confirmed.", "ref": "sms_123" }
+  ]
+}
+```
+
+### Get your SMS keys
+
+1. In the Moolre dashboard, open the **SMS / VAS** product and copy the **VAS Key**.
+2. Register a **Sender ID** (max 11 characters, e.g. `BooksNYou`) and wait for approval.
+   Unapproved IDs return code `ASMS07`.
+3. Put both into `.env.local` / Vercel:
+
+```env
+MOOLRE_VAS_KEY=...
+MOOLRE_SMS_SENDER_ID=BooksNYou
+```
+
+Without those two values, `sendSms()` logs to the console in demo mode so local checkout
+and shipping notifications still work.
+
+Callers (`notifyUser`, shipping advance, etc.) do not need to know about Moolre — they keep
+calling `sendSms({ to, body })`.
+
+## 10. Payment adapter status
+
+Flutterwave and Stripe have been removed. Checkout currently uses **Paystack** only.
+A Moolre payment adapter is still optional; the payment keys above are ready for when you
+want `/embed/link` wired into `src/lib/providers/`. Until then, payments do not go through
+Moolre.

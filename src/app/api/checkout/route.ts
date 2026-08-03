@@ -91,15 +91,7 @@ export async function POST(request: Request) {
     }
 
     // Demo capture when provider keys missing — still creates DB order
-    const shouldAuto =
-      autoCapture ||
-      !process.env[
-        provider === "stripe"
-          ? "STRIPE_SECRET_KEY"
-          : provider === "flutterwave"
-            ? "FLUTTERWAVE_SECRET_KEY"
-            : "PAYSTACK_SECRET_KEY"
-      ];
+    const shouldAuto = autoCapture || !process.env.PAYSTACK_SECRET_KEY;
 
     const result = await placeOrderWithClient(supabase, {
       userId: user.id,

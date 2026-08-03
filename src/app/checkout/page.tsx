@@ -17,8 +17,6 @@ import { cn } from "@/lib/utils";
 
 const providers = [
   { id: "paystack", name: "Paystack", hint: "Cards · Mobile Money" },
-  { id: "flutterwave", name: "Flutterwave", hint: "Cards · Bank" },
-  { id: "stripe", name: "Stripe", hint: "International cards" },
 ] as const;
 
 function CheckoutInner() {
@@ -251,7 +249,7 @@ function CheckoutInner() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-heading text-3xl font-bold tracking-tight">Checkout</h1>
       <p className="text-muted-foreground mt-2 text-sm">
-        Paystack · Flutterwave · Stripe · free delivery above{" "}
+        Paystack · free delivery above{" "}
         {formatMoney(siteConfig.freeDeliveryThreshold)}
       </p>
 

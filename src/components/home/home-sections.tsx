@@ -178,7 +178,7 @@ export function WhyBooksAndYou() {
     {
       icon: Lock,
       title: "Secure payments",
-      body: "Paystack, Stripe, and Flutterwave—encrypted and reliable.",
+      body: "Paystack checkout with Moolre SMS updates—encrypted and reliable.",
     },
     {
       icon: ShieldCheck,

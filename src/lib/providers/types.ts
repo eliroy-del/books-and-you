@@ -1,6 +1,6 @@
 import { siteUrl as resolvedSiteUrl } from "@/lib/seo";
 
-export type PaymentProviderId = "paystack" | "flutterwave" | "stripe";
+export type PaymentProviderId = "paystack";
 
 export type PaymentCurrency = "GHS" | "USD" | "NGN" | "EUR" | "GBP";
 
@@ -63,10 +63,6 @@ export function isPaymentConfigured(provider: PaymentProviderId) {
   switch (provider) {
     case "paystack":
       return Boolean(process.env.PAYSTACK_SECRET_KEY);
-    case "flutterwave":
-      return Boolean(process.env.FLUTTERWAVE_SECRET_KEY);
-    case "stripe":
-      return Boolean(process.env.STRIPE_SECRET_KEY);
     default:
       return false;
   }

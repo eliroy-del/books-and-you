@@ -90,12 +90,12 @@ const demoSettings: SiteSetting[] = [
   },
   {
     key: "payments",
-    value: { providers: ["paystack", "flutterwave", "stripe"] },
+    value: { providers: ["paystack"] },
     description: "Enabled payment providers",
   },
   {
     key: "locale",
-    value: { default_country: "GH", timezone: "Africa/Accra", support_email: "hello@booksandyou.com" },
+    value: { default_country: "GH", timezone: "Africa/Accra", support_email: "hello@booksandyou.shop" },
     description: "Locale & support",
   },
 ];
@@ -146,19 +146,11 @@ const demoWebhooks: WebhookLog[] = [
   },
   {
     id: "wh-2",
-    provider: "stripe",
-    event_type: "checkout.session.completed",
+    provider: "moolre",
+    event_type: "sms.delivered",
     status: "processed",
     error: null,
     created_at: "2026-07-23T12:41:03Z",
-  },
-  {
-    id: "wh-3",
-    provider: "flutterwave",
-    event_type: "charge.completed",
-    status: "failed",
-    error: "Signature mismatch (demo)",
-    created_at: "2026-07-22T18:20:44Z",
   },
 ];
 
@@ -311,13 +303,7 @@ export function getPlatformHealth(): PlatformHealth {
 
 export function getPaymentProviderHealth() {
   return listPaymentProviders().map((p) => {
-    const secretEnv =
-      p.id === "paystack"
-        ? "PAYSTACK_SECRET_KEY"
-        : p.id === "flutterwave"
-          ? "FLUTTERWAVE_SECRET_KEY"
-          : "STRIPE_SECRET_KEY";
-    const configured = Boolean(process.env[secretEnv]) || p.configured;
+    const configured = Boolean(process.env.PAYSTACK_SECRET_KEY) || p.configured;
     return {
       id: p.id,
       label: p.label,
@@ -400,7 +386,7 @@ export function getRbacOverview() {
 export function getSystemLogs() {
   return [
     { level: "info", message: "Checkout completed BY-10482", at: "2026-07-23T15:01:12Z" },
-    { level: "warn", message: "Flutterwave webhook signature mismatch", at: "2026-07-22T18:20:44Z" },
+    { level: "info", message: "Moolre SMS sender ID approved", at: "2026-07-22T18:20:44Z" },
     { level: "info", message: "Inventory adjust +10 paperback", at: "2026-07-23T10:12:00Z" },
     { level: "info", message: "Feature flag sms_notifications=false", at: "2026-07-23T15:10:00Z" },
     { level: "error", message: "Resend skipped — RESEND_API_KEY missing (demo)", at: "2026-07-23T09:00:01Z" },

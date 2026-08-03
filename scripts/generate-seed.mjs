@@ -464,7 +464,7 @@ w(
   `insert into public.site_settings (key, value, description) values
     ('brand', '{"name":"Books & You","primary":"#0F766E","accent":"#D4A017"}'::jsonb, 'Brand tokens'),
     ('shipping', '{"free_delivery_threshold_cents":30000,"currency":"GHS","default_shipping_cents":2500}'::jsonb, 'Shipping rules'),
-    ('payments', '{"providers":["paystack","flutterwave","stripe"]}'::jsonb, 'Enabled payment providers')
+    ('payments', '{"providers":["paystack"]}'::jsonb, 'Enabled payment providers')
    on conflict (key) do update set value = excluded.value;`
 );
 

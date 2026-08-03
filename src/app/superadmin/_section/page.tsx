@@ -18,7 +18,7 @@ const META: Record<string, { title: string; description: string; section: string
   },
   payments: {
     title: "Payment providers",
-    description: "Paystack, Flutterwave, and Stripe configuration health.",
+    description: "Paystack and Moolre configuration health.",
     section: "payments",
   },
   shipping: {
