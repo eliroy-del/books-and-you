@@ -29,7 +29,9 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 do $$ begin
-  create type public.payment_provider as enum ('paystack', 'flutterwave', 'stripe', 'wallet', 'manual');
+  create type public.payment_provider as enum (
+    'paystack', 'flutterwave', 'stripe', 'wallet', 'manual', 'moolre'
+  );
 exception when duplicate_object then null; end $$;
 
 do $$ begin

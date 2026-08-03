@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { books, searchBooks, trendingSearches } from "@/data/mock";
+import { trendingSearches } from "@/data/mock";
 import { cn } from "@/lib/utils";
+import type { Book } from "@/types";
 
 interface SmartSearchProps {
   className?: string;
@@ -18,15 +19,39 @@ export function SmartSearch({ className, large, autoFocus }: SmartSearchProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const [results, setResults] = useState(books.slice(0, 5));
+  const [results, setResults] = useState<Book[]>([]);
 
   useEffect(() => {
+    let cancelled = false;
     const q = query.trim();
-    if (!q) {
-      setResults(books.filter((b) => b.featured || b.bestseller).slice(0, 5));
-      return;
-    }
-    setResults(searchBooks(q).slice(0, 6));
+    const url = q
+      ? `/api/catalog?resource=books&q=${encodeURIComponent(q)}&limit=6`
+      : "/api/catalog?resource=books&limit=8";
+
+    const handle = window.setTimeout(() => {
+      void fetch(url)
+        .then((r) => r.json())
+        .then((json) => {
+          if (cancelled) return;
+          const books = (json.books || []) as Book[];
+          if (q) {
+            setResults(books.slice(0, 6));
+            return;
+          }
+          const featured = books
+            .filter((b) => b.featured || b.bestseller)
+            .slice(0, 5);
+          setResults(featured.length ? featured : books.slice(0, 5));
+        })
+        .catch(() => {
+          if (!cancelled) setResults([]);
+        });
+    }, q ? 180 : 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
   }, [query]);
 
   function submit(e?: React.FormEvent) {
@@ -114,7 +139,8 @@ export function SmartSearch({ className, large, autoFocus }: SmartSearchProps) {
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{book.title}</p>
                     <p className="text-muted-foreground truncate text-xs">
-                      {book.authorName} · {book.genres[0]}
+                      {book.authorName}
+                      {book.genres[0] ? ` · ${book.genres[0]}` : ""}
                     </p>
                   </div>
                 </Link>

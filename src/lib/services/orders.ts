@@ -189,6 +189,7 @@ export async function placeOrderWithClient(
 
   const { error: itemsError } = await client.from("order_items").insert(orderItems);
   if (itemsError) {
+    await client.from("orders").update({ status: "cancelled" }).eq("id", order.id);
     return { ok: false, error: itemsError.message };
   }
 
@@ -210,6 +211,7 @@ export async function placeOrderWithClient(
     .single();
 
   if (txError || !tx) {
+    await client.from("orders").update({ status: "cancelled" }).eq("id", order.id);
     return { ok: false, error: txError?.message ?? "Failed to create transaction" };
   }
 
@@ -254,6 +256,9 @@ export async function placeOrderWithClient(
   });
 
   if (!payment.ok) {
+    await client.from("transactions").update({ status: "failed" }).eq("id", tx.id);
+    await client.from("payments").update({ status: "failed" }).eq("transaction_id", tx.id);
+    await client.from("orders").update({ status: "cancelled" }).eq("id", order.id);
     return { ok: false, error: payment.error || "Payment initialization failed" };
   }
 

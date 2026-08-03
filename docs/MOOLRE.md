@@ -347,6 +347,11 @@ calling `sendSms({ to, body })`.
 
 ## 10. Checkout (live)
 
+The database enum `payment_provider` must include `moolre` (migration
+`20260803224700_add_moolre_payment_provider`). Without it, checkout fails when
+inserting into `transactions` with
+`invalid input value for enum payment_provider: "moolre"`.
+
 Checkout uses **Moolre** exclusively via `src/lib/providers/moolre.ts`:
 
 1. `POST /embed/link` creates a hosted POS payment page (public key + account number).

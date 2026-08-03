@@ -172,7 +172,13 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "refunded";
-      payment_provider: "moolre" | "wallet" | "manual";
+      payment_provider:
+        | "paystack"
+        | "flutterwave"
+        | "stripe"
+        | "wallet"
+        | "manual"
+        | "moolre";
     };
     CompositeTypes: Record<string, never>;
   };

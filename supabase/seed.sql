@@ -3066,7 +3066,7 @@ insert into public.feature_flags (key, enabled, description) values ('live_inven
 insert into public.site_settings (key, value, description) values
     ('brand', '{"name":"Books & You","primary":"#0F766E","accent":"#D4A017"}'::jsonb, 'Brand tokens'),
     ('shipping', '{"free_delivery_threshold_cents":30000,"currency":"GHS","default_shipping_cents":2500}'::jsonb, 'Shipping rules'),
-    ('payments', '{"providers":["paystack","flutterwave","stripe"]}'::jsonb, 'Enabled payment providers')
+    ('payments', '{"providers":["moolre"]}'::jsonb, 'Enabled payment providers')
    on conflict (key) do update set value = excluded.value;
 insert into public.notification_templates (id, key, channel, subject, body) values
     ('326abac7-674a-4ae2-ab65-89820a8a2ffd', 'order_confirmation', 'email', 'Your Books & You order {{order_number}}', 'Thanks for your order. Total: {{total}}.'),
