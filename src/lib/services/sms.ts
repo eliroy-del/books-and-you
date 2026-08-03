@@ -25,7 +25,7 @@ export function normalizeSmsRecipient(phone: string) {
 }
 
 export function isMoolreSmsConfigured() {
-  return Boolean(process.env.MOOLRE_VAS_KEY && process.env.MOOLRE_SMS_SENDER_ID);
+  return Boolean(process.env.MOOLRE_SMS_API_KEY && process.env.MOOLRE_SMS_SENDER_ID);
 }
 
 /**
@@ -43,7 +43,7 @@ export async function sendSms(payload: SmsPayload): Promise<SmsResult> {
     };
   }
 
-  const vasKey = process.env.MOOLRE_VAS_KEY!;
+  const vasKey = process.env.MOOLRE_SMS_API_KEY!;
   const senderId = process.env.MOOLRE_SMS_SENDER_ID!;
   const recipient = normalizeSmsRecipient(payload.to);
   const ref = payload.ref || `sms_${Date.now()}`;

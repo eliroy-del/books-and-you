@@ -95,7 +95,11 @@ const demoSettings: SiteSetting[] = [
   },
   {
     key: "locale",
-    value: { default_country: "GH", timezone: "Africa/Accra", support_email: "hello@booksandyou.shop" },
+    value: {
+      default_country: "GH",
+      timezone: "Africa/Accra",
+      support_email: process.env.ADMIN_EMAIL || "hello@booksandyou.shop",
+    },
     description: "Locale & support",
   },
 ];

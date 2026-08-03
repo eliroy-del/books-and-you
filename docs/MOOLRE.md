@@ -54,9 +54,15 @@ MOOLRE_ACCOUNT_NUMBER=
 MOOLRE_BASE_URL=https://api.moolre.com
 MOOLRE_CURRENCY=GHS
 
-# SMS — separate VAS key + approved Sender ID (max 11 chars)
-MOOLRE_VAS_KEY=
-MOOLRE_SMS_SENDER_ID=BooksNYou
+# SMS — SMS API key + approved Sender ID (max 11 chars)
+MOOLRE_SMS_API_KEY=
+MOOLRE_SMS_SENDER_ID=BooksAndYou
+```
+
+Also set the store contact inbox:
+
+```env
+ADMIN_EMAIL=hello@booksandyou.shop
 ```
 
 For sandbox testing, point the base URL at sandbox instead:
@@ -65,7 +71,7 @@ For sandbox testing, point the base URL at sandbox instead:
 MOOLRE_BASE_URL=https://sandbox.moolre.com
 ```
 
-SMS still requires `X-API-VASKEY` even in sandbox.
+SMS still requires `X-API-VASKEY` (your `MOOLRE_SMS_API_KEY`) even in sandbox.
 
 ### Two things to be careful about
 
@@ -305,7 +311,7 @@ SMS is implemented in `src/lib/services/sms.ts` against:
 
 ```
 POST {MOOLRE_BASE_URL}/open/sms/send
-X-API-VASKEY: <MOOLRE_VAS_KEY>
+X-API-VASKEY: <MOOLRE_SMS_API_KEY>
 ```
 
 Body:
@@ -313,7 +319,7 @@ Body:
 ```json
 {
   "type": 1,
-  "senderid": "BooksNYou",
+  "senderid": "BooksAndYou",
   "messages": [
     { "recipient": "233201234567", "message": "Your order is confirmed.", "ref": "sms_123" }
   ]
@@ -322,18 +328,20 @@ Body:
 
 ### Get your SMS keys
 
-1. In the Moolre dashboard, open the **SMS / VAS** product and copy the **VAS Key**.
-2. Register a **Sender ID** (max 11 characters, e.g. `BooksNYou`) and wait for approval.
+1. In the Moolre dashboard, open the **SMS / VAS** product and copy the **SMS API key** (VAS key).
+2. Register a **Sender ID** (max 11 characters, e.g. `BooksAndYou`) and wait for approval.
    Unapproved IDs return code `ASMS07`.
 3. Put both into `.env.local` / Vercel:
 
 ```env
-MOOLRE_VAS_KEY=...
-MOOLRE_SMS_SENDER_ID=BooksNYou
+MOOLRE_SMS_API_KEY=...
+MOOLRE_SMS_SENDER_ID=BooksAndYou
+ADMIN_EMAIL=hello@booksandyou.shop
 ```
 
-Without those two values, `sendSms()` logs to the console in demo mode so local checkout
-and shipping notifications still work.
+Without the SMS key + sender ID, `sendSms()` logs to the console in demo mode so local
+checkout and shipping notifications still work. `ADMIN_EMAIL` drives the contact/support
+inbox shown on the site.
 
 Callers (`notifyUser`, shipping advance, etc.) do not need to know about Moolre — they keep
 calling `sendSms({ to, body })`.

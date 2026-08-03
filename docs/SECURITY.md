@@ -17,7 +17,7 @@
 
 1. **Demo mode** — Without Supabase, admin APIs default to a demo superadmin session. Never ship production without env vars.
 2. **Rate limit** — In-memory limiter is per-instance; use Redis/Upstash for multi-region.
-3. **Webhook secrets** — Configure Paystack webhook verification before going live. Moolre SMS uses a server-only VAS key (`MOOLRE_VAS_KEY`).
+3. **Webhook secrets** — Configure Paystack webhook verification before going live. Moolre SMS uses a server-only key (`MOOLRE_SMS_API_KEY`).
 4. **Service role** — `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS; only use in webhook/fulfillment server routes.
 5. **XSS / HTML email** — Prefer text/structured templates; sanitize any user-generated review content before admin display.
 

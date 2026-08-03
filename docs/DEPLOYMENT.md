@@ -22,7 +22,8 @@ Recommended:
 
 - `RESEND_API_KEY`, `RESEND_FROM_EMAIL`
 - `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`, `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY`
-- `MOOLRE_VAS_KEY`, `MOOLRE_SMS_SENDER_ID` (SMS)
+- `MOOLRE_SMS_API_KEY`, `MOOLRE_SMS_SENDER_ID` (SMS)
+- `ADMIN_EMAIL` (contact / support inbox)
 - Moolre payment keys if/when the payment adapter is enabled (see `docs/MOOLRE.md`)
 
 ## 3. Deploy
