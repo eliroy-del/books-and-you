@@ -3,14 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import {
-  Gift,
-  Heart,
-  Share2,
-  ShoppingBag,
-  Star,
-  Truck,
-} from "lucide-react";
+import { Heart, Share2, ShoppingBag, Star } from "lucide-react";
 import { toast } from "sonner";
 import { BookCover } from "@/components/books/book-cover";
 import { BookCard } from "@/components/books/book-card";
@@ -179,18 +172,6 @@ export default function BookDetailClient() {
             >
               <Share2 className="size-4" />
             </Button>
-          </div>
-
-          <div className="text-muted-foreground mt-6 grid gap-3 text-sm sm:grid-cols-3">
-            <p className="flex items-center gap-2">
-              <Truck className="text-primary size-4" /> Fast delivery
-            </p>
-            <p className="flex items-center gap-2">
-              <Gift className="text-primary size-4" /> Gift wrap available
-            </p>
-            <p className="flex items-center gap-2">
-              <Star className="text-primary size-4" /> Verified reviews
-            </p>
           </div>
 
           <Separator className="my-8" />
