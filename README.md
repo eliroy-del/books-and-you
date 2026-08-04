@@ -1,6 +1,6 @@
 # Books & You
 
-Premium bookstore platform — Next.js, TypeScript, Tailwind, shadcn/ui, Framer Motion, Supabase.
+Premium bookstore platform: Next.js, TypeScript, Tailwind, shadcn/ui, Framer Motion, Supabase.
 
 ## Phase status
 
@@ -38,12 +38,12 @@ Demo staff (after seed): `superadmin@booksandyou.test` / `Password123!`
 
 ## Phase 6 highlights
 
-- **Super Admin** — flags, site config, payments/shipping health, templates, monitoring, fraud, DB/backups, exports, audit, system logs
-- **Performance** — security headers, compression, `optimizePackageImports`, route `loading.tsx`
-- **Testing** — Vitest suite for RBAC, shipping, rate limits
-- **Deployment** — `vercel.json` + [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
-- **Security** — [docs/SECURITY.md](docs/SECURITY.md) + checkout rate limiting
-- **Docs** — Architecture, Testing, Security, Deployment under `docs/`
+- **Super Admin:** flags, site config, payments/shipping health, templates, monitoring, fraud, DB/backups, exports, audit, system logs
+- **Performance:** security headers, compression, `optimizePackageImports`, route `loading.tsx`
+- **Testing:** Vitest suite for RBAC, shipping, rate limits
+- **Deployment:** `vercel.json` + [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+- **Security:** [docs/SECURITY.md](docs/SECURITY.md) + checkout rate limiting
+- **Docs:** Architecture, Testing, Security, Deployment under `docs/`
 
 ## Documentation
 

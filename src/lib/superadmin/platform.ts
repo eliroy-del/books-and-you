@@ -1,5 +1,5 @@
 /**
- * Super Admin platform services — demo store + Supabase-backed when linked.
+ * Super Admin platform services: demo store + Supabase-backed when linked.
  */
 
 import { tryCreateClient } from "@/lib/supabase/server";
@@ -186,14 +186,14 @@ const demoAudits: AuditEntry[] = [
 ];
 
 export async function listFeatureFlags(): Promise<FeatureFlag[]> {
-  if (!isSupabaseConfigured()) return [...demoFlags];
+  if (!isSupabaseConfigured()) return [..demoFlags];
   const supabase = await tryCreateClient();
-  if (!supabase) return [...demoFlags];
+  if (!supabase) return [..demoFlags];
   const { data } = await db(supabase)
     .from("feature_flags")
     .select("key, enabled, description")
     .order("key");
-  return (data as FeatureFlag[])?.length ? (data as FeatureFlag[]) : [...demoFlags];
+  return (data as FeatureFlag[])?.length ? (data as FeatureFlag[]) : [..demoFlags];
 }
 
 export async function setFeatureFlag(
@@ -204,7 +204,7 @@ export async function setFeatureFlag(
     const flag = demoFlags.find((f) => f.key === key);
     if (!flag) return null;
     flag.enabled = enabled;
-    return { ...flag };
+    return { ..flag };
   }
   const supabase = await tryCreateClient();
   if (!supabase) return null;
@@ -217,11 +217,11 @@ export async function setFeatureFlag(
 }
 
 export async function listSiteSettings(): Promise<SiteSetting[]> {
-  if (!isSupabaseConfigured()) return [...demoSettings];
+  if (!isSupabaseConfigured()) return [..demoSettings];
   const supabase = await tryCreateClient();
-  if (!supabase) return [...demoSettings];
+  if (!supabase) return [..demoSettings];
   const { data } = await db(supabase).from("site_settings").select("key, value, description");
-  return (data as SiteSetting[])?.length ? (data as SiteSetting[]) : [...demoSettings];
+  return (data as SiteSetting[])?.length ? (data as SiteSetting[]) : [..demoSettings];
 }
 
 export async function updateSiteSetting(
@@ -232,7 +232,7 @@ export async function updateSiteSetting(
     const row = demoSettings.find((s) => s.key === key);
     if (!row) return null;
     row.value = value;
-    return { ...row };
+    return { ..row };
   }
   const supabase = await tryCreateClient();
   if (!supabase) return null;
@@ -245,40 +245,40 @@ export async function updateSiteSetting(
 }
 
 export async function listNotificationTemplates(): Promise<NotificationTemplate[]> {
-  if (!isSupabaseConfigured()) return [...demoTemplates];
+  if (!isSupabaseConfigured()) return [..demoTemplates];
   const supabase = await tryCreateClient();
-  if (!supabase) return [...demoTemplates];
+  if (!supabase) return [..demoTemplates];
   const { data } = await db(supabase)
     .from("notification_templates")
     .select("id, key, channel, subject, body, is_active")
     .order("key");
   return (data as NotificationTemplate[])?.length
     ? (data as NotificationTemplate[])
-    : [...demoTemplates];
+    : [..demoTemplates];
 }
 
 export async function listWebhookLogs(): Promise<WebhookLog[]> {
-  if (!isSupabaseConfigured()) return [...demoWebhooks];
+  if (!isSupabaseConfigured()) return [..demoWebhooks];
   const supabase = await tryCreateClient();
-  if (!supabase) return [...demoWebhooks];
+  if (!supabase) return [..demoWebhooks];
   const { data } = await db(supabase)
     .from("webhook_logs")
     .select("id, provider, event_type, status, error, created_at")
     .order("created_at", { ascending: false })
     .limit(40);
-  return (data as WebhookLog[])?.length ? (data as WebhookLog[]) : [...demoWebhooks];
+  return (data as WebhookLog[])?.length ? (data as WebhookLog[]) : [..demoWebhooks];
 }
 
 export async function listAuditCenter(): Promise<AuditEntry[]> {
-  if (!isSupabaseConfigured()) return [...demoAudits];
+  if (!isSupabaseConfigured()) return [..demoAudits];
   const supabase = await tryCreateClient();
-  if (!supabase) return [...demoAudits];
+  if (!supabase) return [..demoAudits];
   const { data } = await db(supabase)
     .from("audit_logs")
     .select("id, action, actor_id, resource_type, created_at, metadata, profiles(full_name)")
     .order("created_at", { ascending: false })
     .limit(50);
-  if (!data?.length) return [...demoAudits];
+  if (!data?.length) return [..demoAudits];
   return (data as any[]).map((row) => ({
     id: row.id,
     action: row.action,
@@ -398,7 +398,7 @@ export function getSystemLogs() {
     { level: "info", message: "Moolre SMS sender ID approved", at: "2026-07-22T18:20:44Z" },
     { level: "info", message: "Inventory adjust +10 paperback", at: "2026-07-23T10:12:00Z" },
     { level: "info", message: "Feature flag sms_notifications=false", at: "2026-07-23T15:10:00Z" },
-    { level: "error", message: "Resend skipped — RESEND_API_KEY missing (demo)", at: "2026-07-23T09:00:01Z" },
+    { level: "error", message: "Resend skipped: RESEND_API_KEY missing (demo)", at: "2026-07-23T09:00:01Z" },
   ];
 }
 

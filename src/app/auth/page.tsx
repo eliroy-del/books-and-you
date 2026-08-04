@@ -40,7 +40,7 @@ function AuthForm() {
     toast.success(mode === "signin" ? "Welcome back" : "Account created", {
       description: configured
         ? "Synced with Supabase"
-        : "Demo mode — configure Supabase for real auth",
+        : "Demo mode. Configure Supabase for real auth",
     });
     router.push(next);
     router.refresh();

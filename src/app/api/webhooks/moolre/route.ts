@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, received: true, note: "No externalref to process" });
   }
 
-  // Never trust the callback body alone — re-verify with Moolre status API
+  // Never trust the callback body alone. Re-verify with Moolre status API
   const verification = await verifyPayment("moolre", externalRef);
 
   if (!verification.ok || verification.status !== "succeeded") {

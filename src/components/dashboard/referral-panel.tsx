@@ -68,7 +68,7 @@ export function ReferralPanel() {
           </div>
           <p className="mt-2 max-w-xl text-sm text-teal-50/80">
             Share code{" "}
-            <span className="font-semibold text-amber-300">{stats.code || "—"}</span> and earn{" "}
+            <span className="font-semibold text-amber-300">{stats.code || "-"}</span> and earn{" "}
             {stats.rewardLabel || formatMoney((stats.rewardCents || 5000) / 100)} when friends
             complete their first order.
           </p>

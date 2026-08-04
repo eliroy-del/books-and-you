@@ -38,7 +38,7 @@ export async function getAdminSession(): Promise<AdminSession | null> {
       email,
       roleKey,
       permissions:
-        roleKey === "super_admin" ? ["*", ...ALL_PERMISSIONS] : permissionsForRole(roleKey),
+        roleKey === "super_admin" ? ["*"..ALL_PERMISSIONS] : permissionsForRole(roleKey),
       demo: true,
       isSuperAdmin: roleKey === "super_admin",
     };
@@ -68,7 +68,7 @@ export async function getAdminSession(): Promise<AdminSession | null> {
 
   let permissions: string[] = [];
   if (isSuper) {
-    permissions = ["*", ...ALL_PERMISSIONS];
+    permissions = ["*"..ALL_PERMISSIONS];
   } else {
     const { data: perms } = await db(supabase)
       .from("role_permissions")
@@ -101,7 +101,7 @@ export async function requireAdmin(
   if (!session) {
     return {
       error: NextResponse.json(
-        { ok: false, error: "Unauthorized — staff access required" },
+        { ok: false, error: "Unauthorized: staff access required" },
         { status: 401 }
       ),
     };
@@ -118,7 +118,7 @@ export async function requireAdmin(
       error: NextResponse.json(
         {
           ok: false,
-          error: "Forbidden — missing permission",
+          error: "Forbidden: missing permission",
           required: needed,
           role: session.roleKey,
         },
@@ -138,7 +138,7 @@ export async function requireSuperAdmin(): Promise<
   if (!auth.session.isSuperAdmin) {
     return {
       error: NextResponse.json(
-        { ok: false, error: "Forbidden — super_admin required" },
+        { ok: false, error: "Forbidden: super_admin required" },
         { status: 403 }
       ),
     };

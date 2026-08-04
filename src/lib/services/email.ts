@@ -66,7 +66,7 @@ export function renderOrderConfirmationEmail(input: {
   trackingUrl: string;
 }) {
   return {
-    subject: `Order ${input.orderNumber} confirmed — Books & You`,
+    subject: `Order ${input.orderNumber} confirmed · Books & You`,
     html: `
       <div style="font-family:Inter,system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a">
         <h1 style="font-size:22px;margin:0 0 12px">Thanks, ${input.customerName}!</h1>
@@ -105,7 +105,7 @@ export function renderReferralRewardEmail(input: {
   code: string;
 }) {
   return {
-    subject: "You earned store credit — Books & You",
+    subject: "You earned store credit · Books & You",
     html: `
       <div style="font-family:Inter,system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a">
         <h1 style="font-size:22px;margin:0 0 12px">Referral reward unlocked</h1>

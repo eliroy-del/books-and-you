@@ -125,7 +125,7 @@ export async function placeOrderWithClient(
     };
   }
 
-  const bookIds = [...new Set(input.lines.map((l) => l.bookId))];
+  const bookIds = [..new Set(input.lines.map((l) => l.bookId))];
   const { data: catalogBooks, error: catalogError } = await client
     .from("books")
     .select("id")
@@ -193,7 +193,7 @@ export async function placeOrderWithClient(
       total_cents: totalCents,
       coupon_code: input.couponCode ?? null,
       shipping_address: {
-        ...input.shippingAddress,
+        ..input.shippingAddress,
         fullName: guestName,
         phone: guestPhone,
         email: guestEmail,
@@ -301,7 +301,7 @@ export async function placeOrderWithClient(
     return { ok: false, error: payment.error || "Payment initialization failed" };
   }
 
-  // Demo providers still need fulfillment after mock redirect — caller may auto-verify
+  // Demo providers still need fulfillment after mock redirect. Caller may auto-verify
   if (payment.demo) {
     await fulfillPaidOrder(supabase, {
       orderId: order.id,

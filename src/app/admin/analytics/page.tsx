@@ -23,18 +23,18 @@ export default function AdminAnalyticsPage() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <AdminStat label="Avg order value" value={data?.kpis.aovLabel ?? "—"} />
+        <AdminStat label="Avg order value" value={data?.kpis.aovLabel ?? "-"} />
         <AdminStat
           label="Repeat rate"
-          value={data ? `${data.kpis.repeatRate}%` : "—"}
+          value={data ? `${data.kpis.repeatRate}%` : "-"}
         />
         <AdminStat
           label="Digital share"
-          value={data ? `${data.kpis.digitalShare}%` : "—"}
+          value={data ? `${data.kpis.digitalShare}%` : "-"}
         />
         <AdminStat
           label="Fulfillment ETA"
-          value={data ? `${data.kpis.fulfillmentHours}h` : "—"}
+          value={data ? `${data.kpis.fulfillmentHours}h` : "-"}
         />
       </div>
 

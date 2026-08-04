@@ -44,12 +44,12 @@ export default function AdminReportsPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <AdminStat
           label="Period orders"
-          value={String(reports?.salesSummary.orders ?? "—")}
+          value={String(reports?.salesSummary.orders ?? "-")}
           hint={reports?.salesSummary.period}
         />
-        <AdminStat label="Gross revenue" value={reports?.salesSummary.revenueLabel ?? "—"} />
-        <AdminStat label="Refunds" value={reports?.salesSummary.refundsLabel ?? "—"} />
-        <AdminStat label="Net" value={reports?.salesSummary.netLabel ?? "—"} />
+        <AdminStat label="Gross revenue" value={reports?.salesSummary.revenueLabel ?? "-"} />
+        <AdminStat label="Refunds" value={reports?.salesSummary.refundsLabel ?? "-"} />
+        <AdminStat label="Net" value={reports?.salesSummary.netLabel ?? "-"} />
       </div>
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
@@ -58,25 +58,25 @@ export default function AdminReportsPage() {
             <div>
               <dt className="text-muted-foreground">SKUs</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.inventorySummary.skus ?? "—"}
+                {reports?.inventorySummary.skus ?? "-"}
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Low stock</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.inventorySummary.lowStock ?? "—"}
+                {reports?.inventorySummary.lowStock ?? "-"}
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Out of stock</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.inventorySummary.outOfStock ?? "—"}
+                {reports?.inventorySummary.outOfStock ?? "-"}
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Reserved</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.inventorySummary.reserved ?? "—"}
+                {reports?.inventorySummary.reserved ?? "-"}
               </dd>
             </div>
           </dl>
@@ -87,25 +87,25 @@ export default function AdminReportsPage() {
             <div>
               <dt className="text-muted-foreground">Active</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.customerSummary.active ?? "—"}
+                {reports?.customerSummary.active ?? "-"}
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">New this month</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.customerSummary.newThisMonth ?? "—"}
+                {reports?.customerSummary.newThisMonth ?? "-"}
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Subscribers</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.customerSummary.subscribers ?? "—"}
+                {reports?.customerSummary.subscribers ?? "-"}
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Referral credits</dt>
               <dd className="font-heading text-xl font-semibold">
-                {reports?.customerSummary.referralCreditsLabel ?? "—"}
+                {reports?.customerSummary.referralCreditsLabel ?? "-"}
               </dd>
             </div>
           </dl>

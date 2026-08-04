@@ -1,15 +1,15 @@
-# SEO — Books & You
+# SEO. Books & You
 
 This document contains (1) the reusable "God-level SEO" master prompt for this website and (2) a record of what is already implemented in the codebase.
 
 ---
 
-## Part 1 — God-Level SEO Master Prompt
+## Part 1. God-Level SEO Master Prompt
 
 Copy-paste this prompt to any AI agent or engineer when doing SEO work on Books & You:
 
 ```
-You are a world-class technical SEO engineer working on "Books & You" — a premium
+You are a world-class technical SEO engineer working on "Books & You", a premium
 Next.js (App Router) bookstore at ${NEXT_PUBLIC_SITE_URL}, backed by Supabase.
 Your job is to make every page maximally discoverable, shareable, and rich-result
 eligible, without hurting Core Web Vitals. Follow these rules exactly.
@@ -39,7 +39,7 @@ eligible, without hurting Core Web Vitals. Follow these rules exactly.
   AggregateRating (only when reviewCount > 0). Add Offer with price, currency
   (GHS), and availability when the buy box renders server-side.
 - Category/author listing pages: BreadcrumbList.
-- Never emit empty or placeholder values — omit fields you can't populate.
+- Never emit empty or placeholder values. Omit fields you can't populate.
 
 ## 4. Crawling and indexing
 - robots.txt: allow all storefront routes; disallow /api, /admin, /superadmin,
@@ -66,7 +66,7 @@ eligible, without hurting Core Web Vitals. Follow these rules exactly.
 ## 7. Content rules
 - One <h1> per page containing the primary keyword (book title, category name).
 - Descriptive link text ("View all fiction books", never "click here").
-- alt text on every image: "{Book title} book cover — Books & You".
+- alt text on every image: "{Book title} book cover. Books & You".
 - Breadcrumbs visible on detail pages, mirrored in BreadcrumbList JSON-LD.
 
 ## 8. Verification checklist (run after every SEO change)
@@ -80,7 +80,7 @@ eligible, without hurting Core Web Vitals. Follow these rules exactly.
 
 ---
 
-## Part 2 — What is implemented
+## Part 2. What is implemented
 
 | Item | Location |
 | --- | --- |
@@ -96,6 +96,6 @@ eligible, without hurting Core Web Vitals. Follow these rules exactly.
 | Shared SEO constants (siteUrl, name, description, keywords) | `src/lib/seo.ts` |
 
 ### Production reminders
-- Set `NEXT_PUBLIC_SITE_URL=https://booksandyou.shop` in Vercel — the sitemap, canonicals, and OG URLs all derive from it.
+- Set `NEXT_PUBLIC_SITE_URL=https://booksandyou.shop` in Vercel. The sitemap, canonicals, and OG URLs all derive from it.
 - After deploy: submit `https://booksandyou.shop/sitemap.xml` in Google Search Console, and validate a book URL in the Facebook Sharing Debugger.
 - Update the `creator: "@booksandyou"` Twitter handle in `src/app/layout.tsx` if the real handle differs.

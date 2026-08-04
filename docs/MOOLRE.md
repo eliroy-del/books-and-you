@@ -1,4 +1,4 @@
-# Moolre Payments — Setup & API Key Guide
+# Moolre Payments. Setup & API Key Guide
 
 Moolre is the payment provider for Books & You (mobile money + cards, GHS settlement).
 This guide covers **how to obtain your API keys**, **which environment variables to set**,
@@ -13,7 +13,7 @@ and **how the API works** so the integration can be wired up and tested.
 
 ## 1. Get your API keys
 
-Moolre authenticates with **API keys sent as request headers** — not a bearer token.
+Moolre authenticates with **API keys sent as request headers**, not a bearer token.
 You need four values before you can take a single payment.
 
 ### Steps in the Moolre dashboard
@@ -23,9 +23,9 @@ You need four values before you can take a single payment.
 2. On signup a **business wallet** is created automatically. Open it and copy the
    **Account Number** (a 12-digit number such as `100000157291`). Every API call includes it.
 3. Go to the **API / Developer** section of the dashboard and generate your keys. You will get:
-   - a **Private API Key** — used for money-moving endpoints (collections, transfers)
-   - a **Public API Key** — used for payment links and status lookups
-4. Note your **Moolre username** — this is the `X-API-USER` value, not your email.
+   - a **Private API Key**, used for money-moving endpoints (collections, transfers)
+   - a **Public API Key**, used for payment links and status lookups
+4. Note your **Moolre username**. This is the `X-API-USER` value, not your email.
 5. Set your **Callback (webhook) URL** on the wallet/API settings to:
    `https://booksandyou.shop/api/webhooks/moolre?secret=<MOOLRE_CALLBACK_SECRET>`
    (use the same value as `MOOLRE_CALLBACK_SECRET` in Vercel / `.env.local`)
@@ -47,7 +47,9 @@ You need four values before you can take a single payment.
 Add these to `.env.local` for development and to your **Vercel project settings** for production.
 
 ```env
-# Moolre — https://docs.moolre.com
+# Moolre
+
+https://docs.moolre.com
 MOOLRE_API_USER=
 MOOLRE_API_KEY=
 MOOLRE_API_PUBKEY=
@@ -55,7 +57,7 @@ MOOLRE_ACCOUNT_NUMBER=
 MOOLRE_BASE_URL=https://api.moolre.com
 MOOLRE_CURRENCY=GHS
 
-# SMS — SMS API key + approved Sender ID (max 11 chars)
+# SMS. SMS API key + approved Sender ID (max 11 chars)
 MOOLRE_SMS_API_KEY=
 MOOLRE_SMS_SENDER_ID=BooksAndYou
 ```
@@ -78,8 +80,8 @@ SMS still requires `X-API-VASKEY` (your `MOOLRE_SMS_API_KEY`) even in sandbox.
 
 **The "Public API Key" is not browser-safe.** Despite the name, it is a server-side
 credential used to create payment links and read transaction status. Do **not** prefix it
-with `NEXT_PUBLIC_` and never ship it to the client — anyone holding it could enumerate your
-transactions. All Moolre payment values stay server-only — never use a `NEXT_PUBLIC_` prefix.
+with `NEXT_PUBLIC_` and never ship it to the client. Anyone holding it could enumerate your
+transactions. All Moolre payment values stay server-only. Never use a `NEXT_PUBLIC_` prefix.
 
 **Moolre amounts are in major units.** Moolre expects `"amount": "50"` to mean GHS 50.00.
 This codebase stores money in minor units (`amountCents`). The Moolre provider converts at
@@ -106,7 +108,7 @@ Every Moolre endpoint returns the same shape, so check `status` before trusting 
 | `status` | `1` = success, `0` = failure |
 | `code` | Stable machine-readable result code (see §7) |
 | `message` | Human-readable description |
-| `data` | The payload — an object, array, or bare string depending on endpoint |
+| `data` | The payload: an object, array, or bare string depending on endpoint |
 | `go` | Navigation hint, usually `null` |
 
 Note that a failed request can still return HTTP 200 with `"status": 0`, and `status` is
@@ -118,7 +120,7 @@ sometimes a string (`"0"`) rather than a number. Compare loosely: `Number(json.s
 
 ### Recommended: hosted payment link
 
-This is the right choice for the Books & You checkout — Moolre hosts the payment page and
+This is the right choice for the Books & You checkout. Moolre hosts the payment page and
 handles mobile money, cards, and the OTP flow, so you never touch card data.
 
 ```
@@ -133,7 +135,7 @@ Content-Type: application/json
 | `type` | Yes | Always `1` |
 | `amount` | Yes | Major units, e.g. `"150"` for GHS 150 |
 | `email` | Yes | Business email |
-| `externalref` | Yes | Your unique order reference — must never repeat |
+| `externalref` | Yes | Your unique order reference; must never repeat |
 | `currency` | Yes | `GHS` |
 | `accountnumber` | Yes | Your wallet account number |
 | `reusable` | Yes | `"0"` for one-off checkout, `"1"` for repeat use |
@@ -177,7 +179,7 @@ X-API-KEY: <MOOLRE_API_KEY>
 | `accountnumber` | Yes | Your wallet account number |
 | `otpcode` | No | Supplied on the retry after code `TP14` |
 
-If the response is code `TP14`, the customer was sent an SMS verification code — collect it
+If the response is code `TP14`, the customer was sent an SMS verification code. Collect it
 and repeat the request with `otpcode` filled in. Code `TR099` means the prompt was delivered
 and you should now poll for status.
 
@@ -208,7 +210,7 @@ X-API-PUBKEY: <MOOLRE_API_PUBKEY>
 }
 ```
 
-Treat `data.txstatus === 1` as paid. Anything else is pending or failed — never fulfil on
+Treat `data.txstatus === 1` as paid. Anything else is pending or failed. Never fulfil on
 `status: 1` alone, since that only means the *lookup* succeeded.
 
 ### Bank list (for payouts/refunds)
@@ -236,7 +238,7 @@ Moolre POSTs to your callback URL whenever a payment completes or changes state:
 to validate, which means an attacker who finds your endpoint could POST a fake "payment
 successful" body and get free books. So the webhook handler must:
 
-1. Read only the `externalref` from the payload — trust nothing else in the body.
+1. Read only the `externalref` from the payload. Trust nothing else in the body.
 2. Call the Payment Status endpoint to confirm the transaction independently.
 3. Confirm the returned amount matches what the order actually costs.
 4. Mark the order paid only then, and make it idempotent so a repeated callback is a no-op.
@@ -250,7 +252,7 @@ route to blunt callback flooding.
 ## 6. Testing in sandbox
 
 Point `MOOLRE_BASE_URL` at `https://sandbox.moolre.com`. In sandbox, `X-API-KEY` and
-`X-API-PUBKEY` are **not required** — only `X-API-USER` — so a working sandbox call does not
+`X-API-PUBKEY` are **not required**; only `X-API-USER`, so a working sandbox call does not
 prove your live keys are correct. Always re-test once after switching to live.
 
 Quick connectivity check:
@@ -333,7 +335,7 @@ Body:
 3. Put both into `.env.local` / Vercel:
 
 ```env
-MOOLRE_SMS_API_KEY=...
+MOOLRE_SMS_API_KEY=..
 MOOLRE_SMS_SENDER_ID=BooksAndYou
 ADMIN_EMAIL=hello@booksandyou.shop
 ```
@@ -342,7 +344,7 @@ Without the SMS key + sender ID, `sendSms()` logs to the console in demo mode so
 checkout and shipping notifications still work. `ADMIN_EMAIL` drives the contact/support
 inbox shown on the site.
 
-Callers (`notifyUser`, shipping advance, etc.) do not need to know about Moolre — they keep
+Callers (`notifyUser`, shipping advance, etc.) do not need to know about Moolre. They keep
 calling `sendSms({ to, body })`.
 
 ## 10. Checkout (live)

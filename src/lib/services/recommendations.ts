@@ -1,5 +1,5 @@
 /**
- * Recommendations service (Phase 3 stub — expands in later AI wiring).
+ * Recommendations service (Phase 3 stub; expands in later AI wiring).
  */
 import { listBooks } from "@/lib/services/books";
 import type { Book } from "@/types";

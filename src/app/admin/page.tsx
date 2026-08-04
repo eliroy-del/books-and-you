@@ -31,12 +31,12 @@ export default function AdminDashboardPage() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <AdminStat label="Catalog titles" value={String(overview?.catalogTitles ?? "—")} />
-        <AdminStat label="Open orders" value={String(overview?.openOrders ?? "—")} />
-        <AdminStat label="Revenue" value={overview?.revenueLabel ?? "—"} />
+        <AdminStat label="Catalog titles" value={String(overview?.catalogTitles ?? "-")} />
+        <AdminStat label="Open orders" value={String(overview?.openOrders ?? "-")} />
+        <AdminStat label="Revenue" value={overview?.revenueLabel ?? "-"} />
         <AdminStat
           label="Low stock"
-          value={String(overview?.lowStockAlerts ?? "—")}
+          value={String(overview?.lowStockAlerts ?? "-")}
           hint={`${overview?.ticketsOpen ?? 0} open tickets`}
         />
       </div>

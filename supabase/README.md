@@ -1,4 +1,4 @@
-# Supabase — Phase 2
+# Supabase. Phase 2
 
 Schema, RLS, storage buckets, realtime publication, and seed data for **Books & You**.
 

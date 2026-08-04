@@ -80,7 +80,7 @@ export default function ContactPage() {
           Contact Us
         </h1>
         <p className="text-muted-foreground mt-3">
-          Visit the shop, call us, or send a message — we&apos;re here for readers,
+          Visit the shop, call us, or send a message. We&apos;re here for readers,
           parents, and schools across Ghana.
         </p>
       </div>
@@ -173,7 +173,7 @@ export default function ContactPage() {
         <div className="rounded-3xl border border-border/70 bg-card p-5 shadow-soft lg:col-span-7 sm:p-6">
           <h2 className="font-heading text-lg font-semibold">Send a message</h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            Tell us how we can help — we typically reply within one business day.
+            Tell us how we can help. We typically reply within one business day.
           </p>
           <form className="mt-5 grid gap-4" action="#">
             <div className="grid gap-4 sm:grid-cols-2">

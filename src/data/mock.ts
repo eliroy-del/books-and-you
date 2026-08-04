@@ -238,9 +238,9 @@ function book(
   partial: Omit<Book, "coverGradient" | "coverAccent"> & { palette?: number }
 ): Book {
   const p = coverPalettes[partial.palette ?? 0]!;
-  const { palette: _palette, ...rest } = partial;
+  const { palette: _palette..rest } = partial;
   return {
-    ...rest,
+    ..rest,
     coverGradient: p.gradient,
     coverAccent: p.accent,
   };
@@ -260,7 +260,7 @@ export const books: Book[] = [
     genres: ["Literary Fiction", "African Literature"],
     description: "A piercing love story that questions marriage, independence, and modern African womanhood.",
     synopsis:
-      "Esi, a career woman in Accra, leaves a stifling marriage and enters a polygamous one—only to discover that freedom has its own complicated price. Aidoo's classic remains urgently contemporary.",
+      "Esi, a career woman in Accra, leaves a stifling marriage and enters a polygamous one, only to discover that freedom has its own complicated price. Aidoo's classic remains urgently contemporary.",
     isbn: "9780435905552",
     pages: 208,
     language: "English",
@@ -322,7 +322,7 @@ export const books: Book[] = [
     genres: ["Contemporary Fiction"],
     description: "A luminous debut about reunion, nightlife, and the ghosts of a city that never sleeps.",
     synopsis:
-      "When Kofi returns to Accra after a decade abroad, he finds a city remade—and a past that refuses to stay buried. Gyasi's prose pulses with the rhythm of coastal nights.",
+      "When Kofi returns to Accra after a decade abroad, he finds a city remade, and a past that refuses to stay buried. Gyasi's prose pulses with the rhythm of coastal nights.",
     isbn: "9789988550121",
     pages: 312,
     language: "English",
@@ -380,7 +380,7 @@ export const books: Book[] = [
     genres: ["Technology", "AI"],
     description: "How intelligent systems will reshape work, trust, and everyday life in emerging markets.",
     synopsis:
-      "Mensah demystifies AI without hype—showing what actually works today for governments, schools, and startups from Kumasi to Kigali.",
+      "Mensah demystifies AI without hype, showing what actually works today for governments, schools, and startups from Kumasi to Kigali.",
     isbn: "9780141998824",
     pages: 340,
     language: "English",
@@ -407,7 +407,7 @@ export const books: Book[] = [
     publisherName: "Afram Publications",
     categoryIds: ["cat-children"],
     genres: ["Children's", "Folklore"],
-    description: "A sparkling retelling of Ananse's cleverest adventure—perfect for ages 5–9.",
+    description: "A sparkling retelling of Ananse's cleverest adventure, perfect for ages 5–9.",
     synopsis:
       "When the Golden Drum goes missing from the village square, Ananse must outwit a parade of animals and learn that wit without kindness rings hollow.",
     isbn: "9789964703125",
@@ -439,7 +439,7 @@ export const books: Book[] = [
     genres: ["History", "Education"],
     description: "A rigorous study of colonial schooling and its afterlives in West Africa.",
     synopsis:
-      "Drawing on archives in Accra, London, and Cape Coast, Frimpong traces how educational systems were designed—and how communities remade them.",
+      "Drawing on archives in Accra, London, and Cape Coast, Frimpong traces how educational systems were designed, and how communities remade them.",
     isbn: "9780674298125",
     pages: 412,
     language: "English",
@@ -523,7 +523,7 @@ export const books: Book[] = [
     genres: ["Literary Fiction", "Romance"],
     description: "A brilliant novel of race, love, and the immigrant experience.",
     synopsis:
-      "Ifemelu and Obinze fall in love in Nigeria, then forge separate paths through America and Britain—before finding their way back to each other and to home.",
+      "Ifemelu and Obinze fall in love in Nigeria, then forge separate paths through America and Britain, before finding their way back to each other and to home.",
     isbn: "9780307455925",
     pages: 588,
     language: "English",
@@ -635,7 +635,7 @@ export const books: Book[] = [
     genres: ["Children's"],
     description: "Ava discovers that courage looks like showing up for friends.",
     synopsis:
-      "On the first day at a new school, Ava finds a constellation of classmates—and a mystery in the library attic.",
+      "On the first day at a new school, Ava finds a constellation of classmates, and a mystery in the library attic.",
     isbn: "9789964703187",
     pages: 64,
     language: "English",
@@ -718,7 +718,7 @@ export const books: Book[] = [
     genres: ["Leadership", "Self-Help"],
     description: "Leadership lessons for introverts and thoughtful operators.",
     synopsis:
-      "How to lead without performing—and build cultures where deep thinking wins.",
+      "How to lead without performing, and build cultures where deep thinking wins.",
     isbn: "9789988023205",
     pages: 240,
     language: "English",
@@ -906,7 +906,7 @@ export const books: Book[] = [
     publisherName: "Sub-Saharan Publishers",
     categoryIds: ["cat-fiction"],
     genres: ["Mystery"],
-    description: "A rare-book dealer vanishes—and leaves a catalog of dangerous truths.",
+    description: "A rare-book dealer vanishes, and leaves a catalog of dangerous truths.",
     synopsis:
       "Detective Ama Serwaa follows annotations through Accra's underground literary scene.",
     isbn: "9789988550213",
@@ -1261,7 +1261,7 @@ export const trendingSearches = [
 
 export const announcements = [
   "Free nationwide delivery above GH₵300",
-  "New arrivals every week — explore this week's shelf",
+  "New arrivals every week. Explore this week's shelf",
   "Trusted by thousands of readers across Ghana",
 ];
 
@@ -1330,7 +1330,7 @@ export function formatMoney(amount: number, currency = siteConfig.currencySymbol
 }
 
 export function lowestPrice(book: Book) {
-  return Math.min(...book.formats.map((f) => f.price));
+  return Math.min(..book.formats.map((f) => f.price));
 }
 
 export function relatedBooks(book: Book, limit = 4) {

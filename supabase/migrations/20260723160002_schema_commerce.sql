@@ -1,4 +1,4 @@
--- Books & You — Commerce, subscriptions, referrals, support, system
+-- Books & You · Commerce, subscriptions, referrals, support, system
 
 -- ---------------------------------------------------------------------------
 -- Cart & orders

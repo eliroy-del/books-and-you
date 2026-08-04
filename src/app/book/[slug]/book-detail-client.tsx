@@ -80,7 +80,7 @@ export default function BookDetailClient() {
 
   function addToCart(buyNow = false) {
     addItem(book!.id, selected!.format, qty);
-    toast.success(buyNow ? "Added — continue to checkout" : "Added to cart", {
+    toast.success(buyNow ? "Added. Continue to checkout" : "Added to cart", {
       description: book!.title,
     });
     if (buyNow) window.location.href = "/checkout";

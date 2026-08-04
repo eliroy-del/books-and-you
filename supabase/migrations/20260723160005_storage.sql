@@ -1,4 +1,4 @@
--- Books & You — Storage buckets + policies
+-- Books & You · Storage buckets + policies
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values

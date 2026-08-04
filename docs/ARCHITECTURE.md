@@ -15,16 +15,16 @@ Books & You is a Next.js App Router bookstore with Supabase-backed auth/data, mu
 
 ## Route map
 
-- **Storefront** — `/`, `/books`, `/book/[slug]`, `/cart`, `/checkout`, `/dashboard`, …
-- **Admin ops** — `/admin/*` (RBAC-gated modules)
-- **Super Admin** — `/superadmin/*` (platform control plane)
-- **APIs** — `/api/checkout`, `/api/admin/*`, `/api/superadmin`, webhooks
+- **Storefront:** `/`, `/books`, `/book/[slug]`, `/cart`, `/checkout`, `/dashboard`, …
+- **Admin ops**. `/admin/*` (RBAC-gated modules)
+- **Super Admin**. `/superadmin/*` (platform control plane)
+- **APIs**. `/api/checkout`, `/api/admin/*`, `/api/superadmin`, webhooks
 
 ## Security model
 
-1. **Customers** — RLS limits rows to `auth.uid()`.
-2. **Staff** — `has_permission(key)` / `is_staff()` for admin modules.
-3. **Super Admin** — `is_superadmin()` for platform settings, flags, webhooks.
+1. **Customers:** RLS limits rows to `auth.uid()`.
+2. **Staff:** `has_permission(key)` / `is_staff()` for admin modules.
+3. **Super Admin:** `is_superadmin()` for platform settings, flags, webhooks.
 
 ## Key folders
 

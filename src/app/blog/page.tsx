@@ -7,7 +7,7 @@ import { siteDescription, siteName, siteUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Essays, reading guides, and bookstore notes from Books & You — habits, African literature, formats, gifting, and education.",
+    "Essays, reading guides, and bookstore notes from Books & You: habits, African literature, formats, gifting, and education.",
   alternates: { canonical: "/blog" },
   openGraph: {
     title: `Blog · ${siteName}`,
@@ -52,8 +52,8 @@ export default function BlogPage() {
           Stories for curious readers
         </h1>
         <p className="text-muted-foreground mt-3">
-          Reading habits, African literature, formats, gifting, and education —
-          notes from our shelves to yours.
+          Reading habits, African literature, formats, gifting, and education.
+          Notes from our shelves to yours.
         </p>
       </div>
 

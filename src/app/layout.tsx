@@ -28,7 +28,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${siteName} — Discover Your Next Favorite Book`,
+    default: `${siteName} · Discover Your Next Favorite Book`,
     template: `%s · ${siteName}`,
   },
   description: siteDescription,
@@ -60,12 +60,12 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName,
-    title: `${siteName} — Discover Your Next Favorite Book`,
+    title: `${siteName} · Discover Your Next Favorite Book`,
     description: siteDescription,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteName} — Discover Your Next Favorite Book`,
+    title: `${siteName} · Discover Your Next Favorite Book`,
     description: siteDescription,
     creator: "@booksandyou",
   },

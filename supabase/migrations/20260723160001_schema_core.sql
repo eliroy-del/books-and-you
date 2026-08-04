@@ -1,4 +1,4 @@
--- Books & You — Phase 2 Schema
+-- Books & You · Phase 2 Schema
 -- Extensions, enums, core tables
 
 create extension if not exists "pgcrypto";

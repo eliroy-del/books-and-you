@@ -123,7 +123,7 @@ export function mapOrder(row: Record<string, unknown>): Order {
           ]
             .filter(Boolean)
             .join(", ")
-        : "—",
+        : "-",
     trackingNumber: shipping?.tracking_number,
     timeline: events.map((e) => ({
       status: e.status,

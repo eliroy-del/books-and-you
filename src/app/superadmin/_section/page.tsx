@@ -188,7 +188,7 @@ export default function SuperAdminSectionPage() {
             value={String(
               (data?.backups as { lastSuccessful?: string })?.lastSuccessful ||
                 (data?.health as { lastBackupAt?: string })?.lastBackupAt ||
-                "—"
+                "-"
             ).replace("T", " ").slice(0, 16)}
           />
           <SaStat

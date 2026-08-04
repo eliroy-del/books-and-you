@@ -14,7 +14,7 @@ export function SiteFooter() {
           <div className="lg:col-span-4">
             <BrandLogo href="/" size="md" showWordmark={false} />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
-              Ghana&apos;s school bookstore — textbooks, stationery, and classroom essentials from
+              Ghana&apos;s school bookstore for textbooks, stationery, and classroom essentials from
               Nursery through SHS.
             </p>
             <div className="mt-6 flex gap-3">
@@ -100,7 +100,7 @@ export function SiteFooter() {
           <div className="lg:col-span-3">
             <h3 className="font-heading text-sm font-semibold text-white">Newsletter</h3>
             <p className="mt-3 text-sm text-slate-400">
-              New releases, discounts, and author events—once a week.
+              New releases, discounts, and author events, once a week.
             </p>
             <form className="mt-4 flex gap-2" action="#">
               <Input
@@ -118,7 +118,7 @@ export function SiteFooter() {
 
         <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-          <p>Made for readers in Ghana — shipping worldwide.</p>
+          <p>Made for readers in Ghana, shipping worldwide.</p>
         </div>
       </div>
     </footer>

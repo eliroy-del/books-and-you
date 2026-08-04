@@ -1,4 +1,4 @@
--- Books & You — Realtime publication for live inventory / orders / support
+-- Books & You · Realtime publication for live inventory / orders / support
 
 do $$
 begin

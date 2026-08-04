@@ -179,7 +179,7 @@ export function WhyBooksAndYou() {
     {
       icon: Lock,
       title: "Secure payments",
-      body: "Moolre checkout and SMS updates—encrypted and reliable.",
+      body: "Moolre checkout and SMS updates, encrypted and reliable.",
     },
     {
       icon: ShieldCheck,
@@ -306,7 +306,7 @@ export function NewsletterSection() {
       <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
         <h2 className="font-heading text-2xl font-bold sm:text-3xl">Stay on the shelf</h2>
         <p className="text-muted-foreground mt-3 text-sm sm:text-base">
-          Receive new releases, discounts, and author events—never spam.
+          Receive new releases, discounts, and author events. Never spam.
         </p>
         <form className="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row" action="#">
           <Input type="email" required placeholder="Email address" className="h-11 bg-background" />

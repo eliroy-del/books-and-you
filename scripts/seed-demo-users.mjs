@@ -42,7 +42,7 @@ async function main() {
 
     let userId = created?.user?.id;
     if (error) {
-      // Already exists — look up
+      // Already exists. look up
       const { data: list } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
       const existing = list?.users?.find((u) => u.email === email);
       if (!existing) {

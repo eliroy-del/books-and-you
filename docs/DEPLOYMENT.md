@@ -23,7 +23,7 @@ Recommended:
 - `ADMIN_EMAIL`
 - `MOOLRE_API_USER`, `MOOLRE_API_PUBKEY`, `MOOLRE_ACCOUNT_NUMBER`, `MOOLRE_CALLBACK_SECRET`
 - `MOOLRE_SMS_API_KEY`, `MOOLRE_SMS_SENDER_ID`
-- `MOOLRE_API_KEY` (private key — needed for MoMo push / transfers, not hosted checkout links)
+- `MOOLRE_API_KEY` (private key; needed for MoMo push / transfers, not hosted checkout links)
 
 ## 3. Deploy
 

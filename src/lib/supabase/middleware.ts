@@ -50,7 +50,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Soft staff gate — full permission checks happen in admin APIs / pages
+  // Soft staff gate. Full permission checks happen in admin APIs / pages
   if (isStaffPath && user) {
     const { data: isStaff } = await supabase.rpc("is_staff");
     if (!isStaff) {

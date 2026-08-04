@@ -75,7 +75,7 @@ export default function AdminOrdersPage() {
           {orders.map((o) => (
             <tr key={o.id}>
               <td className="py-3 font-medium">{o.number}</td>
-              <td className="py-3">{o.customer || "—"}</td>
+              <td className="py-3">{o.customer || "-"}</td>
               <td className="py-3">
                 <Badge variant="secondary" className="capitalize">
                   {o.status}

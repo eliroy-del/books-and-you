@@ -1,4 +1,4 @@
--- Books & You — Row Level Security
+-- Books & You · Row Level Security
 
 -- Enable RLS on all public tables
 do $$

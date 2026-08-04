@@ -1,4 +1,4 @@
--- Books & You — Helper functions, triggers, search
+-- Books & You · Helper functions, triggers, search
 
 -- ---------------------------------------------------------------------------
 -- RBAC helpers (SECURITY DEFINER for RLS)

@@ -104,7 +104,7 @@ async function checkEmail() {
     (from.match(/<([^>]+)>/)?.[1] ?? from);
 
   if (!process.env.ADMIN_EMAIL) {
-    report("email.admin", false, "ADMIN_EMAIL missing — using from-address as probe recipient");
+    report("email.admin", false, "ADMIN_EMAIL missing. using from-address as probe recipient");
   } else {
     report("email.admin", true, "ADMIN_EMAIL set");
   }
@@ -144,7 +144,7 @@ async function checkCallbacks() {
     report("callback.moolre.live", false, e.message);
   }
 
-  // Hosted checkout link probe (does not charge — creates a short-lived POS URL)
+  // Hosted checkout link probe (does not charge. creates a short-lived POS URL)
   if (
     required("MOOLRE_API_USER") &&
     required("MOOLRE_API_PUBKEY") &&
@@ -206,13 +206,13 @@ async function checkCallbacks() {
     required("MOOLRE_API_KEY")
       ? "user/account/pubkey present (private key also set)"
       : required("MOOLRE_API_USER") && required("MOOLRE_ACCOUNT_NUMBER") && required("MOOLRE_API_PUBKEY")
-        ? "user/account/pubkey present — private MOOLRE_API_KEY optional for hosted checkout"
+        ? "user/account/pubkey present. private MOOLRE_API_KEY optional for hosted checkout"
         : "incomplete Moolre payment credentials for status re-verify"
   );
 }
 
 async function main() {
-  console.log("Books & You — comms connectivity check\n");
+  console.log("Books & You · comms connectivity check\n");
   await checkSmsAccount();
   await checkEmail();
   await checkCallbacks();

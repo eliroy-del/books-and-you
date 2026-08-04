@@ -9,7 +9,7 @@ export const siteUrl = (
 export const siteName = "Books & You";
 
 export const siteDescription =
-  "A premium digital bookstore for discovering, purchasing, and managing physical and digital books — with AI recommendations, curated picks, and a personal library.";
+  "A premium digital bookstore for discovering, purchasing, and managing physical and digital books, with curated picks and a personal library.";
 
 export const siteKeywords = [
   "bookstore",

@@ -15,11 +15,11 @@
 
 ## Threat notes
 
-1. **Demo mode** — Without Supabase, admin APIs default to a demo superadmin session. Never ship production without env vars.
-2. **Rate limit** — In-memory limiter is per-instance; use Redis/Upstash for multi-region.
-3. **Webhook secrets** — Set `MOOLRE_CALLBACK_SECRET` on the Moolre callback URL. SMS uses server-only `MOOLRE_SMS_API_KEY`.
-4. **Service role** — `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS; only use in webhook/fulfillment server routes.
-5. **XSS / HTML email** — Prefer text/structured templates; sanitize any user-generated review content before admin display.
+1. **Demo mode:** Without Supabase, admin APIs default to a demo superadmin session. Never ship production without env vars.
+2. **Rate limit:** In-memory limiter is per-instance; use Redis/Upstash for multi-region.
+3. **Webhook secrets:** Set `MOOLRE_CALLBACK_SECRET` on the Moolre callback URL. SMS uses server-only `MOOLRE_SMS_API_KEY`.
+4. **Service role:** `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS; only use in webhook/fulfillment server routes.
+5. **XSS / HTML email:** Prefer text/structured templates; sanitize any user-generated review content before admin display.
 
 ## Pre-launch checklist
 

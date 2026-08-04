@@ -28,11 +28,11 @@ const faqs = [
   },
   {
     q: "How do refunds work?",
-    a: "Physical books in resaleable condition can be returned within 14 days. eBooks are refundable within 48 hours if unread.",
+    a: "Physical books in resaleable condition can be returned within 14 days. Ebooks are refundable within 48 hours if unread.",
   },
   {
     q: "Do you ship internationally?",
-    a: "Yes—international shipping rates are calculated at checkout. Ghana remains our primary focus.",
+    a: "Yes, international shipping rates are calculated at checkout. Ghana remains our primary focus.",
   },
 ];
 
@@ -45,7 +45,7 @@ export default function SupportPage() {
           Support
         </h1>
         <p className="text-muted-foreground mt-3">
-          Knowledge base, tickets, live chat, WhatsApp, and email—we&apos;re here.
+          Knowledge base, tickets, live chat, WhatsApp, and email. We&apos;re here.
         </p>
       </div>
 

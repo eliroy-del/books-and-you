@@ -274,7 +274,7 @@ publishers.forEach(([slug, name, country], i) => {
   const id = uuidFrom(`pub:${slug}`);
   publisherIds[slug] = id;
   w(
-    `insert into public.publishers (id, slug, name, country, description) values (${sqlStr(id)}, ${sqlStr(slug)}, ${sqlStr(name)}, ${sqlStr(country)}, ${sqlStr(`${name} — trusted publisher`)}) on conflict (slug) do update set name = excluded.name;`
+    `insert into public.publishers (id, slug, name, country, description) values (${sqlStr(id)}, ${sqlStr(slug)}, ${sqlStr(name)}, ${sqlStr(country)}, ${sqlStr(`${name}, a trusted publisher`)}) on conflict (slug) do update set name = excluded.name;`
   );
 });
 w(``);
@@ -481,7 +481,7 @@ w(``);
 w(`-- 50 customer accounts (auth.users + triggered profiles)`);
 w(`-- Password for all demo users: Password123!`);
 const demoPasswordHash =
-  "$2a$10$rQZ5K5Z5Z5Z5Z5Z5Z5Z5ZuGKxGxGxGxGxGxGxGxGxGxGxGxGxGxGx"; // placeholder — use supabase auth admin in real envs
+  "$2a$10$rQZ5K5Z5Z5Z5Z5Z5Z5Z5ZuGKxGxGxGxGxGxGxGxGxGxGxGxGxGxGx"; // placeholder; use supabase auth admin in real envs
 
 // For local supabase, insert with encrypted_password using crypt if pgcrypto available
 w(`create extension if not exists pgcrypto;`);
