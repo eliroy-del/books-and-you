@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { newsletterSchema } from "@/lib/validation";
 import { sanitizeEmail } from "@/lib/sanitize";
+import { analytics } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -48,12 +49,15 @@ export function NewsletterForm({
       const data = (await response.json()) as { success?: boolean; error?: string };
       if (!response.ok) {
         setError(data.error || "Subscription failed");
+        analytics.trackFormSubmission("newsletter", false);
         toast.error(data.error || "Subscription failed");
         return;
       }
       setEmail("");
+      analytics.trackFormSubmission("newsletter", true);
       toast.success("You're on the list");
     } catch {
+      analytics.trackFormSubmission("newsletter", false);
       toast.error("Subscription failed. Please try again.");
     } finally {
       setIsSubmitting(false);

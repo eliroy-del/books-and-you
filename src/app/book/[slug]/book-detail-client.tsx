@@ -9,6 +9,7 @@ import { BookCover } from "@/components/books/book-cover";
 import { BookCard } from "@/components/books/book-card";
 import { Button } from "@/components/ui/button";
 import { useCartStore, useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
+import { analytics } from "@/lib/analytics";
 import type { Book } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +57,11 @@ export default function BookDetailClient() {
     return book.formats.find((f) => f.inStock > 0) ?? book.formats[0] ?? null;
   }, [book]);
 
+  useEffect(() => {
+    if (!book || !selected) return;
+    analytics.trackProductView(book.id, book.title, selected.price);
+  }, [book, selected]);
+
   if (book === undefined) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
@@ -80,6 +86,7 @@ export default function BookDetailClient() {
 
   function addToCart(buyNow = false) {
     addItem(book!.id, selected!.format, qty);
+    analytics.trackAddToCart(book!.id, book!.title, qty, selected!.price);
     toast.success(buyNow ? "Added. Continue to checkout" : "Added to cart", {
       description: book!.title,
     });

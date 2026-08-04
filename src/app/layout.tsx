@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ConsentProvider } from "@/components/ConsentProvider";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { WebVitals } from "@/components/WebVitals";
+import {
+  CookieConsentBanner,
+} from "@/components/CookieConsentBanner";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -82,16 +89,35 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jakarta.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}
       >
+        <Script id="consent-default" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = window.gtag || gtag;
+            gtag('consent', 'default', {
+              ad_storage: 'denied',
+              analytics_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+              wait_for_update: 500
+            });
+          `}
+        </Script>
         <GlobalStructuredData />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            <WishlistSync />
-            <AnnouncementBar />
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-            <Toaster richColors position="top-right" />
-          </AuthProvider>
+          <ConsentProvider>
+            <AuthProvider>
+              <WishlistSync />
+              <AnnouncementBar />
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+              <Toaster richColors position="top-right" />
+              <GoogleAnalytics />
+              <WebVitals />
+              <CookieConsentBanner />
+            </AuthProvider>
+          </ConsentProvider>
         </ThemeProvider>
       </body>
     </html>

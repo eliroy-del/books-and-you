@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -32,6 +32,7 @@ import {
   type GhanaRegion,
 } from "@/lib/validation";
 import { sanitize, sanitizeEmail, sanitizePhone } from "@/lib/sanitize";
+import { analytics } from "@/lib/analytics";
 import type { Book } from "@/types";
 
 type CheckoutMode = "guest" | "account";
@@ -195,6 +196,13 @@ function CheckoutInner() {
 
   const subtotal = useMemo(() => lines.reduce((s, l) => s + l.lineTotal, 0), [lines]);
   const total = Math.max(0, subtotal + shippingCents);
+  const beginCheckoutTracked = useRef(false);
+
+  useEffect(() => {
+    if (lines.length === 0 || beginCheckoutTracked.current) return;
+    beginCheckoutTracked.current = true;
+    analytics.trackBeginCheckout(total, lines.length);
+  }, [lines.length, total]);
 
   useEffect(() => {
     let cancelled = false;
@@ -244,6 +252,7 @@ function CheckoutInner() {
         clear();
         setOrderNumber(ref.split("-").slice(0, 2).join("-"));
         setPlaced(true);
+        analytics.trackPurchase(ref, total, lines.length || items.length);
         toast.success("Payment verified");
       } else {
         toast.error(data.error || "Payment verification failed");
@@ -408,6 +417,7 @@ function CheckoutInner() {
         paymentMethods.find((m) => m.id === paymentMethod)?.name ?? "Moolre";
       setOrderNumber(data.orderNumber ?? null);
       setPlaced(true);
+      analytics.trackPurchase(data.orderNumber || "order", total, lines.length);
       clear();
       toast.success("Order placed", {
         description: data.demo

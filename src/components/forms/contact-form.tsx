@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { contactFormSchema, type ContactFormData } from "@/lib/validation";
 import { sanitize, sanitizeEmail, sanitizePhone } from "@/lib/sanitize";
+import { analytics } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 export function ContactForm() {
@@ -79,16 +80,19 @@ export function ContactForm() {
 
       if (!response.ok) {
         if (data.errors) setErrors(data.errors);
+        analytics.trackFormSubmission("contact_form", false);
         toast.error(data.error || "Failed to send message");
         return;
       }
 
       setFormData({ name: "", email: "", phone: "", message: "" });
       setErrors({});
+      analytics.trackFormSubmission("contact_form", true);
       toast.success("Message sent", {
         description: "We typically reply within one business day.",
       });
     } catch {
+      analytics.trackFormSubmission("contact_form", false);
       toast.error("Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);

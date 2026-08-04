@@ -7,6 +7,7 @@ import { BookCover } from "@/components/books/book-cover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney, lowestPrice } from "@/data/mock";
+import { analytics } from "@/lib/analytics";
 import { useCartStore, useWishlistStore } from "@/stores/commerce";
 import type { Book } from "@/types";
 import { cn } from "@/lib/utils";
@@ -91,7 +92,16 @@ export function BookCard({ book, index = 0, className }: BookCardProps) {
             variant="outline"
             className="size-8 rounded-full"
             aria-label={`Add ${book.title} to cart`}
-            onClick={() => addItem(book.id, defaultFormat)}
+            onClick={() => {
+              const format = book.formats.find((f) => f.format === defaultFormat);
+              addItem(book.id, defaultFormat);
+              analytics.trackAddToCart(
+                book.id,
+                book.title,
+                1,
+                format?.price ?? lowestPrice(book)
+              );
+            }}
           >
             <ShoppingBag className="size-3.5" />
           </Button>

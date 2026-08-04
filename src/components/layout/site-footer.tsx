@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AtSign, Globe2, Share2 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { CookieSettingsButton } from "@/components/CookieConsentBanner";
 import { siteConfig } from "@/data/mock";
 import { catalogNav, departmentHref, featuredCollectionDefs } from "@/data/catalog-nav";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
@@ -86,6 +87,9 @@ export function SiteFooter() {
                 </li>
                 <li>
                   <span className="cursor-default">Terms</span>
+                </li>
+                <li>
+                  <CookieSettingsButton className="hover:text-teal-300" />
                 </li>
               </ul>
             </div>
