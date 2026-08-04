@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAdmin, writeAuditLog } from "@/lib/admin/guard";
 import { tryCreateClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
@@ -12,10 +13,13 @@ import { notifyUser } from "@/lib/services/notifications";
 import { sendSms } from "@/lib/services/sms";
 
 /**
- * Advance shipping timeline for an order (staff / demo tooling).
- * Body: { orderId, status? }
+ * Advance shipping timeline for an order.
+ * Staff-only: requires orders.write. Body: { orderId, status?, note? }
  */
 export async function POST(request: Request) {
+  const auth = await requireAdmin("orders.write");
+  if ("error" in auth) return auth.error;
+
   if (!isSupabaseConfigured()) {
     return NextResponse.json({
       ok: true,
@@ -31,22 +35,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "orderId required" }, { status: 400 });
   }
 
+  // Prefer the staff session client (RLS allows orders.write). Fall back to
+  // service role only after authorization succeeded above.
   let supabase = await tryCreateClient();
-  const {
-    data: { user },
-  } = (await supabase?.auth.getUser()) ?? { data: { user: null } };
-
-  // Allow service role for internal jobs when no user session
-  if (!user) {
+  if (!supabase) {
     try {
       supabase = createServiceClient();
     } catch {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ ok: false, error: "Supabase unavailable" }, { status: 500 });
     }
-  }
-
-  if (!supabase) {
-    return NextResponse.json({ ok: false, error: "Supabase unavailable" }, { status: 500 });
   }
 
   const client = db(supabase);
@@ -63,7 +60,7 @@ export async function POST(request: Request) {
   const next =
     (body.status as string) || nextTrackingStatus(String(shipping.status)) || shipping.status;
 
-  await client
+  const { error: shipErr } = await client
     .from("shipping")
     .update({
       status: next,
@@ -71,6 +68,10 @@ export async function POST(request: Request) {
       delivered_at: next === "delivered" ? new Date().toISOString() : undefined,
     })
     .eq("id", shipping.id);
+
+  if (shipErr) {
+    return NextResponse.json({ ok: false, error: shipErr.message }, { status: 400 });
+  }
 
   await client.from("tracking_events").insert({
     shipping_id: shipping.id,
@@ -87,7 +88,14 @@ export async function POST(request: Request) {
           ? "packed"
           : "ordered";
 
-  await client.from("orders").update({ status: orderStatus }).eq("id", orderId);
+  const { error: orderErr } = await client
+    .from("orders")
+    .update({ status: orderStatus })
+    .eq("id", orderId);
+
+  if (orderErr) {
+    return NextResponse.json({ ok: false, error: orderErr.message }, { status: 400 });
+  }
 
   const { data: order } = await client
     .from("orders")
@@ -137,6 +145,14 @@ export async function POST(request: Request) {
       });
     }
   }
+
+  await writeAuditLog({
+    actorId: auth.session.userId,
+    action: "shipping.advance",
+    entityType: "orders",
+    entityId: orderId,
+    metadata: { status: next },
+  });
 
   return NextResponse.json({ ok: true, status: next });
 }

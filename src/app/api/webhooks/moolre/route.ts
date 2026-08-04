@@ -64,11 +64,15 @@ export async function POST(request: Request) {
   }
 
   const expectedSecret = process.env.MOOLRE_CALLBACK_SECRET;
-  if (expectedSecret) {
-    const provided = extractSecret(request, body);
-    if (!secretsMatch(provided, expectedSecret)) {
-      return NextResponse.json({ ok: false, error: "Invalid callback secret" }, { status: 401 });
-    }
+  if (!expectedSecret) {
+    return NextResponse.json(
+      { ok: false, error: "Callback secret not configured" },
+      { status: 503 }
+    );
+  }
+  const provided = extractSecret(request, body);
+  if (!secretsMatch(provided, expectedSecret)) {
+    return NextResponse.json({ ok: false, error: "Invalid callback secret" }, { status: 401 });
   }
 
   const externalRef =
