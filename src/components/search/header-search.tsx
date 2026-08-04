@@ -25,7 +25,7 @@ export function HeaderSearch() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="ghost" size="icon" className="size-11" aria-label="Search books" />
+          <Button variant="ghost" size="icon" className="size-10" aria-label="Search books" />
         }
       >
         <Search className="size-5" />

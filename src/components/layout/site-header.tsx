@@ -35,11 +35,11 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center gap-3 pl-2 pr-4 sm:gap-4 sm:pl-3 sm:pr-6 lg:h-24 lg:gap-5 lg:pl-4 lg:pr-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:h-24 lg:gap-5 lg:px-8">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={
-              <Button variant="ghost" size="icon" className="-ml-1 size-11 lg:hidden" aria-label="Open menu" />
+              <Button variant="ghost" size="icon" className="size-10 lg:hidden" aria-label="Open menu" />
             }
           >
             <Menu className="size-5" />
@@ -144,24 +144,24 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5 pl-4 sm:gap-2 sm:pl-6 lg:pr-1">
+        <div className="ml-auto flex shrink-0 items-center gap-0.5">
           <HeaderSearch />
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="relative size-11" asChild>
+          <Button variant="ghost" size="icon" className="relative size-10" asChild>
             <Link href="/wishlist" aria-label="Wishlist">
               <Heart className="size-5" />
               {wishlistCount > 0 && (
-                <span className="bg-gold text-gold-foreground absolute top-1 right-1 flex size-5 items-center justify-center rounded-full text-[10px] font-bold">
+                <span className="bg-gold text-gold-foreground absolute top-0.5 right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold">
                   {wishlistCount}
                 </span>
               )}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="relative size-11" asChild>
+          <Button variant="ghost" size="icon" className="relative size-10" asChild>
             <Link href="/cart" aria-label="Cart">
               <ShoppingBag className="size-5" />
               {cartCount > 0 && (
-                <span className="bg-primary text-primary-foreground absolute top-1 right-1 flex size-5 items-center justify-center rounded-full text-[10px] font-bold">
+                <span className="bg-primary text-primary-foreground absolute top-0.5 right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold">
                   {cartCount}
                 </span>
               )}

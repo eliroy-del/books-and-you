@@ -35,13 +35,13 @@ export function AnnouncementBar() {
           <span>{phoneDisplay}</span>
         </a>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
           <Link
             href={siteConfig.social.facebook}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Facebook"
-            className="inline-flex size-7 items-center justify-center rounded-full transition hover:bg-white/10"
+            className="inline-flex size-8 items-center justify-center rounded-full transition hover:bg-white/10"
           >
             <FacebookIcon className="size-3.5" />
           </Link>
@@ -50,7 +50,7 @@ export function AnnouncementBar() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
-            className="inline-flex size-7 items-center justify-center rounded-full transition hover:bg-white/10"
+            className="inline-flex size-8 items-center justify-center rounded-full transition hover:bg-white/10"
           >
             <InstagramIcon className="size-3.5" />
           </Link>
