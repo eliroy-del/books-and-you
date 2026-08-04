@@ -7,6 +7,8 @@ import { Search, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { trendingSearches } from "@/data/mock";
 import { cn } from "@/lib/utils";
+import { searchQuerySchema } from "@/lib/validation";
+import { sanitize } from "@/lib/sanitize";
 import type { Book } from "@/types";
 
 interface SmartSearchProps {
@@ -23,7 +25,12 @@ export function SmartSearch({ className, large, autoFocus }: SmartSearchProps) {
 
   useEffect(() => {
     let cancelled = false;
-    const q = query.trim();
+    const parsed = searchQuerySchema.safeParse({ q: query });
+    const q = parsed.success ? sanitize(parsed.data.q).trim() : "";
+    if (query.trim() && !parsed.success) {
+      setResults([]);
+      return;
+    }
     const url = q
       ? `/api/catalog?resource=books&q=${encodeURIComponent(q)}&limit=6`
       : "/api/catalog?resource=books&limit=8";
@@ -56,7 +63,13 @@ export function SmartSearch({ className, large, autoFocus }: SmartSearchProps) {
 
   function submit(e?: React.FormEvent) {
     e?.preventDefault();
-    const q = query.trim();
+    const parsed = searchQuerySchema.safeParse({ q: query });
+    if (!parsed.success) {
+      setOpen(false);
+      router.push("/books");
+      return;
+    }
+    const q = sanitize(parsed.data.q).trim();
     setOpen(false);
     router.push(q ? `/books?q=${encodeURIComponent(q)}` : "/books");
   }
@@ -80,6 +93,7 @@ export function SmartSearch({ className, large, autoFocus }: SmartSearchProps) {
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           autoFocus={autoFocus}
           placeholder="Search titles, authors, ISBN, genres…"
+          maxLength={120}
           className={cn(
             "border-border/80 bg-background/80 pr-4 shadow-soft backdrop-blur-md",
             large

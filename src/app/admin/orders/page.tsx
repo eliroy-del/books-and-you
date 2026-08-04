@@ -17,12 +17,11 @@ type OrderRow = {
 };
 
 const NEXT: Record<string, string> = {
+  pending: "ordered",
   ordered: "packed",
   packed: "shipped",
   shipped: "delivered",
   delivered: "completed",
-  paid: "processing",
-  processing: "shipped",
 };
 
 export default function AdminOrdersPage() {

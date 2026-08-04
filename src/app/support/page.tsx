@@ -4,14 +4,11 @@ import {
   BookOpen,
   CircleHelp,
   Mail,
-  MessageCircle,
   MessageSquare,
   Phone,
   Ticket,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { SupportTicketForm } from "@/components/forms/support-ticket-form";
 import { JsonLd } from "@/components/structured-data";
 import { siteConfig } from "@/data/mock";
 import { siteName, siteUrl } from "@/lib/seo";
@@ -152,17 +149,10 @@ export default function SupportPage() {
               <Ticket className="text-primary size-4" />
               <h2 className="font-heading text-lg font-semibold">Open a ticket</h2>
             </div>
-            <form className="mt-5 space-y-4" action="#">
-              <Input placeholder="Subject" required />
-              <Input type="email" placeholder="Email" defaultValue="ama.darko@email.com" />
-              <Textarea placeholder="How can we help?" rows={5} required />
-              <Button type="submit" className="w-full">
-                <MessageCircle className="size-4" />
-                Submit ticket
-              </Button>
-            </form>
+            <SupportTicketForm />
             <p className="text-muted-foreground mt-3 text-xs">
-              Tickets sync to the support desk in Phase 4. This form is UI-only for Phase 1.
+              Signed-in customers get a ticket number in our support desk. Guests
+              still reach us by email.
             </p>
           </div>
         </section>

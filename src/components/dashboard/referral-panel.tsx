@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney } from "@/data/mock";
 import { useAuth } from "@/components/providers/auth-provider";
+import {
+  getFirstError,
+  referralCodeSchema,
+} from "@/lib/validation";
+import { sanitize } from "@/lib/sanitize";
+import { cn } from "@/lib/utils";
 
 type ReferralStats = {
   code: string | null;
@@ -22,6 +28,7 @@ export function ReferralPanel() {
   const { user } = useAuth();
   const [stats, setStats] = useState<ReferralStats | null>(null);
   const [code, setCode] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function load() {
@@ -35,16 +42,27 @@ export function ReferralPanel() {
     void load();
   }, [user]);
 
-  async function applyCode() {
+  async function applyCode(e?: React.FormEvent) {
+    e?.preventDefault();
+    const parsed = referralCodeSchema.safeParse({ code });
+    if (!parsed.success) {
+      const message = getFirstError(parsed.error);
+      setError(message);
+      toast.error(message);
+      return;
+    }
+
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/referrals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code: sanitize(parsed.data.code) }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
+        if (data.errors?.code) setError(data.errors.code);
         toast.error(data.error || "Could not apply code");
         return;
       }
@@ -91,22 +109,33 @@ export function ReferralPanel() {
         )}
       </div>
 
-      <div className="mt-6 flex max-w-md flex-col gap-2 sm:flex-row">
-        <Input
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Have a friend's code?"
-          className="border-white/20 bg-white/10 text-white placeholder:text-teal-100/50"
-        />
+      <form className="mt-6 flex max-w-md flex-col gap-2 sm:flex-row" onSubmit={applyCode} noValidate>
+        <div className="min-w-0 flex-1">
+          <Input
+            value={code}
+            onChange={(e) => {
+              setCode(e.target.value);
+              if (error) setError("");
+            }}
+            placeholder="Have a friend's code?"
+            className={cn(
+              "border-white/20 bg-white/10 text-white placeholder:text-teal-100/50",
+              error && "border-destructive"
+            )}
+            aria-invalid={Boolean(error)}
+            autoComplete="off"
+          />
+          {error ? <p className="mt-1 text-xs text-amber-200">{error}</p> : null}
+        </div>
         <Button
+          type="submit"
           variant="outline"
           className="border-white/30 bg-transparent text-white hover:bg-white/10"
           disabled={loading || !code.trim()}
-          onClick={applyCode}
         >
           Apply
         </Button>
-      </div>
+      </form>
     </section>
   );
 }

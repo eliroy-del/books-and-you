@@ -7,6 +7,9 @@ import {
   REFERRAL_REWARD_CENTS,
 } from "@/lib/services/referrals";
 import { formatMoney } from "@/lib/services/mappers";
+import { getFieldErrors, referralCodeSchema } from "@/lib/validation";
+import { sanitize } from "@/lib/sanitize";
+import { clientIpFromHeaders, rateLimit } from "@/lib/security/rate-limit";
 
 export async function GET() {
   if (!isSupabaseConfigured()) {
@@ -44,12 +47,29 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const code = String(body.code || "").trim();
-
-  if (!code) {
-    return NextResponse.json({ ok: false, error: "Referral code required" }, { status: 400 });
+  const ip = clientIpFromHeaders(request.headers);
+  const limited = rateLimit(`referrals:${ip}`, { limit: 20, windowMs: 60_000 });
+  if (!limited.ok) {
+    return NextResponse.json(
+      { ok: false, error: "Too many attempts. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } }
+    );
   }
+
+  const body = await request.json();
+  const parsed = referralCodeSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Validation failed",
+        errors: getFieldErrors(parsed.error),
+      },
+      { status: 400 }
+    );
+  }
+
+  const code = sanitize(parsed.data.code);
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ ok: true, demo: true, code });

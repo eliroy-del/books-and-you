@@ -20,16 +20,20 @@ import {
   flattenCatalogNav,
   accentForSlug,
 } from "@/data/catalog-nav";
+import { searchQuerySchema } from "@/lib/validation";
+import { sanitize } from "@/lib/sanitize";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const resource = searchParams.get("resource") || "books";
   const slug = searchParams.get("slug") || undefined;
-  const q = searchParams.get("q") || undefined;
+  const qRaw = searchParams.get("q") || undefined;
+  const qParsed = qRaw ? searchQuerySchema.safeParse({ q: qRaw }) : null;
+  const q = qParsed?.success ? sanitize(qParsed.data.q) : undefined;
   const category = searchParams.get("category") || undefined;
   const collection = searchParams.get("collection") || undefined;
   const authorSlug = searchParams.get("author") || undefined;
-  const limit = Number(searchParams.get("limit") || 100);
+  const limit = Math.min(Math.max(Number(searchParams.get("limit") || 100) || 100, 1), 100);
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(mockPayload(resource, { slug, q, category, collection, authorSlug, limit }));

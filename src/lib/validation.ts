@@ -89,6 +89,109 @@ export const authCredentialsSchema = z.object({
 
 export type AuthCredentialsData = z.infer<typeof authCredentialsSchema>;
 
+export const supportTicketSchema = z.object({
+  subject: z
+    .string()
+    .trim()
+    .min(3, "Subject must be at least 3 characters")
+    .max(160, "Subject must be less than 160 characters"),
+  email: emailField,
+  name: personName.optional().or(z.literal("")),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Please describe your issue in at least 10 characters")
+    .max(2000, "Message must be less than 2000 characters"),
+});
+
+export type SupportTicketData = z.infer<typeof supportTicketSchema>;
+
+export const referralCodeSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .min(3, "Referral code is too short")
+    .max(32, "Referral code must be less than 32 characters")
+    .regex(
+      /^[A-Za-z0-9-]+$/,
+      "Referral code can only contain letters, numbers, and hyphens"
+    )
+    .transform((v) => v.toUpperCase()),
+});
+
+export type ReferralCodeData = z.infer<typeof referralCodeSchema>;
+
+export const searchQuerySchema = z.object({
+  q: z
+    .string()
+    .trim()
+    .max(120, "Search must be less than 120 characters")
+    .regex(/^[^<>]*$/, "Search cannot include < or >"),
+});
+
+export type SearchQueryData = z.infer<typeof searchQuerySchema>;
+
+export const ORDER_STATUSES = [
+  "pending",
+  "ordered",
+  "packed",
+  "shipped",
+  "delivered",
+  "completed",
+  "cancelled",
+  "refunded",
+] as const;
+
+export const adminOrderStatusSchema = z.object({
+  id: z.string().uuid("Invalid order id"),
+  status: z.enum(ORDER_STATUSES, { message: "Invalid order status" }),
+});
+
+export type AdminOrderStatusData = z.infer<typeof adminOrderStatusSchema>;
+
+export const inventoryAdjustSchema = z.object({
+  id: z.string().uuid("Invalid inventory id"),
+  delta: z
+    .number()
+    .int("Quantity change must be a whole number")
+    .min(-10000, "Adjustment too large")
+    .max(10000, "Adjustment too large")
+    .refine((n) => n !== 0, { message: "Adjustment cannot be zero" }),
+  reason: z
+    .string()
+    .trim()
+    .max(200, "Reason must be less than 200 characters")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type InventoryAdjustData = z.infer<typeof inventoryAdjustSchema>;
+
+export const superAdminPatchSchema = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("toggle_flag"),
+    key: z
+      .string()
+      .trim()
+      .min(1)
+      .max(80)
+      .regex(/^[a-z0-9_.-]+$/i, "Invalid flag key"),
+    enabled: z.boolean(),
+  }),
+  z.object({
+    action: z.literal("update_setting"),
+    key: z
+      .string()
+      .trim()
+      .min(1)
+      .max(80)
+      .regex(/^[a-z0-9_.-]+$/i, "Invalid setting key"),
+    value: z.record(z.string(), z.unknown()),
+  }),
+]);
+
+export type SuperAdminPatchData = z.infer<typeof superAdminPatchSchema>;
+
 export const GHANA_REGIONS = [
   "Greater Accra",
   "Ashanti",
@@ -136,7 +239,7 @@ const cityTown = z
   .min(2, "City / town is required")
   .max(100, "City / town must be less than 100 characters")
   .regex(
-    /^[a-zA-Z0-9\s\-'.]+$/,
+    /^[\p{L}\p{N}\s\-'.]+$/u,
     "City can only contain letters, numbers, spaces, hyphens, apostrophes and dots"
   );
 

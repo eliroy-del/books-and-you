@@ -18,6 +18,7 @@ import {
   setFeatureFlag,
   updateSiteSetting,
 } from "@/lib/superadmin/platform";
+import { getFieldErrors, superAdminPatchSchema } from "@/lib/validation";
 
 export async function GET(request: Request) {
   const auth = await requireSuperAdmin();
@@ -83,15 +84,17 @@ export async function PATCH(request: Request) {
   const auth = await requireSuperAdmin();
   if ("error" in auth) return auth.error;
 
-  const body = (await request.json()) as {
-    action?: string;
-    key?: string;
-    enabled?: boolean;
-    value?: Record<string, unknown>;
-  };
+  const body = await request.json();
+  const parsed = superAdminPatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { ok: false, error: "Validation failed", errors: getFieldErrors(parsed.error) },
+      { status: 400 }
+    );
+  }
 
-  if (body.action === "toggle_flag" && body.key && typeof body.enabled === "boolean") {
-    const flag = await setFeatureFlag(body.key, body.enabled);
+  if (parsed.data.action === "toggle_flag") {
+    const flag = await setFeatureFlag(parsed.data.key, parsed.data.enabled);
     if (!flag) {
       return NextResponse.json({ ok: false, error: "Flag not found" }, { status: 404 });
     }
@@ -99,24 +102,20 @@ export async function PATCH(request: Request) {
       actorId: auth.session.userId,
       action: "feature_flag.toggle",
       entityType: "feature_flags",
-      metadata: { key: body.key, enabled: body.enabled },
+      metadata: { key: parsed.data.key, enabled: parsed.data.enabled },
     });
     return NextResponse.json({ ok: true, flag });
   }
 
-  if (body.action === "update_setting" && body.key && body.value) {
-    const setting = await updateSiteSetting(body.key, body.value);
-    if (!setting) {
-      return NextResponse.json({ ok: false, error: "Setting not found" }, { status: 404 });
-    }
-    await writeAuditLog({
-      actorId: auth.session.userId,
-      action: "site_settings.update",
-      entityType: "site_settings",
-      metadata: { key: body.key },
-    });
-    return NextResponse.json({ ok: true, setting });
+  const setting = await updateSiteSetting(parsed.data.key, parsed.data.value);
+  if (!setting) {
+    return NextResponse.json({ ok: false, error: "Setting not found" }, { status: 404 });
   }
-
-  return NextResponse.json({ ok: false, error: "Unsupported action" }, { status: 400 });
+  await writeAuditLog({
+    actorId: auth.session.userId,
+    action: "site_settings.update",
+    entityType: "site_settings",
+    metadata: { key: parsed.data.key },
+  });
+  return NextResponse.json({ ok: true, setting });
 }
