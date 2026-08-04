@@ -19,8 +19,12 @@ export const siteConfig = {
   currencySymbol: "GH₵",
   freeDeliveryThreshold: 300,
   supportEmail: process.env.ADMIN_EMAIL || "hello@booksandyou.shop",
-  supportPhone: "+233 30 123 4567",
-  whatsapp: "+233201234567",
+  supportPhone: "0247140856",
+  whatsapp: "233247140856",
+  social: {
+    facebook: "https://www.facebook.com/",
+    instagram: "https://www.instagram.com/",
+  },
   address: {
     line1: "Books & You Bookstore",
     line2: "Near 5°45'43.0\"N 0°19'24.9\"W",
