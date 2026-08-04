@@ -7,7 +7,13 @@ import {
   getAllBlogPosts,
   getBlogPostBySlug,
 } from "@/data/blog";
+import { JsonLd } from "@/components/structured-data";
 import { siteName, siteUrl } from "@/lib/seo";
+import {
+  blogPostingSchema,
+  buildBreadcrumbs,
+  schemaBaseUrl,
+} from "@/lib/structured-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -53,26 +59,25 @@ export default async function BlogPostPage({ params }: Props) {
     .filter((p) => p.slug !== post.slug)
     .slice(0, 3);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.publishedAt,
-    author: { "@type": "Organization", name: post.author },
-    mainEntityOfPage: `${siteUrl}/blog/${post.slug}`,
-    publisher: {
-      "@type": "Organization",
-      name: siteName,
-      logo: { "@type": "ImageObject", url: `${siteUrl}/icon.png` },
-    },
-  };
+  const url = `${schemaBaseUrl()}/blog/${post.slug}`;
 
   return (
     <article className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={[
+          blogPostingSchema({
+            headline: post.title,
+            description: post.excerpt,
+            url,
+            datePublished: post.publishedAt,
+            authorName: post.author,
+          }),
+          buildBreadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title },
+          ]),
+        ]}
       />
 
       <Link

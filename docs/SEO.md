@@ -95,8 +95,11 @@ eligible, without hurting Core Web Vitals. Follow these rules exactly.
 | Book OG cover + `generateStaticParams` | `src/app/book/[slug]/page.tsx` |
 | `noindex` on cart/checkout/auth/account pages | `src/app/{cart,checkout,auth,dashboard,orders,library,wishlist}/layout.tsx` |
 | PWA web manifest | `src/app/manifest.ts` → `/manifest.webmanifest` |
-| JSON-LD: Organization + WebSite (SearchAction) | `src/app/layout.tsx` |
-| JSON-LD: Book + AggregateRating, per-book generateMetadata | `src/app/book/[slug]/page.tsx` |
+| JSON-LD: Organization + WebSite (SearchAction) | `src/components/structured-data.tsx` + `src/lib/structured-data.ts` |
+| JSON-LD helpers (BreadcrumbList, FAQPage, Book+Offer, BlogPosting, Bookstore) | `src/lib/structured-data.ts` |
+| JSON-LD: Book + Offer + AggregateRating + breadcrumbs | `src/app/book/[slug]/page.tsx` |
+| JSON-LD: FAQPage on Support | `src/app/support/page.tsx` |
+| JSON-LD: Bookstore (LocalBusiness) on Contact | `src/app/contact/page.tsx` |
 | Shared SEO constants (siteUrl, name, description, keywords) | `src/lib/seo.ts` |
 
 ### Production reminders

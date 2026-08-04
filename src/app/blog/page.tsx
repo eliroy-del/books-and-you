@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, Clock } from "lucide-react";
 import { formatBlogDate, getAllBlogPosts } from "@/data/blog";
+import { JsonLd } from "@/components/structured-data";
 import { siteDescription, siteName, siteUrl } from "@/lib/seo";
+import { buildBreadcrumbs, schemaBaseUrl } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -20,28 +22,34 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   const posts = getAllBlogPosts();
+  const base = schemaBaseUrl();
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
     name: `${siteName} Blog`,
     description: siteDescription,
-    url: `${siteUrl}/blog`,
+    url: `${base}/blog`,
     blogPost: posts.map((p) => ({
       "@type": "BlogPosting",
       headline: p.title,
       description: p.excerpt,
-      datePublished: p.publishedAt,
+      datePublished: `${p.publishedAt}T08:00:00+00:00`,
       author: { "@type": "Organization", name: p.author },
-      url: `${siteUrl}/blog/${p.slug}`,
+      url: `${base}/blog/${p.slug}`,
     })),
   };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={[
+          jsonLd,
+          buildBreadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Blog" },
+          ]),
+        ]}
       />
 
       <div className="mx-auto max-w-2xl text-center">

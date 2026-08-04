@@ -10,8 +10,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactForm } from "@/components/forms/contact-form";
+import { JsonLd } from "@/components/structured-data";
 import { siteConfig } from "@/data/mock";
 import { siteName, siteUrl } from "@/lib/seo";
+import { bookstoreSchema, buildBreadcrumbs } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -29,46 +31,16 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   const { address, hours, maps, supportEmail, supportPhone, whatsapp } = siteConfig;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Bookstore",
-    name: siteName,
-    url: siteUrl,
-    email: supportEmail,
-    telephone: supportPhone,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: address.line1,
-      addressLocality: address.city,
-      addressCountry: "GH",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: maps.lat,
-      longitude: maps.lng,
-    },
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-        ],
-        opens: "06:00",
-        closes: "17:00",
-      },
-    ],
-  };
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={[
+          bookstoreSchema(),
+          buildBreadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Contact Us" },
+          ]),
+        ]}
       />
 
       <div className="mx-auto max-w-2xl text-center">

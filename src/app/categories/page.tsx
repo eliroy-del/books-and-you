@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import CategoriesClient from "./categories-client";
+import { JsonLd } from "@/components/structured-data";
 import { siteName, siteUrl } from "@/lib/seo";
+import { buildBreadcrumbs } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Categories",
@@ -19,8 +21,16 @@ export const metadata: Metadata = {
 
 export default function CategoriesPage() {
   return (
-    <Suspense fallback={<div className="py-24 text-center text-sm">Loading browse…</div>}>
-      <CategoriesClient />
-    </Suspense>
+    <>
+      <JsonLd
+        data={buildBreadcrumbs([
+          { name: "Home", path: "/" },
+          { name: "Categories" },
+        ])}
+      />
+      <Suspense fallback={<div className="py-24 text-center text-sm">Loading browse…</div>}>
+        <CategoriesClient />
+      </Suspense>
+    </>
   );
 }

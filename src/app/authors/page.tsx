@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listAuthors } from "@/lib/services/authors";
+import { JsonLd } from "@/components/structured-data";
 import { siteName, siteUrl } from "@/lib/seo";
+import { buildBreadcrumbs, schemaBaseUrl } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Authors",
@@ -18,25 +20,31 @@ export const metadata: Metadata = {
 
 export default async function AuthorsPage() {
   const authors = await listAuthors(50);
+  const base = schemaBaseUrl();
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: `Authors · ${siteName}`,
-    url: `${siteUrl}/authors`,
+    url: `${base}/authors`,
     mainEntity: authors.map((a) => ({
       "@type": "Person",
       name: a.name,
-      url: `${siteUrl}/authors/${a.slug}`,
+      url: `${base}/authors/${a.slug}`,
       description: a.bio.slice(0, 200),
     })),
   };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={[
+          jsonLd,
+          buildBreadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Authors" },
+          ]),
+        ]}
       />
       <h1 className="font-heading text-3xl font-bold tracking-tight">Authors</h1>
       <p className="text-muted-foreground mt-2 max-w-2xl text-sm">

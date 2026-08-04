@@ -12,8 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { JsonLd } from "@/components/structured-data";
 import { siteConfig } from "@/data/mock";
 import { siteName, siteUrl } from "@/lib/seo";
+import { buildBreadcrumbs, buildFAQSchema } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Support",
@@ -50,6 +52,17 @@ const faqs = [
 export default function SupportPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <JsonLd
+        data={[
+          buildFAQSchema(
+            faqs.map((f) => ({ question: f.q, answer: f.a }))
+          ),
+          buildBreadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Support" },
+          ]),
+        ]}
+      />
       <div className="max-w-2xl">
         <p className="text-primary text-sm font-semibold tracking-widest uppercase">Help center</p>
         <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight sm:text-4xl">

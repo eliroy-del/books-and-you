@@ -3,6 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/supabase/env";
 import { books as mockBooks, getBookBySlug } from "@/data/mock";
 import { siteUrl } from "@/lib/seo";
+import { JsonLd } from "@/components/structured-data";
+import {
+  bookProductSchema,
+  buildBreadcrumbs,
+  schemaBaseUrl,
+} from "@/lib/structured-data";
 import BookDetailClient from "./book-detail-client";
 
 type BookMeta = {
@@ -13,6 +19,8 @@ type BookMeta = {
   rating?: number;
   reviewCount?: number;
   coverUrl?: string | null;
+  priceGhs?: number | null;
+  inStock?: boolean;
 };
 
 async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
@@ -24,7 +32,7 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
         const { data } = await supabase
           .from("books")
           .select(
-            "title, subtitle, description, synopsis, cover_url, rating_avg, review_count, book_authors ( is_primary, authors ( name ) )"
+            "title, subtitle, description, synopsis, cover_url, rating_avg, review_count, book_authors ( is_primary, authors ( name ) ), book_inventory ( format, price_cents, quantity_on_hand, is_active )"
           )
           .eq("slug", slug)
           .maybeSingle();
@@ -36,6 +44,20 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
           const primary = authors.find((a) => a.is_primary) ?? authors[0];
           const a = primary?.authors;
           const authorName = Array.isArray(a) ? a[0]?.name : a?.name;
+          const inventory = (
+            (data.book_inventory ?? []) as Array<{
+              price_cents?: number;
+              quantity_on_hand?: number;
+              is_active?: boolean;
+            }>
+          ).filter((i) => i.is_active !== false);
+          const prices = inventory
+            .map((i) => i.price_cents)
+            .filter((p): p is number => typeof p === "number" && p > 0);
+          const priceGhs = prices.length
+            ? Math.min(...prices.map((c) => Math.round(c / 100)))
+            : null;
+          const inStock = inventory.some((i) => (i.quantity_on_hand ?? 0) > 0);
           return {
             title: data.title,
             subtitle: data.subtitle ?? undefined,
@@ -44,6 +66,8 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
             rating: data.rating_avg ?? undefined,
             reviewCount: data.review_count ?? undefined,
             coverUrl: data.cover_url ?? undefined,
+            priceGhs,
+            inStock,
           };
         }
       } catch {
@@ -53,6 +77,7 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
   }
   const mock = getBookBySlug(slug);
   if (!mock) return null;
+  const prices = mock.formats?.map((f) => f.price).filter((p) => p > 0) ?? [];
   return {
     title: mock.title,
     subtitle: mock.subtitle,
@@ -61,6 +86,8 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
     rating: mock.rating,
     reviewCount: mock.reviewCount,
     coverUrl: mock.coverUrl,
+    priceGhs: prices.length ? Math.min(...prices) : null,
+    inStock: true,
   };
 }
 
@@ -124,37 +151,31 @@ export default async function BookDetailPage({
 }) {
   const { slug } = await params;
   const book = await fetchBookMeta(slug);
-
-  const jsonLd = book
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Book",
-        name: book.title,
-        description: (book.description || "").slice(0, 500),
-        url: `${siteUrl}/book/${slug}`,
-        ...(book.coverUrl ? { image: book.coverUrl } : {}),
-        ...(book.authorName
-          ? { author: { "@type": "Person", name: book.authorName } }
-          : {}),
-        ...(book.rating && book.reviewCount
-          ? {
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: book.rating,
-                reviewCount: book.reviewCount,
-                bestRating: 5,
-              },
-            }
-          : {}),
-      }
-    : null;
+  const base = schemaBaseUrl();
+  const url = `${base}/book/${slug}`;
 
   return (
     <>
-      {jsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      {book ? (
+        <JsonLd
+          data={[
+            bookProductSchema({
+              name: book.title,
+              description: book.description || book.subtitle || "",
+              url,
+              image: book.coverUrl,
+              authorName: book.authorName,
+              rating: book.rating,
+              reviewCount: book.reviewCount,
+              priceGhs: book.priceGhs,
+              availability: book.inStock === false ? "OutOfStock" : "InStock",
+            }),
+            buildBreadcrumbs([
+              { name: "Home", path: "/" },
+              { name: "Books", path: "/books" },
+              { name: book.title },
+            ]),
+          ]}
         />
       ) : null}
       <BookDetailClient />
