@@ -530,14 +530,8 @@ function CheckoutInner() {
                   />
                 </div>
               ) : null}
-            </div>
-          </section>
-
-          <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
-            <h2 className="font-heading text-lg font-semibold">Delivery location</h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <Label htmlFor="line1">Address / landmark *</Label>
+                <Label htmlFor="line1">Street address *</Label>
                 <Input
                   id="line1"
                   className="mt-1.5"
