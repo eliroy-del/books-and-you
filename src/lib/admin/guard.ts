@@ -1,7 +1,7 @@
 import { cookies, headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { tryCreateClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isDemoAuthAllowed, isSupabaseConfigured } from "@/lib/supabase/env";
 import { db } from "@/lib/supabase/typed";
 import {
   ALL_PERMISSIONS,
@@ -27,11 +27,14 @@ export async function getAdminSession(): Promise<AdminSession | null> {
   const demoRoleOverride =
     headerStore.get("x-demo-role") || cookieStore.get("bay-demo-role")?.value || null;
 
+  // Never auto-login staff. Demo admin is opt-in for local testing only.
   if (!isSupabaseConfigured()) {
+    if (!isDemoAuthAllowed()) return null;
     const email =
       headerStore.get("x-demo-email") ||
       cookieStore.get("bay-demo-email")?.value ||
-      "superadmin@booksandyou.test";
+      null;
+    if (!email) return null;
     const roleKey = resolveDemoRole(email, demoRoleOverride);
     return {
       userId: "demo-admin",

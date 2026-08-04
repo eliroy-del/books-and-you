@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import type { User } from "@supabase/supabase-js";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isDemoAuthAllowed, isSupabaseConfigured } from "@/lib/supabase/env";
 import { tryCreateClient } from "@/lib/supabase/client";
 import { db } from "@/lib/supabase/typed";
 import {
@@ -76,12 +76,20 @@ function writeDemo(session: DemoSession | null) {
   else localStorage.setItem(DEMO_KEY, JSON.stringify(session));
 }
 
+function clearDemoArtifacts() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(DEMO_KEY);
+  document.cookie = "bay-demo-role=; path=/; max-age=0; SameSite=Lax";
+  document.cookie = "bay-demo-email=; path=/; max-age=0; SameSite=Lax";
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const configured = isSupabaseConfigured();
+  const demoAllowed = isDemoAuthAllowed();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [demoMode, setDemoMode] = useState(!configured);
+  const [demoMode, setDemoMode] = useState(false);
 
   const loadProfile = useCallback(async (uid: string) => {
     const supabase = tryCreateClient();
@@ -89,11 +97,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await db(supabase)
       .from("profiles")
       .select(
-        "id, email, full_name, avatar_url, referral_code, reading_goal, reading_streak, favorite_genres"
+        "id, email, full_name, avatar_url, referral_code, reading_goal, reading_streak, favorite_genres, roles(key)"
       )
       .eq("id", uid)
       .maybeSingle();
-    return (data as Profile | null) ?? null;
+
+    if (!data) return null;
+    const row = data as Profile & { roles?: { key?: string } | null };
+    return {
+      id: row.id,
+      email: row.email,
+      full_name: row.full_name,
+      avatar_url: row.avatar_url,
+      referral_code: row.referral_code,
+      reading_goal: row.reading_goal,
+      reading_streak: row.reading_streak,
+      favorite_genres: row.favorite_genres,
+      role_key: (row.roles?.key as RoleKey | undefined) ?? null,
+    } satisfies Profile;
   }, []);
 
   const refreshProfile = useCallback(async () => {
@@ -107,22 +128,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
 
     async function init() {
+      // Production / live mode: never restore fake demo sessions.
+      if (!demoAllowed) {
+        clearDemoArtifacts();
+      }
+
       if (!configured) {
-        const demo = readDemo();
-        if (demo && mounted) {
-          setDemoMode(true);
-          setUser({ id: demo.id, email: demo.email } as User);
-          setProfile({
-            id: demo.id,
-            email: demo.email,
-            full_name: demo.full_name,
-            avatar_url: null,
-            referral_code: "DEMO-READS",
-            reading_goal: 24,
-            reading_streak: 3,
-            favorite_genres: ["Literary Fiction", "Business"],
-            role_key: DEMO_STAFF_BY_EMAIL[demo.email.toLowerCase()] || null,
-          });
+        if (demoAllowed) {
+          const demo = readDemo();
+          if (demo && mounted) {
+            setDemoMode(true);
+            setUser({ id: demo.id, email: demo.email } as User);
+            setProfile({
+              id: demo.id,
+              email: demo.email,
+              full_name: demo.full_name,
+              avatar_url: null,
+              referral_code: "DEMO-READS",
+              reading_goal: 24,
+              reading_streak: 3,
+              favorite_genres: ["Literary Fiction", "Business"],
+              role_key: DEMO_STAFF_BY_EMAIL[demo.email.toLowerCase()] || null,
+            });
+          }
         }
         if (mounted) setLoading(false);
         return;
@@ -164,11 +192,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mounted = false;
       void cleanup.then((unsub) => unsub?.());
     };
-  }, [configured, loadProfile]);
+  }, [configured, demoAllowed, loadProfile]);
 
   const signIn = useCallback(
     async (email: string, password: string) => {
       if (!configured) {
+        if (!demoAllowed) {
+          return { error: "Sign-in is unavailable. Connect Supabase for live authentication." };
+        }
         const demo: DemoSession = {
           id: "demo-user-local",
           email,
@@ -197,12 +228,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       return error ? { error: error.message } : {};
     },
-    [configured]
+    [configured, demoAllowed]
   );
 
   const signUp = useCallback(
     async (email: string, password: string, fullName: string) => {
       if (!configured) {
+        if (!demoAllowed) {
+          return { error: "Account creation requires live authentication." };
+        }
         return signIn(email, password);
       }
       const supabase = tryCreateClient();
@@ -214,29 +248,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       return error ? { error: error.message } : {};
     },
-    [configured, signIn]
+    [configured, demoAllowed, signIn]
   );
 
   const signOut = useCallback(async () => {
+    clearDemoArtifacts();
     if (!configured) {
-      writeDemo(null);
       setUser(null);
       setProfile(null);
+      setDemoMode(false);
       return;
     }
     const supabase = tryCreateClient();
     await supabase?.auth.signOut();
     setUser(null);
     setProfile(null);
+    setDemoMode(false);
   }, [configured]);
 
   const roleKey = useMemo<RoleKey | null>(() => {
     if (profile?.role_key) return profile.role_key;
-    if (profile?.email && DEMO_STAFF_BY_EMAIL[profile.email.toLowerCase()]) {
+    // Demo staff map only applies in explicit demo auth mode.
+    if (demoMode && profile?.email && DEMO_STAFF_BY_EMAIL[profile.email.toLowerCase()]) {
       return DEMO_STAFF_BY_EMAIL[profile.email.toLowerCase()];
     }
     return null;
-  }, [profile]);
+  }, [profile, demoMode]);
 
   const permissions = useMemo(
     () => (roleKey ? permissionsForRole(roleKey) : []),
@@ -249,7 +286,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile,
       loading,
       configured,
-      demoMode: demoMode || !configured,
+      demoMode,
       roleKey,
       permissions,
       isStaff: Boolean(roleKey && roleKey !== "customer"),

@@ -10,26 +10,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 function AuthForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next") || "/dashboard";
+  const next = params.get("next") || "/";
   const { signIn, signUp, configured } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState(
-    configured ? "reader01@booksandyou.test" : "ama.darko@email.com"
-  );
-  const [password, setPassword] = useState("Password123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
 
   async function submit(mode: "signin" | "signup") {
+    if (!email.trim() || !password) {
+      toast.error("Enter your email and password");
+      return;
+    }
     setLoading(true);
     const result =
       mode === "signin"
-        ? await signIn(email, password)
-        : await signUp(email, password, fullName || email.split("@")[0] || "Reader");
+        ? await signIn(email.trim(), password)
+        : await signUp(email.trim(), password, fullName.trim() || email.split("@")[0] || "Reader");
     setLoading(false);
 
     if (result.error) {
@@ -37,11 +38,7 @@ function AuthForm() {
       return;
     }
 
-    toast.success(mode === "signin" ? "Welcome back" : "Account created", {
-      description: configured
-        ? "Synced with Supabase"
-        : "Demo mode. Configure Supabase for real auth",
-    });
+    toast.success(mode === "signin" ? "Welcome back" : "Account created");
     router.push(next);
     router.refresh();
   }
@@ -54,11 +51,11 @@ function AuthForm() {
           <BrandLogo href={null} size="lg" showWordmark={false} priority />
           <h1 className="sr-only">Books & You</h1>
           <p className="text-muted-foreground mt-4 text-sm">Sign in to sync your library</p>
-          {!isSupabaseConfigured() && (
-            <p className="bg-accent text-accent-foreground mt-3 rounded-full px-3 py-1 text-[11px] font-medium">
-              Demo auth · add Supabase keys for production
+          {!configured ? (
+            <p className="text-destructive mt-3 text-xs">
+              Live authentication is not configured on this environment.
             </p>
-          )}
+          ) : null}
         </div>
 
         <Tabs defaultValue="signin">
@@ -75,6 +72,8 @@ function AuthForm() {
                 className="mt-1.5"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@email.com"
+                autoComplete="email"
               />
             </div>
             <div>
@@ -85,9 +84,11 @@ function AuthForm() {
                 className="mt-1.5"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Your password"
+                autoComplete="current-password"
               />
             </div>
-            <Button className="w-full" disabled={loading} onClick={() => submit("signin")}>
+            <Button className="w-full" disabled={loading || !configured} onClick={() => submit("signin")}>
               {loading ? "Signing in…" : "Sign in"}
             </Button>
           </TabsContent>
@@ -100,6 +101,7 @@ function AuthForm() {
                 placeholder="Your name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                autoComplete="name"
               />
             </div>
             <div>
@@ -111,6 +113,7 @@ function AuthForm() {
                 placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
               />
             </div>
             <div>
@@ -122,9 +125,10 @@ function AuthForm() {
                 placeholder="Create a password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
               />
             </div>
-            <Button className="w-full" disabled={loading} onClick={() => submit("signup")}>
+            <Button className="w-full" disabled={loading || !configured} onClick={() => submit("signup")}>
               {loading ? "Creating…" : "Create account"}
             </Button>
           </TabsContent>

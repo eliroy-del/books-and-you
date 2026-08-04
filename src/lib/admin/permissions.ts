@@ -279,6 +279,5 @@ export function resolveDemoRole(email?: string | null, override?: string | null)
   if (email && DEMO_STAFF_BY_EMAIL[email.toLowerCase()]) {
     return DEMO_STAFF_BY_EMAIL[email.toLowerCase()];
   }
-  // Default demo admin access so /admin works without login
-  return "super_admin";
+  return "customer";
 }
