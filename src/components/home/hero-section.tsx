@@ -207,9 +207,9 @@ export function HeroSection() {
           </div>
         </div>
 
-        <div className="relative lg:col-span-6 xl:col-span-7">
-          <AnimatePresence mode="wait">
-            {slide.foreground ? (
+        {slide.foreground ? (
+          <div className="relative lg:col-span-6 xl:col-span-7">
+            <AnimatePresence mode="wait">
               <motion.div
                 key={slide.id + "-fg"}
                 initial={{ opacity: 0, y: 24, scale: 0.98 }}
@@ -232,27 +232,9 @@ export function HeroSection() {
                   }}
                 />
               </motion.div>
-            ) : (
-              <motion.div
-                key={slide.id + "-badge"}
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.45 }}
-                className="hidden lg:flex lg:min-h-[320px] lg:items-end lg:justify-end"
-              >
-                <div className="max-w-sm rounded-3xl border border-white/20 bg-black/25 p-6 text-white backdrop-blur-md">
-                  <p className={cn("font-heading text-sm font-semibold tracking-wide uppercase", slide.accent)}>
-                    {slide.eyebrow}
-                  </p>
-                  <p className="mt-2 text-lg leading-snug text-white/90">
-                    Fresh stock for Ghana classrooms — delivered nationwide.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+            </AnimatePresence>
+          </div>
+        ) : null}
       </div>
     </section>
   );
