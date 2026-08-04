@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Check, CreditCard, Truck } from "lucide-react";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { formatMoney, savedAddresses, siteConfig } from "@/data/mock";
+import { formatMoney, siteConfig } from "@/data/mock";
 import { useCartStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
 import type { Book } from "@/types";
@@ -20,16 +20,33 @@ const providers = [
   { id: "moolre", name: "Moolre", hint: "Mobile Money · Cards" },
 ] as const;
 
+const GHANA_REGIONS = [
+  "Greater Accra",
+  "Ashanti",
+  "Western",
+  "Central",
+  "Eastern",
+  "Volta",
+  "Northern",
+  "Upper East",
+  "Upper West",
+  "Bono",
+  "Bono East",
+  "Ahafo",
+  "Western North",
+  "Oti",
+  "North East",
+  "Savannah",
+];
+
 function CheckoutInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, profile, configured, loading: authLoading } = useAuth();
+  const { user, profile } = useAuth();
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
   const pruneInvalid = useCartStore((s) => s.pruneInvalid);
   const [catalog, setCatalog] = useState<Book[]>([]);
   const [catalogLoaded, setCatalogLoaded] = useState(false);
-  const [addressId, setAddressId] = useState(savedAddresses[0]?.id);
   const [provider, setProvider] = useState<(typeof providers)[number]["id"]>("moolre");
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -40,11 +57,23 @@ function CheckoutInner() {
   const [shippingLabel, setShippingLabel] = useState("Nationwide");
   const [verifying, setVerifying] = useState(false);
 
-  const address = savedAddresses.find((a) => a.id === addressId) ?? savedAddresses[0];
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [line1, setLine1] = useState("");
+  const [city, setCity] = useState("Accra");
+  const [region, setRegion] = useState("Greater Accra");
 
   useEffect(() => {
     pruneInvalid();
   }, [pruneInvalid]);
+
+  useEffect(() => {
+    if (profile?.full_name && !fullName) setFullName(profile.full_name);
+    if ((profile?.email || user?.email) && !email) {
+      setEmail(profile?.email || user?.email || "");
+    }
+  }, [profile, user, fullName, email]);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,9 +129,9 @@ function CheckoutInner() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          city: address?.city,
-          region: address?.region,
-          country: address?.country || "Ghana",
+          city,
+          region,
+          country: "Ghana",
           subtotalCents: Math.round(subtotal * 100),
         }),
       });
@@ -118,9 +147,8 @@ function CheckoutInner() {
     return () => {
       cancelled = true;
     };
-  }, [address?.city, address?.region, address?.country, subtotal]);
+  }, [city, region, subtotal]);
 
-  // Return from payment provider
   useEffect(() => {
     const paid = searchParams.get("paid");
     const ref = searchParams.get("ref");
@@ -173,9 +201,16 @@ function CheckoutInner() {
       return;
     }
 
-    if (configured && !authLoading && !user) {
-      toast.error("Please sign in to checkout");
-      router.push("/auth?next=/checkout");
+    if (!fullName.trim()) {
+      toast.error("Enter your full name");
+      return;
+    }
+    if (phone.replace(/\D/g, "").length < 9) {
+      toast.error("Enter a valid phone number");
+      return;
+    }
+    if (!line1.trim() && !city.trim()) {
+      toast.error("Enter your delivery location");
       return;
     }
 
@@ -188,19 +223,18 @@ function CheckoutInner() {
           provider,
           couponCode: coupon || undefined,
           discountCedis: discount,
-          email: profile?.email || user?.email,
-          customerName: profile?.full_name || undefined,
-          shippingAddress: address
-            ? {
-                fullName: address.fullName,
-                line1: address.line1,
-                line2: address.line2,
-                city: address.city,
-                region: address.region,
-                country: address.country,
-                phone: address.phone,
-              }
-            : {},
+          email: email.trim() || undefined,
+          customerName: fullName.trim(),
+          phone: phone.trim(),
+          shippingAddress: {
+            fullName: fullName.trim(),
+            line1: line1.trim() || city.trim(),
+            city: city.trim() || line1.trim(),
+            region,
+            country: "Ghana",
+            phone: phone.trim(),
+            email: email.trim() || undefined,
+          },
           lines: lines.map((l) => ({
             bookId: l.book.id,
             format: l.format.format,
@@ -229,7 +263,6 @@ function CheckoutInner() {
         setShippingCents(data.shippingCents / 100);
       }
 
-      // Live provider redirect
       if (data.authorizationUrl && !data.demo && !data.authorizationUrl.includes("mock_pay")) {
         window.location.href = data.authorizationUrl;
         return;
@@ -274,14 +307,15 @@ function CheckoutInner() {
           ) : (
             "Thanks for shopping with Books & You."
           )}{" "}
-          A receipt email is on the way. Track shipping from Orders — eBooks are in your Library.
+          We&apos;ll contact you on your phone about delivery
+          {email.trim() ? " and send a receipt if email was provided" : ""}.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button asChild>
-            <Link href="/orders">Track order</Link>
+            <Link href="/books">Continue shopping</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/library">Go to library</Link>
+            <Link href="/contact">Contact us</Link>
           </Button>
         </div>
       </div>
@@ -292,37 +326,100 @@ function CheckoutInner() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-heading text-3xl font-bold tracking-tight">Checkout</h1>
       <p className="text-muted-foreground mt-2 text-sm">
-        Moolre · free delivery above{" "}
+        Guest checkout welcome · free delivery above{" "}
         {formatMoney(siteConfig.freeDeliveryThreshold)}
       </p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-12">
         <div className="space-y-8 lg:col-span-7">
           <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
-            <h2 className="font-heading text-lg font-semibold">Shipping address</h2>
-            <div className="mt-4 space-y-3">
-              {savedAddresses.map((addr) => (
-                <button
-                  key={addr.id}
-                  type="button"
-                  onClick={() => setAddressId(addr.id)}
-                  className={cn(
-                    "w-full rounded-2xl border p-4 text-left transition",
-                    addressId === addr.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/30"
-                  )}
+            <h2 className="font-heading text-lg font-semibold">Your details</h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              No account needed. We only need this to deliver your order.
+            </p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <Label htmlFor="fullName">Full name *</Label>
+                <Input
+                  id="fullName"
+                  className="mt-1.5"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Ama Darko"
+                  autoComplete="name"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone">Phone / WhatsApp *</Label>
+                <Input
+                  id="phone"
+                  className="mt-1.5"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="0247140856"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email (optional)</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  className="mt-1.5"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@email.com"
+                  autoComplete="email"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
+            <h2 className="font-heading text-lg font-semibold">Delivery location</h2>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <Label htmlFor="line1">Address / landmark *</Label>
+                <Input
+                  id="line1"
+                  className="mt-1.5"
+                  value={line1}
+                  onChange={(e) => setLine1(e.target.value)}
+                  placeholder="14 Boundary Rd, East Legon"
+                  autoComplete="street-address"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="city">City / town *</Label>
+                <Input
+                  id="city"
+                  className="mt-1.5"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Accra"
+                  autoComplete="address-level2"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="region">Region</Label>
+                <select
+                  id="region"
+                  className="border-input bg-background mt-1.5 flex h-10 w-full rounded-md border px-3 text-sm"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
                 >
-                  <p className="text-sm font-semibold">
-                    {addr.label}
-                    {addr.isDefault ? " · Default" : ""}
-                  </p>
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    {addr.fullName} · {addr.line1}
-                    {addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}
-                  </p>
-                </button>
-              ))}
+                  {GHANA_REGIONS.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <p className="text-muted-foreground mt-4 flex items-center gap-2 text-xs">
               <Truck className="size-3.5" />
@@ -351,10 +448,6 @@ function CheckoutInner() {
                 </button>
               ))}
             </div>
-            <p className="text-muted-foreground mt-4 text-xs">
-              Without provider secret keys, checkout auto-captures in demo mode and still sends
-              confirmation notifications.
-            </p>
           </section>
         </div>
 
@@ -394,7 +487,6 @@ function CheckoutInner() {
                 Apply
               </Button>
             </div>
-            <p className="text-muted-foreground mt-2 text-xs">Try READMORE</p>
             <Separator className="my-4" />
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -422,7 +514,9 @@ function CheckoutInner() {
               onClick={placeOrder}
               disabled={lines.length === 0 || submitting}
             >
-              {submitting ? "Processing…" : `Pay ${formatMoney(total)} with ${providers.find((p) => p.id === provider)?.name}`}
+              {submitting
+                ? "Processing…"
+                : `Pay ${formatMoney(total)} with ${providers.find((p) => p.id === provider)?.name}`}
             </Button>
             {staleCart ? (
               <Button
@@ -441,6 +535,15 @@ function CheckoutInner() {
                 {staleCart ? "Browse books" : "Back to cart"}
               </Link>
             </Button>
+            {!user ? (
+              <p className="text-muted-foreground mt-3 text-center text-xs">
+                Have an account?{" "}
+                <Link href="/auth?next=/checkout" className="text-primary hover:underline">
+                  Sign in
+                </Link>{" "}
+                (optional)
+              </p>
+            ) : null}
           </div>
         </aside>
       </div>

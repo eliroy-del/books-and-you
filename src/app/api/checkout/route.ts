@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { tryCreateClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/admin";
 import { placeOrder, placeOrderWithClient, type CheckoutLine } from "@/lib/services/orders";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { PaymentProviderId } from "@/lib/providers";
@@ -47,10 +48,53 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Cart is empty" }, { status: 400 });
     }
 
-    const shippingQuote = quoteShipping({
-      city: String(shippingAddress?.city || ""),
-      region: String(shippingAddress?.region || ""),
+    const fullName = String(customerName || shippingAddress?.fullName || "").trim();
+    const contact = String(phone || shippingAddress?.phone || "").trim();
+    const locationLine = String(shippingAddress?.line1 || "").trim();
+    const city = String(shippingAddress?.city || "").trim();
+    const region = String(shippingAddress?.region || "").trim();
+    const optionalEmail = String(email || shippingAddress?.email || "").trim();
+
+    if (!fullName) {
+      return NextResponse.json(
+        { ok: false, error: "Full name is required" },
+        { status: 400 }
+      );
+    }
+    if (!contact || contact.replace(/\D/g, "").length < 9) {
+      return NextResponse.json(
+        { ok: false, error: "A valid phone number is required" },
+        { status: 400 }
+      );
+    }
+    if (!locationLine && !city) {
+      return NextResponse.json(
+        { ok: false, error: "Delivery location is required" },
+        { status: 400 }
+      );
+    }
+    if (optionalEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(optionalEmail)) {
+      return NextResponse.json(
+        { ok: false, error: "Email looks invalid" },
+        { status: 400 }
+      );
+    }
+
+    const normalizedAddress = {
+      ...(shippingAddress ?? {}),
+      fullName,
+      phone: contact,
+      email: optionalEmail || undefined,
+      line1: locationLine || city,
+      city: city || locationLine,
+      region: region || "Greater Accra",
       country: String(shippingAddress?.country || "Ghana"),
+    };
+
+    const shippingQuote = quoteShipping({
+      city: normalizedAddress.city,
+      region: normalizedAddress.region,
+      country: normalizedAddress.country,
       subtotalCents: lines.reduce(
         (s, l) => s + Math.round(l.unitPrice * 100) * l.quantity,
         0
@@ -60,12 +104,12 @@ export async function POST(request: Request) {
     const payload = {
       lines,
       provider: provider ?? "moolre",
-      shippingAddress: shippingAddress ?? {},
+      shippingAddress: normalizedAddress,
       couponCode,
       discountCedis,
-      email,
-      customerName,
-      phone,
+      email: optionalEmail || undefined,
+      customerName: fullName,
+      phone: contact,
       autoCapture: autoCapture ?? false,
     } as const;
 
@@ -77,20 +121,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ ...result, shippingQuote });
     }
 
-    const supabase = await tryCreateClient();
-    if (!supabase) {
-      return NextResponse.json({ ok: false, error: "Supabase unavailable" }, { status: 500 });
-    }
-
+    const sessionClient = await tryCreateClient();
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = (await sessionClient?.auth.getUser()) ?? { data: { user: null } };
 
-    if (!user) {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    // Guests and signed-in users both place orders via service role so RLS doesn't block inserts.
+    let supabase;
+    try {
+      supabase = createServiceClient();
+    } catch {
+      return NextResponse.json(
+        { ok: false, error: "Checkout is temporarily unavailable" },
+        { status: 500 }
+      );
     }
 
-    // Demo capture when provider keys missing — still creates DB order
     const shouldAuto =
       autoCapture ||
       !(
@@ -100,14 +146,14 @@ export async function POST(request: Request) {
       );
 
     const result = await placeOrderWithClient(supabase, {
-      userId: user.id,
+      userId: user?.id ?? null,
       ...payload,
-      email: email || user.email || undefined,
+      email: optionalEmail || user?.email || undefined,
       autoCapture: shouldAuto,
     });
 
     return NextResponse.json(
-      { ...result, shippingQuote },
+      { ...result, shippingQuote, guest: !user },
       { status: result.ok ? 200 : 400 }
     );
   } catch (error) {

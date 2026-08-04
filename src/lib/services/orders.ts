@@ -55,7 +55,8 @@ export type CheckoutLine = {
 };
 
 export type PlaceOrderInput = {
-  userId: string;
+  /** Null/undefined for guest checkout. */
+  userId?: string | null;
   email?: string;
   customerName?: string;
   phone?: string;
@@ -144,6 +145,32 @@ export async function placeOrderWithClient(
     };
   }
 
+  const guestName =
+    input.customerName?.trim() ||
+    String(input.shippingAddress.fullName || "").trim() ||
+    null;
+  const guestPhone =
+    input.phone?.trim() || String(input.shippingAddress.phone || "").trim() || null;
+  const guestEmail = input.email?.trim() || null;
+  const isGuest = !input.userId;
+
+  if (isGuest && (!guestName || !guestPhone)) {
+    return {
+      ok: false,
+      error: "Full name and phone number are required for guest checkout.",
+    };
+  }
+
+  const location =
+    String(input.shippingAddress.line1 || "").trim() ||
+    String(input.shippingAddress.city || "").trim();
+  if (isGuest && !location) {
+    return {
+      ok: false,
+      error: "Delivery location is required for guest checkout.",
+    };
+  }
+
   const { subtotalCents, discountCents, shippingCents, totalCents, rate } = calcTotals(
     input.lines,
     input.shippingAddress,
@@ -153,7 +180,11 @@ export async function placeOrderWithClient(
   const { data: order, error: orderError } = await client
     .from("orders")
     .insert({
-      user_id: input.userId,
+      user_id: input.userId || null,
+      is_guest: isGuest,
+      guest_name: guestName,
+      guest_phone: guestPhone,
+      guest_email: guestEmail,
       status: "pending",
       currency: "GHS",
       subtotal_cents: subtotalCents,
@@ -163,6 +194,9 @@ export async function placeOrderWithClient(
       coupon_code: input.couponCode ?? null,
       shipping_address: {
         ...input.shippingAddress,
+        fullName: guestName,
+        phone: guestPhone,
+        email: guestEmail,
         shipping_zone: rate.zone,
         carrier: rate.carrier,
         eta_days_min: rate.etaDaysMin,
@@ -199,13 +233,17 @@ export async function placeOrderWithClient(
     .from("transactions")
     .insert({
       order_id: order.id,
-      user_id: input.userId,
+      user_id: input.userId || null,
       provider: input.provider,
       provider_reference: paymentReference,
       amount_cents: totalCents,
       currency: "GHS",
       status: "pending",
-      metadata: { order_number: order.order_number },
+      metadata: {
+        order_number: order.order_number,
+        guest: isGuest,
+        guest_phone: guestPhone,
+      },
     })
     .select("id")
     .single();
@@ -251,7 +289,8 @@ export async function placeOrderWithClient(
     metadata: {
       order_id: order.id,
       order_number: order.order_number,
-      user_id: input.userId,
+      user_id: input.userId || null,
+      guest: isGuest,
     },
   });
 
@@ -296,7 +335,9 @@ export async function fulfillPaidOrder(
 
   const { data: order } = await client
     .from("orders")
-    .select("id, order_number, user_id, status, total_cents, shipping_address, currency")
+    .select(
+      "id, order_number, user_id, status, total_cents, shipping_address, currency, guest_name, guest_email, guest_phone, is_guest"
+    )
     .eq("id", input.orderId)
     .maybeSingle();
 
@@ -376,7 +417,7 @@ export async function fulfillPaidOrder(
     .eq("order_id", order.id);
 
   for (const line of items ?? []) {
-    if (line.format === "ebook" || line.format === "audiobook") {
+    if ((line.format === "ebook" || line.format === "audiobook") && order.user_id) {
       await client.from("library_items").upsert(
         {
           user_id: order.user_id,
@@ -387,7 +428,7 @@ export async function fulfillPaidOrder(
         },
         { onConflict: "user_id,book_id,format" }
       );
-    } else {
+    } else if (line.format !== "ebook" && line.format !== "audiobook") {
       const { data: inv } = await client
         .from("book_inventory")
         .select("id, quantity_on_hand")
@@ -408,15 +449,26 @@ export async function fulfillPaidOrder(
     }
   }
 
-  const { data: profile } = await client
-    .from("profiles")
-    .select("full_name, email, phone")
-    .eq("id", order.user_id)
-    .maybeSingle();
+  const { data: profile } = order.user_id
+    ? await client
+        .from("profiles")
+        .select("full_name, email, phone")
+        .eq("id", order.user_id)
+        .maybeSingle()
+    : { data: null };
 
   const totalLabel = formatMoney(Number(order.total_cents) / 100);
   const trackingUrl = siteUrl("/orders");
-  const customerName = profile?.full_name || "Reader";
+  const customerName =
+    profile?.full_name ||
+    order.guest_name ||
+    String(address.fullName || "") ||
+    "Customer";
+  const notifyEmail =
+    profile?.email || order.guest_email || String(address.email || "") || undefined;
+  const notifyPhone =
+    profile?.phone || order.guest_phone || String(address.phone || "") || undefined;
+
   const emailContent = renderOrderConfirmationEmail({
     customerName,
     orderNumber: order.order_number,
@@ -424,9 +476,9 @@ export async function fulfillPaidOrder(
     trackingUrl,
   });
 
-  if (profile?.email) {
+  if (notifyEmail) {
     await sendEmail({
-      to: profile.email,
+      to: notifyEmail,
       subject: emailContent.subject,
       html: emailContent.html,
       text: emailContent.text,
@@ -434,31 +486,33 @@ export async function fulfillPaidOrder(
     });
   }
 
-  await notifyUser(supabase, {
-    userId: order.user_id,
-    email: profile?.email ?? undefined,
-    phone: profile?.phone ?? undefined,
-    title: "Order confirmed",
-    body: `${order.order_number} · ${totalLabel}`,
-    type: "order_confirmation",
-    link: "/orders",
-    channels: ["in_app", "email"],
-    emailSubject: emailContent.subject,
-    emailHtml: emailContent.html,
-  });
+  if (order.user_id) {
+    await notifyUser(supabase, {
+      userId: order.user_id,
+      email: notifyEmail,
+      phone: notifyPhone,
+      title: "Order confirmed",
+      body: `${order.order_number} · ${totalLabel}`,
+      type: "order_confirmation",
+      link: "/orders",
+      channels: ["in_app", "email"],
+      emailSubject: emailContent.subject,
+      emailHtml: emailContent.html,
+    });
 
-  if (profile?.phone) {
-    await sendSms({
-      to: profile.phone,
-      body: `Books & You: Order ${order.order_number} confirmed. Track at ${trackingUrl}`,
+    await qualifyReferralForOrder(supabase, {
+      userId: order.user_id,
+      orderId: order.id,
+      orderNumber: order.order_number,
     });
   }
 
-  await qualifyReferralForOrder(supabase, {
-    userId: order.user_id,
-    orderId: order.id,
-    orderNumber: order.order_number,
-  });
+  if (notifyPhone) {
+    await sendSms({
+      to: notifyPhone,
+      body: `Books & You: Order ${order.order_number} confirmed. Total ${totalLabel}. We'll contact you about delivery.`,
+    });
+  }
 
   await client.from("webhook_logs").insert({
     provider: "internal",

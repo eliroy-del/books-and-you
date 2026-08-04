@@ -100,7 +100,11 @@ export type Database = {
         Row: {
           id: string;
           order_number: string;
-          user_id: string;
+          user_id: string | null;
+          is_guest: boolean;
+          guest_name: string | null;
+          guest_phone: string | null;
+          guest_email: string | null;
           status:
             | "pending"
             | "ordered"
@@ -124,9 +128,7 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Partial<Database["public"]["Tables"]["orders"]["Row"]> & {
-          user_id: string;
-        };
+        Insert: Partial<Database["public"]["Tables"]["orders"]["Row"]>;
         Update: Partial<Database["public"]["Tables"]["orders"]["Row"]>;
         Relationships: [];
       };

@@ -32,7 +32,11 @@ create index if not exists cart_items_cart_id_idx on public.cart_items(cart_id);
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
   order_number text not null unique,
-  user_id uuid not null references public.profiles(id) on delete restrict,
+  user_id uuid references public.profiles(id) on delete restrict,
+  is_guest boolean not null default false,
+  guest_name text,
+  guest_phone text,
+  guest_email text,
   status public.order_status not null default 'pending',
   currency text not null default 'GHS',
   subtotal_cents integer not null default 0,
@@ -77,7 +81,7 @@ alter table public.library_items
 create table if not exists public.transactions (
   id uuid primary key default gen_random_uuid(),
   order_id uuid references public.orders(id) on delete set null,
-  user_id uuid not null references public.profiles(id) on delete restrict,
+  user_id uuid references public.profiles(id) on delete restrict,
   provider public.payment_provider not null,
   provider_reference text,
   amount_cents integer not null check (amount_cents >= 0),
