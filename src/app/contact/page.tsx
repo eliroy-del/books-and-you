@@ -9,8 +9,7 @@ import {
   Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { ContactForm } from "@/components/forms/contact-form";
 import { siteConfig } from "@/data/mock";
 import { siteName, siteUrl } from "@/lib/seo";
 
@@ -175,49 +174,7 @@ export default function ContactPage() {
           <p className="text-muted-foreground mt-1 text-sm">
             Tell us how we can help. We typically reply within one business day.
           </p>
-          <form className="mt-5 grid gap-4" action="#">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="name" className="mb-1.5 block text-sm font-medium">
-                  Full name
-                </label>
-                <Input id="name" name="name" required placeholder="Your name" />
-              </div>
-              <div>
-                <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@email.com"
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="phone" className="mb-1.5 block text-sm font-medium">
-                Phone (optional)
-              </label>
-              <Input id="phone" name="phone" type="tel" placeholder="+233…" />
-            </div>
-            <div>
-              <label htmlFor="message" className="mb-1.5 block text-sm font-medium">
-                Message
-              </label>
-              <Textarea
-                id="message"
-                name="message"
-                required
-                rows={5}
-                placeholder="How can we help?"
-              />
-            </div>
-            <Button type="submit" className="h-11 rounded-xl sm:w-fit">
-              Send message
-            </Button>
-          </form>
+          <ContactForm />
         </div>
       </div>
 

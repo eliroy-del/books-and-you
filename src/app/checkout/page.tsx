@@ -21,6 +21,8 @@ import { Separator } from "@/components/ui/separator";
 import { formatMoney } from "@/data/mock";
 import { useCartStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
+import { checkoutSchema, getFirstError, validateGhanaPhone } from "@/lib/validation";
+import { sanitize, sanitizeEmail, sanitizePhone } from "@/lib/sanitize";
 import type { Book } from "@/types";
 
 type CheckoutMode = "guest" | "account";
@@ -213,16 +215,8 @@ function CheckoutInner() {
       return;
     }
 
-    if (!fullName.trim()) {
-      toast.error("Enter your full name");
-      return;
-    }
-    if (phone.replace(/\D/g, "").length < 9) {
-      toast.error("Enter a valid phone number");
-      return;
-    }
-    if (!line1.trim() && !city.trim()) {
-      toast.error("Enter your delivery location");
+    if (!validateGhanaPhone(phone)) {
+      toast.error("Enter a valid Ghana phone number");
       return;
     }
 
@@ -238,10 +232,44 @@ function CheckoutInner() {
       }
     }
 
+    const checkoutPayload = {
+      provider: "moolre" as const,
+      paymentMethod,
+      email: email.trim() || "",
+      customerName: fullName.trim(),
+      phone: phone.trim(),
+      shippingAddress: {
+        fullName: fullName.trim(),
+        line1: line1.trim() || city.trim(),
+        city: city.trim() || line1.trim(),
+        region,
+        country: "Ghana",
+        phone: phone.trim(),
+        email: email.trim() || "",
+      },
+      lines: lines.map((l) => ({
+        bookId: l.book.id,
+        format: l.format.format as "hardcover" | "paperback" | "ebook" | "audiobook",
+        quantity: l.quantity,
+        unitPrice: l.format.price,
+        title: l.book.title,
+      })),
+    };
+
+    const validated = checkoutSchema.safeParse(checkoutPayload);
+    if (!validated.success) {
+      toast.error(getFirstError(validated.error));
+      return;
+    }
+
     setSubmitting(true);
     try {
       if (wantsAccount) {
-        const created = await signUp(email.trim(), password, fullName.trim());
+        const created = await signUp(
+          sanitizeEmail(email.trim()),
+          password,
+          sanitize(fullName.trim())
+        );
         if (created.error) {
           toast.error(created.error);
           setSubmitting(false);
@@ -254,26 +282,26 @@ function CheckoutInner() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          provider: "moolre",
-          paymentMethod,
-          email: email.trim() || undefined,
-          customerName: fullName.trim(),
-          phone: phone.trim(),
+          ...validated.data,
+          email: validated.data.email
+            ? sanitizeEmail(validated.data.email)
+            : undefined,
+          customerName: sanitize(validated.data.customerName),
+          phone: sanitizePhone(validated.data.phone),
           shippingAddress: {
-            fullName: fullName.trim(),
-            line1: line1.trim() || city.trim(),
-            city: city.trim() || line1.trim(),
-            region,
-            country: "Ghana",
-            phone: phone.trim(),
-            email: email.trim() || undefined,
+            ...validated.data.shippingAddress,
+            fullName: sanitize(validated.data.customerName),
+            line1: sanitize(validated.data.shippingAddress.line1),
+            city: sanitize(validated.data.shippingAddress.city),
+            region: sanitize(validated.data.shippingAddress.region),
+            phone: sanitizePhone(validated.data.phone),
+            email: validated.data.email
+              ? sanitizeEmail(validated.data.email)
+              : undefined,
           },
-          lines: lines.map((l) => ({
-            bookId: l.book.id,
-            format: l.format.format,
-            quantity: l.quantity,
-            unitPrice: l.format.price,
-            title: l.book.title,
+          lines: validated.data.lines.map((l) => ({
+            ...l,
+            title: sanitize(l.title),
           })),
         }),
       });

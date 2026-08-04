@@ -5,8 +5,8 @@ import Link from "next/link";
 import { ArrowRight, Gift, Headphones, Lock, Package, ShieldCheck, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { BookCard } from "@/components/books/book-card";
+import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { currentUser, formatMoney, testimonials } from "@/data/mock";
 import { useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
 import type { Book, Collection } from "@/types";
@@ -308,12 +308,12 @@ export function NewsletterSection() {
         <p className="text-muted-foreground mt-3 text-sm sm:text-base">
           Receive new releases, discounts, and author events. Never spam.
         </p>
-        <form className="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row" action="#">
-          <Input type="email" required placeholder="Email address" className="h-11 bg-background" />
-          <Button type="submit" className="h-11 shrink-0">
-            Subscribe
-          </Button>
-        </form>
+        <NewsletterForm
+          className="mx-auto mt-6 max-w-md flex-col sm:flex-row"
+          inputClassName="h-11 bg-background"
+          buttonClassName="h-11"
+          buttonLabel="Subscribe"
+        />
       </div>
     </section>
   );

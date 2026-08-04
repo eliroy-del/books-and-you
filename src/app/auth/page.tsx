@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authCredentialsSchema } from "@/lib/validation";
+import { sanitize, sanitizeEmail } from "@/lib/sanitize";
 
 function AuthForm() {
   const router = useRouter();
@@ -22,15 +24,22 @@ function AuthForm() {
   const [fullName, setFullName] = useState("");
 
   async function submit(mode: "signin" | "signup") {
-    if (!email.trim() || !password) {
-      toast.error("Enter your email and password");
+    const parsed = authCredentialsSchema.safeParse({
+      email,
+      password,
+      fullName: mode === "signup" ? fullName || email.split("@")[0] || "Reader" : undefined,
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message || "Please check your details");
       return;
     }
     setLoading(true);
+    const cleanEmail = sanitizeEmail(parsed.data.email);
+    const cleanName = sanitize(parsed.data.fullName || cleanEmail.split("@")[0] || "Reader");
     const result =
       mode === "signin"
-        ? await signIn(email.trim(), password)
-        : await signUp(email.trim(), password, fullName.trim() || email.split("@")[0] || "Reader");
+        ? await signIn(cleanEmail, parsed.data.password)
+        : await signUp(cleanEmail, parsed.data.password, cleanName);
     setLoading(false);
 
     if (result.error) {

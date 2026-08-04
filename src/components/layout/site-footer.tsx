@@ -3,8 +3,7 @@ import { AtSign, Globe2, Share2 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { siteConfig } from "@/data/mock";
 import { catalogNav, departmentHref, featuredCollectionDefs } from "@/data/catalog-nav";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { NewsletterForm } from "@/components/forms/newsletter-form";
 
 export function SiteFooter() {
   return (
@@ -102,17 +101,11 @@ export function SiteFooter() {
             <p className="mt-3 text-sm text-slate-400">
               New releases, discounts, and author events, once a week.
             </p>
-            <form className="mt-4 flex gap-2" action="#">
-              <Input
-                type="email"
-                required
-                placeholder="you@email.com"
-                className="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-              />
-              <Button type="submit" className="shrink-0 bg-teal-600 hover:bg-teal-500">
-                Join
-              </Button>
-            </form>
+            <NewsletterForm
+              className="mt-4"
+              inputClassName="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
+              buttonClassName="bg-teal-600 hover:bg-teal-500"
+            />
           </div>
         </div>
 
