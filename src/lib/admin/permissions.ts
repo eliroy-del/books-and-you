@@ -59,7 +59,7 @@ export const ALL_PERMISSIONS: PermissionKey[] = [
 
 /** Mirrors supabase/seed role_permissions */
 export const ROLE_PERMISSIONS: Record<RoleKey, PermissionKey[]> = {
-  super_admin: [..ALL_PERMISSIONS],
+  super_admin: [...ALL_PERMISSIONS],
   inventory_manager: [
     "catalog.read",
     "catalog.write",

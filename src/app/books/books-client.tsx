@@ -54,16 +54,16 @@ export default function BooksClient() {
   }, [q, categorySlug, collectionSlug]);
 
   const filtered = useMemo(() => {
-    return [..books].sort((a, b) => {
+    return [...books].sort((a, b) => {
       if (sort === "rating") return b.rating - a.rating;
       if (sort === "price-asc") {
-        const ap = Math.min(..a.formats.map((f) => f.price), Infinity);
-        const bp = Math.min(..b.formats.map((f) => f.price), Infinity);
+        const ap = Math.min(...a.formats.map((f) => f.price), Infinity);
+        const bp = Math.min(...b.formats.map((f) => f.price), Infinity);
         return ap - bp;
       }
       if (sort === "price-desc") {
-        const ap = Math.min(..a.formats.map((f) => f.price), Infinity);
-        const bp = Math.min(..b.formats.map((f) => f.price), Infinity);
+        const ap = Math.min(...a.formats.map((f) => f.price), Infinity);
+        const bp = Math.min(...b.formats.map((f) => f.price), Infinity);
         return bp - ap;
       }
       return Number(b.featured) - Number(a.featured) || b.reviewCount - a.reviewCount;

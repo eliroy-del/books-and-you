@@ -238,9 +238,9 @@ function book(
   partial: Omit<Book, "coverGradient" | "coverAccent"> & { palette?: number }
 ): Book {
   const p = coverPalettes[partial.palette ?? 0]!;
-  const { palette: _palette..rest } = partial;
+  const { palette: _palette, ...rest } = partial;
   return {
-    ..rest,
+    ...rest,
     coverGradient: p.gradient,
     coverAccent: p.accent,
   };
@@ -1330,7 +1330,7 @@ export function formatMoney(amount: number, currency = siteConfig.currencySymbol
 }
 
 export function lowestPrice(book: Book) {
-  return Math.min(..book.formats.map((f) => f.price));
+  return Math.min(...book.formats.map((f) => f.price));
 }
 
 export function relatedBooks(book: Book, limit = 4) {

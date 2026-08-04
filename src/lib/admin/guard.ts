@@ -38,7 +38,7 @@ export async function getAdminSession(): Promise<AdminSession | null> {
       email,
       roleKey,
       permissions:
-        roleKey === "super_admin" ? ["*"..ALL_PERMISSIONS] : permissionsForRole(roleKey),
+        roleKey === "super_admin" ? ["*", ...ALL_PERMISSIONS] : permissionsForRole(roleKey),
       demo: true,
       isSuperAdmin: roleKey === "super_admin",
     };
@@ -68,7 +68,7 @@ export async function getAdminSession(): Promise<AdminSession | null> {
 
   let permissions: string[] = [];
   if (isSuper) {
-    permissions = ["*"..ALL_PERMISSIONS];
+    permissions = ["*", ...ALL_PERMISSIONS];
   } else {
     const { data: perms } = await db(supabase)
       .from("role_permissions")

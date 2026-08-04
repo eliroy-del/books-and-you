@@ -121,7 +121,7 @@ export const blogPosts: BlogPost[] = [
 ];
 
 export function getAllBlogPosts() {
-  return [..blogPosts].sort(
+  return [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 }
