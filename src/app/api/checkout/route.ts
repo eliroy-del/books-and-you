@@ -5,20 +5,23 @@ import { placeOrderWithClient } from "@/lib/services/orders";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { quoteShipping } from "@/lib/services/shipping";
 import { clientIpFromHeaders, rateLimit } from "@/lib/security/rate-limit";
-import { checkoutSchema, getFirstError } from "@/lib/validation";
+import { checkoutSchema, getFieldErrors, getFirstError } from "@/lib/validation";
 import { sanitize, sanitizeEmail, sanitizePhone } from "@/lib/sanitize";
+import { corsPreflight, jsonWithCors } from "@/lib/security/cors";
+
+export async function OPTIONS(request: Request) {
+  return corsPreflight(request);
+}
 
 export async function POST(request: Request) {
   try {
     const ip = clientIpFromHeaders(request.headers);
     const limited = rateLimit(`checkout:${ip}`, { limit: 20, windowMs: 60_000 });
     if (!limited.ok) {
-      return NextResponse.json(
+      return jsonWithCors(
+        request,
         { ok: false, error: "Too many checkout attempts" },
-        {
-          status: 429,
-          headers: { "Retry-After": String(limited.retryAfterSec) },
-        }
+        { status: 429 }
       );
     }
 
@@ -31,13 +34,12 @@ export async function POST(request: Request) {
     });
 
     if (!parsed.success) {
-      return NextResponse.json(
+      return jsonWithCors(
+        request,
         {
           ok: false,
           error: getFirstError(parsed.error),
-          errors: Object.fromEntries(
-            parsed.error.issues.map((i) => [i.path.join(".") || "form", i.message])
-          ),
+          errors: getFieldErrors(parsed.error),
         },
         { status: 400 }
       );
@@ -88,7 +90,8 @@ export async function POST(request: Request) {
     } as const;
 
     if (!isSupabaseConfigured()) {
-      return NextResponse.json(
+      return jsonWithCors(
+        request,
         { ok: false, error: "Checkout requires a live database connection" },
         { status: 503 }
       );
@@ -103,7 +106,8 @@ export async function POST(request: Request) {
     try {
       supabase = createServiceClient();
     } catch {
-      return NextResponse.json(
+      return jsonWithCors(
+        request,
         { ok: false, error: "Checkout is temporarily unavailable" },
         { status: 500 }
       );
@@ -124,13 +128,16 @@ export async function POST(request: Request) {
       autoCapture: shouldAuto,
     });
 
-    return NextResponse.json(
+    return jsonWithCors(
+      request,
       { ...result, shippingQuote, guest: !user },
       { status: result.ok ? 200 : 400 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "Checkout failed" },
+    console.error("Checkout API error:", error);
+    return jsonWithCors(
+      request,
+      { ok: false, error: "Checkout failed. Please try again." },
       { status: 500 }
     );
   }

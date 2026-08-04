@@ -21,7 +21,16 @@ import { Separator } from "@/components/ui/separator";
 import { formatMoney } from "@/data/mock";
 import { useCartStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
-import { checkoutSchema, getFirstError, validateGhanaPhone } from "@/lib/validation";
+import {
+  checkoutDetailsSchema,
+  checkoutDetailsSchemaForMode,
+  checkoutSchema,
+  getFieldErrors,
+  getFirstError,
+  GHANA_REGIONS,
+  type CheckoutDetailsData,
+  type GhanaRegion,
+} from "@/lib/validation";
 import { sanitize, sanitizeEmail, sanitizePhone } from "@/lib/sanitize";
 import type { Book } from "@/types";
 
@@ -42,25 +51,6 @@ const paymentMethods = [
   },
 ] as const;
 
-const GHANA_REGIONS = [
-  "Greater Accra",
-  "Ashanti",
-  "Western",
-  "Central",
-  "Eastern",
-  "Volta",
-  "Northern",
-  "Upper East",
-  "Upper West",
-  "Bono",
-  "Bono East",
-  "Ahafo",
-  "Western North",
-  "Oti",
-  "North East",
-  "Savannah",
-];
-
 function CheckoutInner() {
   const searchParams = useSearchParams();
   const { user, profile, signUp } = useAuth();
@@ -78,6 +68,7 @@ function CheckoutInner() {
   const [shippingLabel, setShippingLabel] = useState("Nationwide");
   const [verifying, setVerifying] = useState(false);
   const [checkoutMode, setCheckoutMode] = useState<CheckoutMode>("guest");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -85,7 +76,65 @@ function CheckoutInner() {
   const [password, setPassword] = useState("");
   const [line1, setLine1] = useState("");
   const [city, setCity] = useState("Accra");
-  const [region, setRegion] = useState("Greater Accra");
+  const [region, setRegion] = useState<GhanaRegion>("Greater Accra");
+
+  function detailsValues(): CheckoutDetailsData {
+    return {
+      fullName,
+      phone,
+      email,
+      password,
+      line1,
+      city,
+      region,
+    };
+  }
+
+  function validateDetailsField(field: keyof CheckoutDetailsData, value: unknown) {
+    const fieldSchema = checkoutDetailsSchema.shape[field];
+    const result = fieldSchema.safeParse(value);
+    setErrors((prev) => {
+      const next = { ...prev };
+      if (!result.success) {
+        next[field] = result.error.issues[0]?.message || "Invalid";
+      } else {
+        delete next[field];
+      }
+      return next;
+    });
+  }
+
+  function handleDetailsChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    const { name, value } = e.target;
+    switch (name) {
+      case "fullName":
+        setFullName(value);
+        break;
+      case "phone":
+        setPhone(value);
+        break;
+      case "email":
+        setEmail(value);
+        break;
+      case "password":
+        setPassword(value);
+        break;
+      case "line1":
+        setLine1(value);
+        break;
+      case "city":
+        setCity(value);
+        break;
+      case "region":
+        setRegion(value as GhanaRegion);
+        break;
+      default:
+        break;
+    }
+    validateDetailsField(name as keyof CheckoutDetailsData, value);
+  }
 
   useEffect(() => {
     pruneInvalid();
@@ -206,7 +255,9 @@ function CheckoutInner() {
     };
   }, [searchParams, clear]);
 
-  async function placeOrder() {
+  async function placeOrder(e?: React.FormEvent) {
+    e?.preventDefault();
+
     if (lines.length === 0) {
       toast.error(
         staleCart
@@ -217,60 +268,78 @@ function CheckoutInner() {
       return;
     }
 
-    if (!validateGhanaPhone(phone)) {
-      toast.error("Enter a valid Ghana phone number");
+    const wantsAccount = !user && checkoutMode === "account";
+    const detailsResult = checkoutDetailsSchemaForMode(
+      checkoutMode,
+      Boolean(user)
+    ).safeParse(detailsValues());
+
+    if (!detailsResult.success) {
+      const fieldErrors = getFieldErrors(detailsResult.error);
+      setErrors(fieldErrors);
+      toast.error(Object.values(fieldErrors)[0] || "Please fix the form");
       return;
     }
 
-    const wantsAccount = !user && checkoutMode === "account";
-    if (wantsAccount) {
-      if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-        toast.error("Email is required to create an account");
-        return;
-      }
-      if (password.length < 6) {
-        toast.error("Password must be at least 6 characters");
-        return;
-      }
-    }
+    const details = detailsResult.data;
+    const safeName = sanitize(details.fullName);
+    const safePhone = sanitizePhone(details.phone);
+    const safeEmail = details.email ? sanitizeEmail(details.email) : "";
+    const safeLine1 = sanitize(details.line1);
+    const safeCity = sanitize(details.city);
+    const safeRegion = sanitize(details.region);
 
     const checkoutPayload = {
       provider: "moolre" as const,
       paymentMethod,
-      email: email.trim() || "",
-      customerName: fullName.trim(),
-      phone: phone.trim(),
+      email: safeEmail,
+      customerName: safeName,
+      phone: safePhone,
       shippingAddress: {
-        fullName: fullName.trim(),
-        line1: line1.trim() || city.trim(),
-        city: city.trim() || line1.trim(),
-        region,
+        fullName: safeName,
+        line1: safeLine1,
+        city: safeCity,
+        region: details.region,
         country: "Ghana",
-        phone: phone.trim(),
-        email: email.trim() || "",
+        phone: safePhone,
+        email: safeEmail,
       },
       lines: lines.map((l) => ({
         bookId: l.book.id,
         format: l.format.format as "hardcover" | "paperback" | "ebook" | "audiobook",
         quantity: l.quantity,
         unitPrice: l.format.price,
-        title: l.book.title,
+        title: sanitize(l.book.title),
       })),
     };
 
     const validated = checkoutSchema.safeParse(checkoutPayload);
     if (!validated.success) {
+      const fieldErrors = getFieldErrors(validated.error);
+      const mapped: Record<string, string> = { ...fieldErrors };
+      if (fieldErrors.customerName) mapped.fullName = fieldErrors.customerName;
+      if (fieldErrors["shippingAddress.line1"]) {
+        mapped.line1 = fieldErrors["shippingAddress.line1"];
+      }
+      if (fieldErrors["shippingAddress.city"]) {
+        mapped.city = fieldErrors["shippingAddress.city"];
+      }
+      if (fieldErrors["shippingAddress.region"]) {
+        mapped.region = fieldErrors["shippingAddress.region"];
+      }
+      setErrors(mapped);
       toast.error(getFirstError(validated.error));
       return;
     }
 
+    setErrors({});
     setSubmitting(true);
     try {
       if (wantsAccount) {
         const created = await signUp(
-          sanitizeEmail(email.trim()),
-          password,
-          sanitize(fullName.trim())
+          safeEmail,
+          details.password || "",
+          safeName
         );
         if (created.error) {
           toast.error(created.error);
@@ -285,32 +354,25 @@ function CheckoutInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...validated.data,
-          email: validated.data.email
-            ? sanitizeEmail(validated.data.email)
-            : undefined,
-          customerName: sanitize(validated.data.customerName),
-          phone: sanitizePhone(validated.data.phone),
+          email: safeEmail || undefined,
+          customerName: safeName,
+          phone: safePhone,
           shippingAddress: {
             ...validated.data.shippingAddress,
-            fullName: sanitize(validated.data.customerName),
-            line1: sanitize(validated.data.shippingAddress.line1),
-            city: sanitize(validated.data.shippingAddress.city),
-            region: sanitize(validated.data.shippingAddress.region),
-            phone: sanitizePhone(validated.data.phone),
-            email: validated.data.email
-              ? sanitizeEmail(validated.data.email)
-              : undefined,
+            fullName: safeName,
+            line1: safeLine1,
+            city: safeCity,
+            region: safeRegion,
+            phone: safePhone,
+            email: safeEmail || undefined,
           },
-          lines: validated.data.lines.map((l) => ({
-            ...l,
-            title: sanitize(l.title),
-          })),
         }),
       });
 
       const data = (await res.json()) as {
         ok: boolean;
         error?: string;
+        errors?: Record<string, string>;
         orderNumber?: string;
         authorizationUrl?: string;
         demo?: boolean;
@@ -318,6 +380,17 @@ function CheckoutInner() {
       };
 
       if (!res.ok || !data.ok) {
+        if (data.errors) {
+          const mapped: Record<string, string> = { ...data.errors };
+          if (data.errors.customerName) mapped.fullName = data.errors.customerName;
+          if (data.errors["shippingAddress.line1"]) {
+            mapped.line1 = data.errors["shippingAddress.line1"];
+          }
+          if (data.errors["shippingAddress.city"]) {
+            mapped.city = data.errors["shippingAddress.city"];
+          }
+          setErrors(mapped);
+        }
         toast.error(data.error ?? "Checkout failed");
         return;
       }
@@ -396,16 +469,24 @@ function CheckoutInner() {
           <section>
             <h2 className="font-heading text-lg font-semibold">Checkout as</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setCheckoutMode("guest")}
-                className={cn(
-                  "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
-                  checkoutMode === "guest"
-                    ? "border-primary bg-primary/5 shadow-soft"
-                    : "border-border bg-card hover:border-primary/30"
-                )}
-              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCheckoutMode("guest");
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.password;
+                      delete next.email;
+                      return next;
+                    });
+                  }}
+                  className={cn(
+                    "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
+                    checkoutMode === "guest"
+                      ? "border-primary bg-primary/5 shadow-soft"
+                      : "border-border bg-card hover:border-primary/30"
+                  )}
+                >
                 <span
                   className={cn(
                     "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full",
@@ -495,31 +576,51 @@ function CheckoutInner() {
                 ? "Create your account while placing this order."
                 : "We only need this to deliver your order."}
             </p>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <form
+              id="checkout-details"
+              className="mt-5 grid gap-4 sm:grid-cols-2"
+              onSubmit={placeOrder}
+              noValidate
+            >
               <div className="sm:col-span-2">
                 <Label htmlFor="fullName">Full name *</Label>
                 <Input
                   id="fullName"
-                  className="mt-1.5"
+                  name="fullName"
+                  className={cn("mt-1.5", errors.fullName && "border-destructive")}
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  onChange={handleDetailsChange}
                   placeholder="Ama Darko"
                   autoComplete="name"
-                  required
+                  aria-invalid={Boolean(errors.fullName)}
+                  aria-describedby={errors.fullName ? "fullName-error" : undefined}
                 />
+                {errors.fullName ? (
+                  <p id="fullName-error" className="text-destructive mt-1 text-xs">
+                    {errors.fullName}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <Label htmlFor="phone">Phone / WhatsApp *</Label>
                 <Input
                   id="phone"
-                  className="mt-1.5"
+                  name="phone"
+                  type="tel"
+                  className={cn("mt-1.5", errors.phone && "border-destructive")}
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={handleDetailsChange}
                   placeholder="0247140856"
                   autoComplete="tel"
                   inputMode="tel"
-                  required
+                  aria-invalid={Boolean(errors.phone)}
+                  aria-describedby={errors.phone ? "phone-error" : undefined}
                 />
+                {errors.phone ? (
+                  <p id="phone-error" className="text-destructive mt-1 text-xs">
+                    {errors.phone}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <Label htmlFor="email">
@@ -527,61 +628,95 @@ function CheckoutInner() {
                 </Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
-                  className="mt-1.5"
+                  className={cn("mt-1.5", errors.email && "border-destructive")}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleDetailsChange}
                   placeholder="you@email.com"
                   autoComplete="email"
-                  required={checkoutMode === "account" && !user}
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "email-error" : undefined}
                 />
+                {errors.email ? (
+                  <p id="email-error" className="text-destructive mt-1 text-xs">
+                    {errors.email}
+                  </p>
+                ) : null}
               </div>
               {checkoutMode === "account" && !user ? (
                 <div className="sm:col-span-2">
                   <Label htmlFor="password">Password *</Label>
                   <Input
                     id="password"
+                    name="password"
                     type="password"
-                    className="mt-1.5"
+                    className={cn("mt-1.5", errors.password && "border-destructive")}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handleDetailsChange}
                     placeholder="At least 6 characters"
                     autoComplete="new-password"
-                    required
+                    aria-invalid={Boolean(errors.password)}
+                    aria-describedby={errors.password ? "password-error" : undefined}
                   />
+                  {errors.password ? (
+                    <p id="password-error" className="text-destructive mt-1 text-xs">
+                      {errors.password}
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
               <div className="sm:col-span-2">
                 <Label htmlFor="line1">Street address *</Label>
                 <Input
                   id="line1"
-                  className="mt-1.5"
+                  name="line1"
+                  className={cn("mt-1.5", errors.line1 && "border-destructive")}
                   value={line1}
-                  onChange={(e) => setLine1(e.target.value)}
+                  onChange={handleDetailsChange}
                   placeholder="14 Boundary Rd, East Legon"
                   autoComplete="street-address"
-                  required
+                  aria-invalid={Boolean(errors.line1)}
+                  aria-describedby={errors.line1 ? "line1-error" : undefined}
                 />
+                {errors.line1 ? (
+                  <p id="line1-error" className="text-destructive mt-1 text-xs">
+                    {errors.line1}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <Label htmlFor="city">City / town *</Label>
                 <Input
                   id="city"
-                  className="mt-1.5"
+                  name="city"
+                  className={cn("mt-1.5", errors.city && "border-destructive")}
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={handleDetailsChange}
                   placeholder="Accra"
                   autoComplete="address-level2"
-                  required
+                  aria-invalid={Boolean(errors.city)}
+                  aria-describedby={errors.city ? "city-error" : undefined}
                 />
+                {errors.city ? (
+                  <p id="city-error" className="text-destructive mt-1 text-xs">
+                    {errors.city}
+                  </p>
+                ) : null}
               </div>
               <div>
-                <Label htmlFor="region">Region</Label>
+                <Label htmlFor="region">Region *</Label>
                 <select
                   id="region"
-                  className="border-input bg-background mt-1.5 flex h-10 w-full rounded-md border px-3 text-sm"
+                  name="region"
+                  className={cn(
+                    "border-input bg-background mt-1.5 flex h-10 w-full rounded-md border px-3 text-sm",
+                    errors.region && "border-destructive"
+                  )}
                   value={region}
-                  onChange={(e) => setRegion(e.target.value)}
+                  onChange={handleDetailsChange}
+                  aria-invalid={Boolean(errors.region)}
+                  aria-describedby={errors.region ? "region-error" : undefined}
                 >
                   {GHANA_REGIONS.map((r) => (
                     <option key={r} value={r}>
@@ -589,8 +724,13 @@ function CheckoutInner() {
                     </option>
                   ))}
                 </select>
+                {errors.region ? (
+                  <p id="region-error" className="text-destructive mt-1 text-xs">
+                    {errors.region}
+                  </p>
+                ) : null}
               </div>
-            </div>
+            </form>
             <p className="text-muted-foreground mt-4 flex items-center gap-2 text-xs">
               <Truck className="size-3.5" />
               {shippingLabel}
@@ -669,7 +809,8 @@ function CheckoutInner() {
             <Button
               className="mt-6 h-12 w-full rounded-xl shadow-glow"
               size="lg"
-              onClick={placeOrder}
+              type="submit"
+              form="checkout-details"
               disabled={lines.length === 0 || submitting}
             >
               {submitting

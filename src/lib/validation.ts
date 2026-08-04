@@ -70,7 +70,7 @@ export const authCredentialsSchema = z.object({
 
 export type AuthCredentialsData = z.infer<typeof authCredentialsSchema>;
 
-const GHANA_REGIONS = [
+export const GHANA_REGIONS = [
   "Greater Accra",
   "Ashanti",
   "Western",
@@ -89,6 +89,83 @@ const GHANA_REGIONS = [
   "Savannah",
 ] as const;
 
+export type GhanaRegion = (typeof GHANA_REGIONS)[number];
+
+const ghanaPhoneRequired = z
+  .string()
+  .trim()
+  .min(9, "A valid phone number is required")
+  .max(20, "Phone number must be less than 20 characters")
+  .refine(validateGhanaPhone, {
+    message: "Please enter a valid Ghana phone number (e.g. 0247140856 or +233247140856)",
+  });
+
+const optionalEmail = z.union([
+  z.literal(""),
+  emailField,
+]);
+
+const streetAddress = z
+  .string()
+  .trim()
+  .min(2, "Street address is required")
+  .max(200, "Street address must be less than 200 characters");
+
+const cityTown = z
+  .string()
+  .trim()
+  .min(2, "City / town is required")
+  .max(100, "City / town must be less than 100 characters")
+  .regex(
+    /^[a-zA-Z0-9\s\-'.]+$/,
+    "City can only contain letters, numbers, spaces, hyphens, apostrophes and dots"
+  );
+
+const ghanaRegion = z.enum(GHANA_REGIONS, {
+  message: "Please select a valid Ghana region",
+});
+
+/** Customer-facing "Your details" fields on checkout (guest or create-account). */
+export const checkoutDetailsSchema = z.object({
+  fullName: personName,
+  phone: ghanaPhoneRequired,
+  email: optionalEmail,
+  password: z
+    .string()
+    .max(128, "Password must be less than 128 characters")
+    .optional()
+    .or(z.literal("")),
+  line1: streetAddress,
+  city: cityTown,
+  region: ghanaRegion,
+});
+
+export type CheckoutDetailsData = z.infer<typeof checkoutDetailsSchema>;
+
+export function checkoutDetailsSchemaForMode(
+  mode: "guest" | "account",
+  hasUser: boolean
+) {
+  return checkoutDetailsSchema.superRefine((data, ctx) => {
+    if (mode === "account" && !hasUser) {
+      if (!data.email?.trim()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["email"],
+          message: "Email is required to create an account",
+        });
+      }
+      if (!data.password || data.password.length < 6) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["password"],
+          message: "Password must be at least 6 characters",
+        });
+      }
+    }
+  });
+}
+
 export const checkoutLineSchema = z.object({
   bookId: z.string().uuid("Invalid book id"),
   format: z.enum(["hardcover", "paperback", "ebook", "audiobook"]),
@@ -101,30 +178,16 @@ export const checkoutSchema = z.object({
   provider: z.enum(["moolre"]).default("moolre"),
   paymentMethod: z.enum(["momo", "card"]).optional(),
   customerName: personName,
-  phone: z
-    .string()
-    .trim()
-    .min(9, "A valid phone number is required")
-    .max(20)
-    .refine(validateGhanaPhone, {
-      message: "Please enter a valid Ghana phone number",
-    }),
-  email: z
-    .string()
-    .trim()
-    .email("Email looks invalid")
-    .max(254)
-    .transform((v) => v.toLowerCase())
-    .optional()
-    .or(z.literal("")),
+  phone: ghanaPhoneRequired,
+  email: optionalEmail,
   shippingAddress: z.object({
     fullName: personName.optional(),
-    line1: z.string().trim().min(2, "Street address is required").max(200),
-    city: z.string().trim().min(2, "City / town is required").max(100),
-    region: z.string().trim().min(2).max(100).default("Greater Accra"),
+    line1: streetAddress,
+    city: cityTown,
+    region: ghanaRegion.default("Greater Accra"),
     country: z.string().trim().max(80).default("Ghana"),
     phone: z.string().trim().max(20).optional(),
-    email: z.string().trim().email().max(254).optional().or(z.literal("")),
+    email: optionalEmail,
   }),
   lines: z.array(checkoutLineSchema).min(1, "Cart is empty").max(50),
   couponCode: z.string().trim().max(40).optional(),
@@ -133,8 +196,6 @@ export const checkoutSchema = z.object({
 });
 
 export type CheckoutData = z.infer<typeof checkoutSchema>;
-
-export { GHANA_REGIONS };
 
 export function getFirstError(error: z.ZodError): string {
   return error.issues[0]?.message || "Validation failed";
