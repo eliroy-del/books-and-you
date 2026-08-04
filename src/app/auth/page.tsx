@@ -10,8 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { authCredentialsSchema } from "@/lib/validation";
+import {
+  getFieldErrors,
+  getFirstError,
+  signInSchema,
+  signUpSchema,
+  type SignInData,
+  type SignUpData,
+} from "@/lib/validation";
 import { sanitize, sanitizeEmail } from "@/lib/sanitize";
+import { cn } from "@/lib/utils";
 
 function AuthForm() {
   const router = useRouter();
@@ -19,27 +27,66 @@ function AuthForm() {
   const next = params.get("next") || "/";
   const { signIn, signUp, configured } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [signInData, setSignInData] = useState<SignInData>({
+    email: "",
+    password: "",
+  });
+  const [signUpData, setSignUpData] = useState<SignUpData>({
+    fullName: "",
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  async function submit(mode: "signin" | "signup") {
-    const parsed = authCredentialsSchema.safeParse({
-      email,
-      password,
-      fullName: mode === "signup" ? fullName || email.split("@")[0] || "Reader" : undefined,
+  function clearFieldError(field: string) {
+    setErrors((prev) => {
+      if (!prev[field]) return prev;
+      const nextErrors = { ...prev };
+      delete nextErrors[field];
+      return nextErrors;
     });
+  }
+
+  function validateSignInField(field: keyof SignInData, value: string) {
+    const result = signInSchema.shape[field].safeParse(value);
+    setErrors((prev) => {
+      const nextErrors = { ...prev };
+      if (!result.success) {
+        nextErrors[field] = result.error.issues[0]?.message || "Invalid";
+      } else {
+        delete nextErrors[field];
+      }
+      return nextErrors;
+    });
+  }
+
+  function validateSignUpField(field: keyof SignUpData, value: string) {
+    const result = signUpSchema.shape[field].safeParse(value);
+    setErrors((prev) => {
+      const nextErrors = { ...prev };
+      if (!result.success) {
+        nextErrors[field] = result.error.issues[0]?.message || "Invalid";
+      } else {
+        delete nextErrors[field];
+      }
+      return nextErrors;
+    });
+  }
+
+  async function handleSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    const parsed = signInSchema.safeParse(signInData);
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message || "Please check your details");
+      setErrors(getFieldErrors(parsed.error));
+      toast.error(getFirstError(parsed.error));
       return;
     }
+
     setLoading(true);
+    setErrors({});
     const cleanEmail = sanitizeEmail(parsed.data.email);
-    const cleanName = sanitize(parsed.data.fullName || cleanEmail.split("@")[0] || "Reader");
-    const result =
-      mode === "signin"
-        ? await signIn(cleanEmail, parsed.data.password)
-        : await signUp(cleanEmail, parsed.data.password, cleanName);
+    const result = await signIn(cleanEmail, parsed.data.password);
     setLoading(false);
 
     if (result.error) {
@@ -47,7 +94,40 @@ function AuthForm() {
       return;
     }
 
-    toast.success(mode === "signin" ? "Welcome back" : "Account created");
+    toast.success("Welcome back");
+    router.push(next);
+    router.refresh();
+  }
+
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    const parsed = signUpSchema.safeParse(signUpData);
+    if (!parsed.success) {
+      setErrors(getFieldErrors(parsed.error));
+      toast.error(getFirstError(parsed.error));
+      return;
+    }
+
+    setLoading(true);
+    setErrors({});
+    const cleanEmail = sanitizeEmail(parsed.data.email);
+    const cleanName = sanitize(parsed.data.fullName);
+    if (cleanName.length < 2) {
+      setErrors({ fullName: "Name must be at least 2 characters" });
+      setLoading(false);
+      toast.error("Please enter a valid full name");
+      return;
+    }
+
+    const result = await signUp(cleanEmail, parsed.data.password, cleanName);
+    setLoading(false);
+
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success("Account created");
     router.push(next);
     router.refresh();
   }
@@ -67,84 +147,175 @@ function AuthForm() {
           ) : null}
         </div>
 
-        <Tabs defaultValue="signin">
+        <Tabs
+          value={mode}
+          onValueChange={(value) => {
+            setMode(value as "signin" | "signup");
+            setErrors({});
+          }}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign in</TabsTrigger>
             <TabsTrigger value="signup">Create account</TabsTrigger>
           </TabsList>
-          <TabsContent value="signin" className="mt-6 space-y-4">
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                className="mt-1.5"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@email.com"
-                autoComplete="email"
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                className="mt-1.5"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Your password"
-                autoComplete="current-password"
-              />
-            </div>
-            <Button className="w-full" disabled={loading || !configured} onClick={() => submit("signin")}>
-              {loading ? "Signing in…" : "Sign in"}
-            </Button>
+
+          <TabsContent value="signin" className="mt-6">
+            <form className="space-y-4" onSubmit={handleSignIn} noValidate>
+              <div>
+                <Label htmlFor="signin-email">Email</Label>
+                <Input
+                  id="signin-email"
+                  name="email"
+                  type="email"
+                  className={cn("mt-1.5", errors.email && "border-destructive")}
+                  value={signInData.email}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSignInData((prev) => ({ ...prev, email: value }));
+                    validateSignInField("email", value);
+                  }}
+                  onBlur={(e) => validateSignInField("email", e.target.value)}
+                  placeholder="you@email.com"
+                  autoComplete="email"
+                  inputMode="email"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "signin-email-error" : undefined}
+                />
+                {errors.email ? (
+                  <p id="signin-email-error" className="text-destructive mt-1 text-xs">
+                    {errors.email}
+                  </p>
+                ) : null}
+              </div>
+              <div>
+                <Label htmlFor="signin-password">Password</Label>
+                <Input
+                  id="signin-password"
+                  name="password"
+                  type="password"
+                  className={cn("mt-1.5", errors.password && "border-destructive")}
+                  value={signInData.password}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSignInData((prev) => ({ ...prev, password: value }));
+                    clearFieldError("password");
+                  }}
+                  onBlur={(e) => validateSignInField("password", e.target.value)}
+                  placeholder="Your password"
+                  autoComplete="current-password"
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={errors.password ? "signin-password-error" : undefined}
+                />
+                {errors.password ? (
+                  <p id="signin-password-error" className="text-destructive mt-1 text-xs">
+                    {errors.password}
+                  </p>
+                ) : null}
+              </div>
+              <Button className="w-full" type="submit" disabled={loading || !configured}>
+                {loading ? "Signing in…" : "Sign in"}
+              </Button>
+            </form>
           </TabsContent>
-          <TabsContent value="signup" className="mt-6 space-y-4">
-            <div>
-              <Label htmlFor="name">Full name</Label>
-              <Input
-                id="name"
-                className="mt-1.5"
-                placeholder="Your name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                autoComplete="name"
-              />
-            </div>
-            <div>
-              <Label htmlFor="email2">Email</Label>
-              <Input
-                id="email2"
-                type="email"
-                className="mt-1.5"
-                placeholder="you@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-              />
-            </div>
-            <div>
-              <Label htmlFor="password2">Password</Label>
-              <Input
-                id="password2"
-                type="password"
-                className="mt-1.5"
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-              />
-            </div>
-            <Button className="w-full" disabled={loading || !configured} onClick={() => submit("signup")}>
-              {loading ? "Creating…" : "Create account"}
-            </Button>
+
+          <TabsContent value="signup" className="mt-6">
+            <form className="space-y-4" onSubmit={handleSignUp} noValidate>
+              <div>
+                <Label htmlFor="signup-fullName">Full name</Label>
+                <Input
+                  id="signup-fullName"
+                  name="fullName"
+                  className={cn("mt-1.5", errors.fullName && "border-destructive")}
+                  placeholder="Your name"
+                  value={signUpData.fullName}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSignUpData((prev) => ({ ...prev, fullName: value }));
+                    validateSignUpField("fullName", value);
+                  }}
+                  onBlur={(e) => validateSignUpField("fullName", e.target.value)}
+                  autoComplete="name"
+                  aria-invalid={Boolean(errors.fullName)}
+                  aria-describedby={errors.fullName ? "signup-fullName-error" : undefined}
+                />
+                {errors.fullName ? (
+                  <p id="signup-fullName-error" className="text-destructive mt-1 text-xs">
+                    {errors.fullName}
+                  </p>
+                ) : null}
+              </div>
+              <div>
+                <Label htmlFor="signup-email">Email</Label>
+                <Input
+                  id="signup-email"
+                  name="email"
+                  type="email"
+                  className={cn("mt-1.5", errors.email && "border-destructive")}
+                  placeholder="you@email.com"
+                  value={signUpData.email}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSignUpData((prev) => ({ ...prev, email: value }));
+                    validateSignUpField("email", value);
+                  }}
+                  onBlur={(e) => validateSignUpField("email", e.target.value)}
+                  autoComplete="email"
+                  inputMode="email"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "signup-email-error" : undefined}
+                />
+                {errors.email ? (
+                  <p id="signup-email-error" className="text-destructive mt-1 text-xs">
+                    {errors.email}
+                  </p>
+                ) : null}
+              </div>
+              <div>
+                <Label htmlFor="signup-password">Password</Label>
+                <Input
+                  id="signup-password"
+                  name="password"
+                  type="password"
+                  className={cn("mt-1.5", errors.password && "border-destructive")}
+                  placeholder="Create a password"
+                  value={signUpData.password}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSignUpData((prev) => ({ ...prev, password: value }));
+                    clearFieldError("password");
+                  }}
+                  onBlur={(e) => validateSignUpField("password", e.target.value)}
+                  autoComplete="new-password"
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={errors.password ? "signup-password-error" : undefined}
+                />
+                {errors.password ? (
+                  <p id="signup-password-error" className="text-destructive mt-1 text-xs">
+                    {errors.password}
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    At least 6 characters.
+                  </p>
+                )}
+              </div>
+              <Button className="w-full" type="submit" disabled={loading || !configured}>
+                {loading ? "Creating…" : "Create account"}
+              </Button>
+            </form>
           </TabsContent>
         </Tabs>
 
         <p className="text-muted-foreground mt-6 text-center text-xs">
-          By continuing you agree to our Terms and Privacy Policy.
+          By continuing you agree to our{" "}
+          <Link href="/support" className="underline underline-offset-2 hover:text-foreground">
+            Terms
+          </Link>{" "}
+          and{" "}
+          <Link href="/support" className="underline underline-offset-2 hover:text-foreground">
+            Privacy Policy
+          </Link>
+          .
         </p>
         <Button variant="link" className="mt-2 w-full" asChild>
           <Link href="/">Back to store</Link>

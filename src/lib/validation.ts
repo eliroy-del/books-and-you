@@ -15,13 +15,14 @@ export function validateGhanaPhone(phone: string): boolean {
   return false;
 }
 
+/** Letters (incl. accented / Unicode), spaces, hyphens, apostrophes, dots. */
 const personName = z
   .string()
   .trim()
   .min(2, "Name must be at least 2 characters")
   .max(100, "Name must be less than 100 characters")
   .regex(
-    /^[a-zA-Z\s\-'.]+$/,
+    /^[\p{L}\s\-'.]+$/u,
     "Name can only contain letters, spaces, hyphens, apostrophes and dots"
   );
 
@@ -31,6 +32,11 @@ const emailField = z
   .email("Please enter a valid email address")
   .max(254, "Email must be less than 254 characters")
   .transform((v) => v.toLowerCase());
+
+const passwordField = z
+  .string()
+  .min(6, "Password must be at least 6 characters")
+  .max(128, "Password must be less than 128 characters");
 
 export const contactFormSchema = z.object({
   name: personName,
@@ -59,12 +65,25 @@ export const newsletterSchema = z.object({
 
 export type NewsletterData = z.infer<typeof newsletterSchema>;
 
+export const signInSchema = z.object({
+  email: emailField,
+  password: passwordField,
+});
+
+export type SignInData = z.infer<typeof signInSchema>;
+
+export const signUpSchema = z.object({
+  fullName: personName,
+  email: emailField,
+  password: passwordField,
+});
+
+export type SignUpData = z.infer<typeof signUpSchema>;
+
+/** @deprecated Prefer signInSchema / signUpSchema */
 export const authCredentialsSchema = z.object({
   email: emailField,
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(128, "Password must be less than 128 characters"),
+  password: passwordField,
   fullName: personName.optional(),
 });
 
