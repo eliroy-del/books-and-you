@@ -33,7 +33,8 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const protectedPaths = ["/dashboard", "/orders", "/library", "/checkout", "/wishlist"];
+  // Checkout stays public so Buy now / cart can go straight there; guest vs account is chosen on the page.
+  const protectedPaths = ["/dashboard", "/orders", "/library", "/wishlist"];
   const staffPaths = ["/admin", "/superadmin"];
   const isProtected = protectedPaths.some(
     (p) => path === p || path.startsWith(`${p}/`)
