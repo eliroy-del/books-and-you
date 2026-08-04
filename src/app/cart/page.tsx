@@ -56,9 +56,6 @@ export default function CartPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-heading text-3xl font-bold tracking-tight">Your cart</h1>
-      <p className="text-muted-foreground mt-2 text-sm">
-        Free nationwide delivery above {formatMoney(siteConfig.freeDeliveryThreshold)}.
-      </p>
 
       {items.length > 0 && lines.length === 0 && !loaded ? (
         <div className="mt-12 rounded-3xl border border-dashed border-border p-12 text-center">
