@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { Check, CreditCard, Truck } from "lucide-react";
+import { Check, CreditCard, CircleUserRound, Truck, User } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import { formatMoney, siteConfig } from "@/data/mock";
 import { useCartStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
 import type { Book } from "@/types";
+
+type CheckoutMode = "guest" | "account";
 
 const providers = [
   { id: "moolre", name: "Moolre", hint: "Mobile Money · Cards" },
@@ -41,7 +43,7 @@ const GHANA_REGIONS = [
 
 function CheckoutInner() {
   const searchParams = useSearchParams();
-  const { user, profile } = useAuth();
+  const { user, profile, signUp } = useAuth();
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
   const pruneInvalid = useCartStore((s) => s.pruneInvalid);
@@ -56,10 +58,12 @@ function CheckoutInner() {
   const [shippingCents, setShippingCents] = useState(25);
   const [shippingLabel, setShippingLabel] = useState("Nationwide");
   const [verifying, setVerifying] = useState(false);
+  const [checkoutMode, setCheckoutMode] = useState<CheckoutMode>("guest");
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [line1, setLine1] = useState("");
   const [city, setCity] = useState("Accra");
   const [region, setRegion] = useState("Greater Accra");
@@ -214,8 +218,30 @@ function CheckoutInner() {
       return;
     }
 
+    const wantsAccount = !user && checkoutMode === "account";
+    if (wantsAccount) {
+      if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        toast.error("Email is required to create an account");
+        return;
+      }
+      if (password.length < 6) {
+        toast.error("Password must be at least 6 characters");
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
+      if (wantsAccount) {
+        const created = await signUp(email.trim(), password, fullName.trim());
+        if (created.error) {
+          toast.error(created.error);
+          setSubmitting(false);
+          return;
+        }
+        toast.success("Account created");
+      }
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -322,20 +348,125 @@ function CheckoutInner() {
     );
   }
 
+  const showModePicker = !user;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-heading text-3xl font-bold tracking-tight">Checkout</h1>
       <p className="text-muted-foreground mt-2 text-sm">
-        Guest checkout welcome · free delivery above{" "}
-        {formatMoney(siteConfig.freeDeliveryThreshold)}
+        Free delivery above {formatMoney(siteConfig.freeDeliveryThreshold)}
       </p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-12">
         <div className="space-y-8 lg:col-span-7">
+          {showModePicker ? (
+            <section>
+              <h2 className="font-heading text-lg font-semibold">Checkout as</h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setCheckoutMode("guest")}
+                  className={cn(
+                    "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
+                    checkoutMode === "guest"
+                      ? "border-primary bg-primary/5 shadow-soft"
+                      : "border-border bg-card hover:border-primary/30"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full",
+                      checkoutMode === "guest"
+                        ? "bg-primary/15 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    <User className="size-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="font-heading block text-base font-semibold">
+                      Guest Checkout
+                    </span>
+                    <span className="text-muted-foreground mt-1 block text-sm leading-snug">
+                      Quick checkout without creating an account.
+                    </span>
+                  </span>
+                  <span
+                    className={cn(
+                      "absolute top-3 right-3 flex size-5 items-center justify-center rounded-full border",
+                      checkoutMode === "guest"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border"
+                    )}
+                  >
+                    {checkoutMode === "guest" ? <Check className="size-3" /> : null}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCheckoutMode("account")}
+                  className={cn(
+                    "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
+                    checkoutMode === "account"
+                      ? "border-primary bg-primary/5 shadow-soft"
+                      : "border-border bg-card hover:border-primary/30"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full",
+                      checkoutMode === "account"
+                        ? "bg-primary/15 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    <CircleUserRound className="size-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="font-heading block text-base font-semibold">
+                      Create Account
+                    </span>
+                    <span className="text-muted-foreground mt-1 block text-sm leading-snug">
+                      Save info, track orders &amp; earn loyalty points.
+                    </span>
+                  </span>
+                  <span
+                    className={cn(
+                      "absolute top-3 right-3 flex size-5 items-center justify-center rounded-full border",
+                      checkoutMode === "account"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border"
+                    )}
+                  >
+                    {checkoutMode === "account" ? <Check className="size-3" /> : null}
+                  </span>
+                </button>
+              </div>
+              {checkoutMode === "account" ? (
+                <p className="text-muted-foreground mt-3 text-xs">
+                  Already have an account?{" "}
+                  <Link href="/auth?next=/checkout" className="text-primary hover:underline">
+                    Sign in
+                  </Link>
+                </p>
+              ) : null}
+            </section>
+          ) : (
+            <section className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
+              Checking out as{" "}
+              <span className="font-medium">
+                {profile?.full_name || user?.email || "signed-in customer"}
+              </span>
+            </section>
+          )}
+
           <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
             <h2 className="font-heading text-lg font-semibold">Your details</h2>
             <p className="text-muted-foreground mt-1 text-sm">
-              No account needed. We only need this to deliver your order.
+              {checkoutMode === "account" && !user
+                ? "Create your account while placing this order."
+                : "We only need this to deliver your order."}
             </p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
@@ -364,7 +495,9 @@ function CheckoutInner() {
                 />
               </div>
               <div>
-                <Label htmlFor="email">Email (optional)</Label>
+                <Label htmlFor="email">
+                  Email {checkoutMode === "account" && !user ? "*" : "(optional)"}
+                </Label>
                 <Input
                   id="email"
                   type="email"
@@ -373,8 +506,24 @@ function CheckoutInner() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@email.com"
                   autoComplete="email"
+                  required={checkoutMode === "account" && !user}
                 />
               </div>
+              {checkoutMode === "account" && !user ? (
+                <div className="sm:col-span-2">
+                  <Label htmlFor="password">Password *</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    className="mt-1.5"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="At least 6 characters"
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+              ) : null}
             </div>
           </section>
 
@@ -516,7 +665,9 @@ function CheckoutInner() {
             >
               {submitting
                 ? "Processing…"
-                : `Pay ${formatMoney(total)} with ${providers.find((p) => p.id === provider)?.name}`}
+                : checkoutMode === "account" && !user
+                  ? `Create account & pay ${formatMoney(total)}`
+                  : `Pay ${formatMoney(total)} with ${providers.find((p) => p.id === provider)?.name}`}
             </Button>
             {staleCart ? (
               <Button
@@ -535,15 +686,6 @@ function CheckoutInner() {
                 {staleCart ? "Browse books" : "Back to cart"}
               </Link>
             </Button>
-            {!user ? (
-              <p className="text-muted-foreground mt-3 text-center text-xs">
-                Have an account?{" "}
-                <Link href="/auth?next=/checkout" className="text-primary hover:underline">
-                  Sign in
-                </Link>{" "}
-                (optional)
-              </p>
-            ) : null}
           </div>
         </aside>
       </div>
