@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Download, RotateCcw, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatMoney, sampleOrders } from "@/data/mock";
+import { formatMoney } from "@/data/mock";
 import { subscribeOrderStatus } from "@/lib/services/inventory";
 import type { Order, OrderStatus } from "@/types";
 import { cn } from "@/lib/utils";
@@ -14,30 +14,44 @@ import { useAuth } from "@/components/providers/auth-provider";
 const steps: OrderStatus[] = ["ordered", "packed", "shipped", "delivered", "completed"];
 
 export default function OrdersPage() {
-  const { user, configured } = useAuth();
-  const [orders, setOrders] = useState<Order[]>(sampleOrders);
+  const { user, loading: authLoading } = useAuth();
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
     let cancelled = false;
+
+    if (!user) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     (async () => {
       try {
         const res = await fetch("/api/me?type=orders");
         if (res.ok) {
           const data = (await res.json()) as { orders?: Order[] };
-          if (!cancelled && data.orders?.length) setOrders(data.orders);
+          if (!cancelled) setOrders(data.orders || []);
+        } else if (!cancelled) {
+          setOrders([]);
         }
+      } catch {
+        if (!cancelled) setOrders([]);
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, authLoading]);
 
   useEffect(() => {
-    if (!configured || !orders[0]?.id || orders[0].id.startsWith("ord-")) return;
+    if (!user || !orders[0]?.id || orders[0].id.startsWith("ord-")) return;
     return subscribeOrderStatus(orders[0].id, (status) => {
       setOrders((prev) =>
         prev.map((o, i) =>
@@ -45,7 +59,27 @@ export default function OrdersPage() {
         )
       );
     });
-  }, [configured, orders]);
+  }, [user, orders]);
+
+  if (!authLoading && !user) {
+    return (
+      <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-24 text-center">
+        <h1 className="font-heading text-3xl font-bold tracking-tight">Orders</h1>
+        <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+          Sign in to view order history. Guest checkouts are confirmed by phone or email after
+          payment.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Button asChild>
+            <Link href="/auth?next=/orders">Sign in</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/books">Continue shopping</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -53,8 +87,7 @@ export default function OrdersPage() {
         <div>
           <h1 className="font-heading text-3xl font-bold tracking-tight">Orders</h1>
           <p className="text-muted-foreground mt-2 text-sm">
-            Timeline tracking, invoices, and repeat purchases
-            {configured ? " · live status when linked" : " · demo data"}.
+            Timeline tracking, invoices, and repeat purchases.
           </p>
         </div>
         <Button variant="outline" asChild>
@@ -62,8 +95,15 @@ export default function OrdersPage() {
         </Button>
       </div>
 
-      {loading ? (
+      {loading || authLoading ? (
         <p className="text-muted-foreground mt-10 text-sm">Loading orders…</p>
+      ) : orders.length === 0 ? (
+        <div className="mt-16 text-center">
+          <p className="text-muted-foreground text-sm">No orders yet.</p>
+          <Button className="mt-6" asChild>
+            <Link href="/books">Browse books</Link>
+          </Button>
+        </div>
       ) : (
         <div className="mt-10 space-y-6">
           {orders.map((order) => {

@@ -82,11 +82,6 @@ export function SiteFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/dashboard" className="hover:text-teal-300">
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
                   <span className="cursor-default">Privacy</span>
                 </li>
                 <li>

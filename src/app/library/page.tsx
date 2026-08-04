@@ -6,32 +6,66 @@ import { Bookmark, Highlighter, StickyNote } from "lucide-react";
 import { BookCover } from "@/components/books/book-cover";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { getBookById, libraryBooks as mockLibrary } from "@/data/mock";
+import { getBookById } from "@/data/mock";
 import type { LibraryBook } from "@/types";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export default function LibraryPage() {
-  const { user } = useAuth();
-  const [items, setItems] = useState<LibraryBook[]>(mockLibrary);
+  const { user, loading: authLoading } = useAuth();
+  const [items, setItems] = useState<LibraryBook[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
     let cancelled = false;
+
+    if (!user) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     (async () => {
       try {
         const res = await fetch("/api/me?type=library");
         if (res.ok) {
           const data = (await res.json()) as { items?: LibraryBook[] };
-          if (!cancelled && data.items?.length) setItems(data.items);
+          if (!cancelled) setItems(data.items || []);
+        } else if (!cancelled) {
+          setItems([]);
         }
+      } catch {
+        if (!cancelled) setItems([]);
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, authLoading]);
+
+  if (!authLoading && !user) {
+    return (
+      <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-24 text-center">
+        <h1 className="font-heading text-3xl font-bold tracking-tight">Digital library</h1>
+        <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+          Sign in to access purchased eBooks, progress, and notes. You can still browse and buy
+          as a guest.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Button asChild>
+            <Link href="/auth?next=/library">Sign in</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/books">Browse books</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const continueReading = [...items].sort(
     (a, b) => new Date(b.lastOpenedAt).getTime() - new Date(a.lastOpenedAt).getTime()
@@ -51,8 +85,15 @@ export default function LibraryPage() {
         </Button>
       </div>
 
-      {loading ? (
+      {loading || authLoading ? (
         <p className="text-muted-foreground mt-10 text-sm">Loading library…</p>
+      ) : items.length === 0 ? (
+        <div className="mt-16 text-center">
+          <p className="text-muted-foreground text-sm">No eBooks in your library yet.</p>
+          <Button className="mt-6" asChild>
+            <Link href="/books">Browse books</Link>
+          </Button>
+        </div>
       ) : (
         <>
           <section className="mt-10">

@@ -92,11 +92,13 @@ function CheckoutInner() {
   }, [pruneInvalid]);
 
   useEffect(() => {
+    // Only fill from account when the shopper chooses account checkout.
+    if (checkoutMode !== "account" || !user) return;
     if (profile?.full_name && !fullName) setFullName(profile.full_name);
-    if ((profile?.email || user?.email) && !email) {
-      setEmail(profile?.email || user?.email || "");
+    if ((profile?.email || user.email) && !email) {
+      setEmail(profile?.email || user.email || "");
     }
-  }, [profile, user, fullName, email]);
+  }, [checkoutMode, profile, user, fullName, email]);
 
   useEffect(() => {
     let cancelled = false;
@@ -385,115 +387,106 @@ function CheckoutInner() {
     );
   }
 
-  const showModePicker = !user;
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-heading text-3xl font-bold tracking-tight">Checkout</h1>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-12">
         <div className="space-y-8 lg:col-span-7">
-          {showModePicker ? (
-            <section>
-              <h2 className="font-heading text-lg font-semibold">Checkout as</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => setCheckoutMode("guest")}
+          <section>
+            <h2 className="font-heading text-lg font-semibold">Checkout as</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setCheckoutMode("guest")}
+                className={cn(
+                  "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
+                  checkoutMode === "guest"
+                    ? "border-primary bg-primary/5 shadow-soft"
+                    : "border-border bg-card hover:border-primary/30"
+                )}
+              >
+                <span
                   className={cn(
-                    "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
+                    "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full",
                     checkoutMode === "guest"
-                      ? "border-primary bg-primary/5 shadow-soft"
-                      : "border-border bg-card hover:border-primary/30"
+                      ? "bg-primary/15 text-primary"
+                      : "bg-muted text-muted-foreground"
                   )}
                 >
-                  <span
-                    className={cn(
-                      "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full",
-                      checkoutMode === "guest"
-                        ? "bg-primary/15 text-primary"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    <User className="size-5" />
+                  <User className="size-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="font-heading block text-base font-semibold">
+                    Guest Checkout
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="font-heading block text-base font-semibold">
-                      Guest Checkout
-                    </span>
-                    <span className="text-muted-foreground mt-1 block text-sm leading-snug">
-                      Quick checkout without creating an account.
-                    </span>
+                  <span className="text-muted-foreground mt-1 block text-sm leading-snug">
+                    Quick checkout without creating an account.
                   </span>
-                  <span
-                    className={cn(
-                      "absolute top-3 right-3 flex size-5 items-center justify-center rounded-full border",
-                      checkoutMode === "guest"
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border"
-                    )}
-                  >
-                    {checkoutMode === "guest" ? <Check className="size-3" /> : null}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setCheckoutMode("account")}
+                </span>
+                <span
                   className={cn(
-                    "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
-                    checkoutMode === "account"
-                      ? "border-primary bg-primary/5 shadow-soft"
-                      : "border-border bg-card hover:border-primary/30"
+                    "absolute top-3 right-3 flex size-5 items-center justify-center rounded-full border",
+                    checkoutMode === "guest"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border"
                   )}
                 >
-                  <span
-                    className={cn(
-                      "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full",
-                      checkoutMode === "account"
-                        ? "bg-primary/15 text-primary"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    <CircleUserRound className="size-5" />
+                  {checkoutMode === "guest" ? <Check className="size-3" /> : null}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCheckoutMode("account")}
+                className={cn(
+                  "relative flex items-start gap-3 rounded-2xl border p-4 text-left transition",
+                  checkoutMode === "account"
+                    ? "border-primary bg-primary/5 shadow-soft"
+                    : "border-border bg-card hover:border-primary/30"
+                )}
+              >
+                <span
+                  className={cn(
+                    "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full",
+                    checkoutMode === "account"
+                      ? "bg-primary/15 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  <CircleUserRound className="size-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="font-heading block text-base font-semibold">
+                    {user ? "Use my account" : "Create Account"}
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="font-heading block text-base font-semibold">
-                      Create Account
-                    </span>
-                    <span className="text-muted-foreground mt-1 block text-sm leading-snug">
-                      Save info, track orders &amp; earn loyalty points.
-                    </span>
+                  <span className="text-muted-foreground mt-1 block text-sm leading-snug">
+                    {user
+                      ? `Continue as ${profile?.full_name || user.email || "signed-in customer"}.`
+                      : "Save info, track orders & earn loyalty points."}
                   </span>
-                  <span
-                    className={cn(
-                      "absolute top-3 right-3 flex size-5 items-center justify-center rounded-full border",
-                      checkoutMode === "account"
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border"
-                    )}
-                  >
-                    {checkoutMode === "account" ? <Check className="size-3" /> : null}
-                  </span>
-                </button>
-              </div>
-              {checkoutMode === "account" ? (
-                <p className="text-muted-foreground mt-3 text-xs">
-                  Already have an account?{" "}
-                  <Link href="/auth?next=/checkout" className="text-primary hover:underline">
-                    Sign in
-                  </Link>
-                </p>
-              ) : null}
-            </section>
-          ) : (
-            <section className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
-              Checking out as{" "}
-              <span className="font-medium">
-                {profile?.full_name || user?.email || "signed-in customer"}
-              </span>
-            </section>
-          )}
+                </span>
+                <span
+                  className={cn(
+                    "absolute top-3 right-3 flex size-5 items-center justify-center rounded-full border",
+                    checkoutMode === "account"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border"
+                  )}
+                >
+                  {checkoutMode === "account" ? <Check className="size-3" /> : null}
+                </span>
+              </button>
+            </div>
+            {checkoutMode === "account" && !user ? (
+              <p className="text-muted-foreground mt-3 text-xs">
+                Already have an account?{" "}
+                <Link href="/auth?next=/checkout" className="text-primary hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            ) : null}
+          </section>
 
           <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
             <h2 className="font-heading text-lg font-semibold">Your details</h2>

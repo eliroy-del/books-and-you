@@ -53,6 +53,8 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const DEMO_KEY = "books-and-you-demo-auth";
+/** One-time clear of leftover browser sessions so the storefront opens as guest. */
+const GUEST_FIRST_KEY = "bay-guest-first-v1";
 
 type DemoSession = {
   id: string;
@@ -128,7 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
 
     async function init() {
-      // Production / live mode: never restore fake demo sessions.
+      // Never restore fake demo sessions unless explicitly allowed.
       if (!demoAllowed) {
         clearDemoArtifacts();
       }
@@ -151,6 +153,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               role_key: DEMO_STAFF_BY_EMAIL[demo.email.toLowerCase()] || null,
             });
           }
+        } else if (typeof window !== "undefined") {
+          localStorage.setItem(GUEST_FIRST_KEY, "1");
         }
         if (mounted) setLoading(false);
         return;
@@ -162,13 +166,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      // Drop leftover test sessions once so visitors land as guests.
+      const needsGuestReset =
+        typeof window !== "undefined" && !localStorage.getItem(GUEST_FIRST_KEY);
+      if (needsGuestReset) {
+        localStorage.setItem(GUEST_FIRST_KEY, "1");
+        clearDemoArtifacts();
+        await supabase.auth.signOut();
+      }
 
-      if (session?.user && mounted) {
-        setUser(session.user);
-        setProfile(await loadProfile(session.user.id));
+      const {
+        data: { user: authedUser },
+      } = await supabase.auth.getUser();
+
+      if (authedUser && mounted) {
+        setUser(authedUser);
+        setProfile(await loadProfile(authedUser.id));
+      } else if (mounted) {
+        setUser(null);
+        setProfile(null);
       }
 
       const {

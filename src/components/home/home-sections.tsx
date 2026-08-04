@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { BookCard } from "@/components/books/book-card";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { Button } from "@/components/ui/button";
-import { currentUser, formatMoney, testimonials } from "@/data/mock";
+import { testimonials } from "@/data/mock";
 import { useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
 import type { Book, Collection } from "@/types";
 
@@ -115,24 +115,25 @@ export function SmartRecommendations() {
   const recommended = books
     .filter(
       (b) =>
-        currentUser.favoriteGenres.some((g) => b.genres.includes(g)) ||
         wishlistIds.includes(b.id) ||
         recentIds.includes(b.id) ||
-        b.staffPick
+        b.staffPick ||
+        b.featured ||
+        b.bestseller
     )
     .filter((b, i, arr) => arr.findIndex((x) => x.id === b.id) === i)
     .slice(0, 8);
 
-  const fallback = recommended.length ? recommended : books.filter((b) => b.featured).slice(0, 8);
+  const fallback = recommended.length ? recommended : books.slice(0, 8);
 
   return (
     <section className="border-y border-border/50 bg-secondary/40 py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Smart Recommendations"
-          description="Based on your genres, wishlist, and browsing history."
-          href="/dashboard"
-          linkLabel="Reading dashboard"
+          title="Popular picks"
+          description="Staff picks, bestsellers, and titles shoppers are browsing now."
+          href="/books"
+          linkLabel="Shop all"
         />
         <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {fallback.map((book, i) => (
@@ -267,23 +268,19 @@ export function ReferralSection() {
         <div className="relative grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="text-teal-200 text-sm font-semibold tracking-widest uppercase">
-              Referral program
+              For schools & parents
             </p>
             <h2 className="font-heading mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              Invite friends. Earn store credits.
+              Textbooks and supplies, ready for term.
             </h2>
             <p className="mt-4 max-w-md text-teal-50/80">
-              Share your code and unlock exclusive discounts when friends make their first
-              purchase. Your code:{" "}
-              <span className="font-semibold text-amber-300">{currentUser.referralCode}</span>
-            </p>
-            <p className="mt-2 text-sm text-teal-100/70">
-              Earnings to date: {formatMoney(currentUser.referralEarnings)}
+              Browse by class level, subject, and stationery. Checkout as a guest. No account
+              required.
             </p>
           </div>
           <div className="flex flex-wrap gap-3 lg:justify-end">
             <Button size="lg" className="bg-white text-teal-900 hover:bg-teal-50" asChild>
-              <Link href="/dashboard">Open rewards</Link>
+              <Link href="/books">Shop books</Link>
             </Button>
             <Button
               size="lg"
@@ -291,7 +288,7 @@ export function ReferralSection() {
               className="border-white/30 bg-transparent text-white hover:bg-white/10"
               asChild
             >
-              <Link href="/auth">Create account</Link>
+              <Link href="/categories">Browse categories</Link>
             </Button>
           </div>
         </div>
