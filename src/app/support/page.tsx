@@ -36,6 +36,18 @@ const faqs = [
     a: "Most Accra orders arrive in 1–2 business days. Same-day options appear at checkout when available.",
   },
   {
+    q: "Can I checkout without creating an account?",
+    a: "Yes. Choose Guest Checkout, enter your name, phone, and delivery address, then pay. Creating an account is optional if you want to save details later.",
+  },
+  {
+    q: "Do you accept Mobile Money and cards?",
+    a: "Yes. At checkout you can pay with Mobile Money (MTN, Telecel, AirtelTigo) or debit/card. Payments are processed securely through our payment partner.",
+  },
+  {
+    q: "Do you stock GES / standards-based school textbooks?",
+    a: "Yes. We focus on Ghana classroom titles by school level and subject, including standards-based learner books. Browse Categories by Nursery through SHS, or search the catalog.",
+  },
+  {
     q: "Can I read eBooks immediately?",
     a: "Yes. Digital purchases appear in your Library as soon as payment confirms.",
   },

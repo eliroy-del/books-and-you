@@ -8,9 +8,10 @@ Books & You is an online bookstore focused on Ghana classrooms, parents, and rea
 
 ## What we help with
 
-- Finding GES-aligned textbooks and learner books by class (Nursery, Primary, JHS, SHS)
+- Finding GES-aligned / standards-based textbooks and learner books by class (Nursery, Primary, JHS, SHS)
 - Stationery and classroom supplies for term start
-- Delivery in Greater Accra and nationwide Ghana shipping
+- Delivery in Greater Accra (typically 1–2 business days) and nationwide Ghana shipping
+- Guest checkout without an account; Mobile Money and card payment at checkout
 - Optional digital titles and a personal library when you create an account
 - Reading guides and bookstore notes on our blog
 
@@ -21,8 +22,9 @@ Books & You is an online bookstore focused on Ghana classrooms, parents, and rea
 - Focus market: Ghana (schools and parents)
 - Currency on site: GHS (GH₵)
 - Guest checkout: yes
+- Payments: Mobile Money and debit/card (see checkout)
 - Physical shop contact and hours: see https://booksandyou.shop/contact
-
+- Delivery and returns: see https://booksandyou.shop/support
 ## Public pages
 
 - Home: https://booksandyou.shop/
