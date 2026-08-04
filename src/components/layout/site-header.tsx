@@ -25,13 +25,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CatalogMegaMenu, MobileCatalogNav } from "@/components/layout/catalog-mega-menu";
+import {
+  CategoriesDropdown,
+  MobileCategoriesNav,
+} from "@/components/layout/categories-dropdown";
 
-const nav = [
-  { href: "/books", label: "All Books" },
-  { href: "/categories", label: "Browse" },
-  { href: "/contact", label: "Contact Us" },
+const simpleNav = [
   { href: "/blog", label: "Blog" },
-  { href: "/library", label: "Library" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function SiteHeader() {
@@ -59,23 +60,34 @@ export function SiteHeader() {
               </SheetTitle>
             </SheetHeader>
             <nav className="mt-4 flex flex-col gap-1 overflow-y-auto pb-8">
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
+                  pathname === "/" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+                )}
+              >
+                Home
+              </Link>
               <MobileCatalogNav onNavigate={() => setOpen(false)} />
+              <MobileCategoriesNav onNavigate={() => setOpen(false)} />
+              {simpleNav.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
+                    pathname.startsWith(item.href)
+                      ? "bg-primary/10 text-primary"
+                      : "hover:bg-muted"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
               <div className="mt-3 border-t border-border/60 pt-3">
-                {nav.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className={cn(
-                      "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors block",
-                      pathname.startsWith(item.href)
-                        ? "bg-primary/10 text-primary"
-                        : "hover:bg-muted"
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
                 <Link
                   href="/dashboard"
                   onClick={() => setOpen(false)}
@@ -98,8 +110,20 @@ export function SiteHeader() {
         <BrandLogo href="/" size="md" showWordmark={false} priority />
 
         <nav className="ml-1 hidden items-center gap-0.5 lg:flex">
+          <Link
+            href="/"
+            className={cn(
+              "rounded-xl px-3.5 py-2.5 text-[15px] font-medium transition-colors",
+              pathname === "/"
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Home
+          </Link>
           <CatalogMegaMenu />
-          {nav.map((item) => (
+          <CategoriesDropdown />
+          {simpleNav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
