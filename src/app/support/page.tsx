@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   BookOpen,
@@ -12,9 +13,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { siteConfig } from "@/data/mock";
+import { siteName, siteUrl } from "@/lib/seo";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Support",
+  description:
+    "Help with delivery, eBooks, refunds, and orders at Books & You. FAQs and ways to reach our Accra team.",
+  alternates: { canonical: "/support" },
+  openGraph: {
+    title: `Support · ${siteName}`,
+    description: "FAQs and contact options for Books & You customers.",
+    url: `${siteUrl}/support`,
+    type: "website",
+  },
 };
 
 const faqs = [

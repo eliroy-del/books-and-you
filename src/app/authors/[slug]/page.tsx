@@ -1,40 +1,70 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { BookCard } from "@/components/books/book-card";
-import type { Author, Book } from "@/types";
+import { listAuthors, getAuthorWithBooks } from "@/lib/services/authors";
+import { siteName, siteUrl } from "@/lib/seo";
 
-export default function AuthorDetailPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const [author, setAuthor] = useState<Author | null | undefined>(undefined);
-  const [books, setBooks] = useState<Book[]>([]);
+type Props = { params: Promise<{ slug: string }> };
 
-  useEffect(() => {
-    void fetch(`/api/catalog?resource=authors&slug=${encodeURIComponent(slug)}`)
-      .then((r) => r.json())
-      .then((json) => {
-        setAuthor(json.author ?? null);
-        setBooks(json.books || []);
-      });
-  }, [slug]);
+export async function generateStaticParams() {
+  const authors = await listAuthors(200);
+  return authors.map((a) => ({ slug: a.slug }));
+}
 
-  if (author === undefined) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 py-16">
-        <div className="bg-muted/50 h-40 animate-pulse rounded-3xl" />
-      </div>
-    );
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getAuthorWithBooks(slug);
+  if (!data) {
+    return { title: "Author not found" };
   }
+  const { author } = data;
+  const description = (
+    author.bio || `Books by ${author.name} at Books & You.`
+  ).slice(0, 160);
+  const url = `${siteUrl}/authors/${slug}`;
+  return {
+    title: author.name,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${author.name} · ${siteName}`,
+      description,
+      url,
+      type: "profile",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${author.name} · ${siteName}`,
+      description,
+    },
+  };
+}
 
-  if (!author) {
-    notFound();
-    return null;
-  }
+export default async function AuthorDetailPage({ params }: Props) {
+  const { slug } = await params;
+  const data = await getAuthorWithBooks(slug);
+  if (!data) notFound();
+
+  const { author, books } = data;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: {
+      "@type": "Person",
+      name: author.name,
+      description: author.bio,
+      url: `${siteUrl}/authors/${author.slug}`,
+      nationality: author.nationality || undefined,
+    },
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link href="/authors" className="text-primary text-sm font-medium hover:underline">
         ← All authors
       </Link>

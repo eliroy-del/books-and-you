@@ -90,6 +90,10 @@ eligible, without hurting Core Web Vitals. Follow these rules exactly.
 | Social share image (1200-wide brand banner) | `src/app/opengraph-image.png`, also `public/og.png` |
 | Dynamic sitemap (books, authors, categories from Supabase with mock fallback) | `src/app/sitemap.ts` → `/sitemap.xml` |
 | Robots rules (blocks admin/api/account routes) | `src/app/robots.ts` → `/robots.txt` |
+| AI crawler summary (`llms.txt`) | `public/llms.txt` |
+| Unique metadata + SSR authors / categories | `src/app/authors/**`, `src/app/categories/**` |
+| Book OG cover + `generateStaticParams` | `src/app/book/[slug]/page.tsx` |
+| `noindex` on cart/checkout/auth/account pages | `src/app/{cart,checkout,auth,dashboard,orders,library,wishlist}/layout.tsx` |
 | PWA web manifest | `src/app/manifest.ts` → `/manifest.webmanifest` |
 | JSON-LD: Organization + WebSite (SearchAction) | `src/app/layout.tsx` |
 | JSON-LD: Book + AggregateRating, per-book generateMetadata | `src/app/book/[slug]/page.tsx` |

@@ -1,23 +1,47 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { Author } from "@/types";
+import type { Metadata } from "next";
+import { listAuthors } from "@/lib/services/authors";
+import { siteName, siteUrl } from "@/lib/seo";
 
-export default function AuthorsPage() {
-  const [authors, setAuthors] = useState<Author[]>([]);
+export const metadata: Metadata = {
+  title: "Authors",
+  description:
+    "Discover authors at Books & You — Ghanaian voices, African literature, and textbook writers for every classroom.",
+  alternates: { canonical: "/authors" },
+  openGraph: {
+    title: `Authors · ${siteName}`,
+    description: "Browse authors and their books at Books & You.",
+    url: `${siteUrl}/authors`,
+    type: "website",
+  },
+};
 
-  useEffect(() => {
-    void fetch("/api/catalog?resource=authors&limit=50")
-      .then((r) => r.json())
-      .then((json) => {
-        setAuthors(json.authors || []);
-      });
-  }, []);
+export default async function AuthorsPage() {
+  const authors = await listAuthors(50);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `Authors · ${siteName}`,
+    url: `${siteUrl}/authors`,
+    mainEntity: authors.map((a) => ({
+      "@type": "Person",
+      name: a.name,
+      url: `${siteUrl}/authors/${a.slug}`,
+      description: a.bio.slice(0, 200),
+    })),
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <h1 className="font-heading text-3xl font-bold tracking-tight">Authors</h1>
+      <p className="text-muted-foreground mt-2 max-w-2xl text-sm">
+        Writers and educators featured across our catalog.
+      </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {authors.map((a) => (
           <Link

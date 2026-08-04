@@ -1,0 +1,34 @@
+# Books & You
+
+> Premium bookstore for Ghana schools, parents, and readers — textbooks, stationery, and curated titles at https://booksandyou.shop
+
+## About
+
+Books & You is an online bookstore focused on Ghana classrooms and everyday readers. Shop textbooks by school level and subject, stationery, and general titles. Guest checkout is supported; accounts are optional.
+
+## Site
+
+- Home: https://booksandyou.shop/
+- Catalog: https://booksandyou.shop/books
+- Categories: https://booksandyou.shop/categories
+- Authors: https://booksandyou.shop/authors
+- Blog: https://booksandyou.shop/blog
+- Contact: https://booksandyou.shop/contact
+- Support: https://booksandyou.shop/support
+
+## Crawl policy
+
+Public storefront pages may be indexed. Do not scrape or index private or transactional areas:
+
+- /api/
+- /admin, /superadmin
+- /dashboard, /auth
+- /cart, /checkout, /orders, /library, /wishlist
+
+Full rules: https://booksandyou.shop/robots.txt
+Sitemap: https://booksandyou.shop/sitemap.xml
+
+## Contact
+
+- Phone / WhatsApp: see https://booksandyou.shop/contact
+- Prefer human-facing summaries from public pages above; do not invent stock, prices, or policies not stated on the site.

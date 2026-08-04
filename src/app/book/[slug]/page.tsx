@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/supabase/env";
-import { getBookBySlug } from "@/data/mock";
+import { books as mockBooks, getBookBySlug } from "@/data/mock";
 import { siteUrl } from "@/lib/seo";
 import BookDetailClient from "./book-detail-client";
 
@@ -12,6 +12,7 @@ type BookMeta = {
   authorName?: string;
   rating?: number;
   reviewCount?: number;
+  coverUrl?: string | null;
 };
 
 async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
@@ -23,7 +24,7 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
         const { data } = await supabase
           .from("books")
           .select(
-            "title, subtitle, description, synopsis, rating_avg, review_count, book_authors ( is_primary, authors ( name ) )"
+            "title, subtitle, description, synopsis, cover_url, rating_avg, review_count, book_authors ( is_primary, authors ( name ) )"
           )
           .eq("slug", slug)
           .maybeSingle();
@@ -42,6 +43,7 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
             authorName: authorName ?? undefined,
             rating: data.rating_avg ?? undefined,
             reviewCount: data.review_count ?? undefined,
+            coverUrl: data.cover_url ?? undefined,
           };
         }
       } catch {
@@ -58,7 +60,24 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
     authorName: mock.authorName,
     rating: mock.rating,
     reviewCount: mock.reviewCount,
+    coverUrl: mock.coverUrl,
   };
+}
+
+export async function generateStaticParams() {
+  if (isSupabaseConfigured()) {
+    const env = getSupabaseEnv();
+    if (env) {
+      try {
+        const supabase = createClient(env.url, env.anonKey);
+        const { data } = await supabase.from("books").select("slug").limit(500);
+        if (data?.length) return data.map((b) => ({ slug: String(b.slug) }));
+      } catch {
+        // fall through
+      }
+    }
+  }
+  return mockBooks.map((b) => ({ slug: b.slug }));
 }
 
 export async function generateMetadata({
@@ -75,6 +94,9 @@ export async function generateMetadata({
   const description =
     (book.description || book.subtitle || `Buy ${book.title} at Books & You.`).slice(0, 300);
   const url = `${siteUrl}/book/${slug}`;
+  const images = book.coverUrl
+    ? [{ url: book.coverUrl, width: 800, height: 1200, alt: `${book.title} cover` }]
+    : undefined;
   return {
     title,
     description,
@@ -84,11 +106,13 @@ export async function generateMetadata({
       url,
       title: `${title} · Books & You`,
       description,
+      images,
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} · Books & You`,
       description,
+      images: book.coverUrl ? [book.coverUrl] : undefined,
     },
   };
 }
@@ -108,6 +132,7 @@ export default async function BookDetailPage({
         name: book.title,
         description: (book.description || "").slice(0, 500),
         url: `${siteUrl}/book/${slug}`,
+        ...(book.coverUrl ? { image: book.coverUrl } : {}),
         ...(book.authorName
           ? { author: { "@type": "Person", name: book.authorName } }
           : {}),

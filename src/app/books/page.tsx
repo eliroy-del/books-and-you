@@ -1,9 +1,21 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import BooksClient from "./books-client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { siteName, siteUrl } from "@/lib/seo";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Books",
+  description:
+    "Shop textbooks, stationery, and curated titles at Books & You. Browse by class, subject, and collection for Ghana schools and readers.",
+  alternates: { canonical: "/books" },
+  openGraph: {
+    title: `Books · ${siteName}`,
+    description:
+      "Browse the Books & You catalog — textbooks, stationery, and reading picks.",
+    url: `${siteUrl}/books`,
+    type: "website",
+  },
 };
 
 export default function Page() {
