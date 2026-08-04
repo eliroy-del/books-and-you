@@ -107,7 +107,7 @@ export default function BookDetailClient() {
           </Link>
           <span aria-hidden>/</span>
           <Link
-            href={`/books?genre=${encodeURIComponent(categorySlug)}`}
+            href={`/books?category=${encodeURIComponent(categorySlug)}`}
             className="hover:text-foreground capitalize transition"
           >
             {categoryLabel}
