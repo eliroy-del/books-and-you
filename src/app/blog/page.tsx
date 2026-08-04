@@ -32,7 +32,7 @@ export default function BlogPage() {
       headline: p.title,
       description: p.excerpt,
       datePublished: p.publishedAt,
-      author: { "@type": "Person", name: p.author },
+      author: { "@type": "Organization", name: p.author },
       url: `${siteUrl}/blog/${p.slug}`,
     })),
   };

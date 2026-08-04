@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     title: "How to Build a Reading Habit That Actually Sticks",
     excerpt:
       "Skip the guilt. A practical, low-pressure routine for busy people who want books back in their week, without finishing a novel overnight.",
-    author: "Ama Mensah",
+    author: "Books and You",
     publishedAt: "2026-07-12",
     readingMinutes: 6,
     category: "Reading life",
@@ -39,7 +39,7 @@ export const blogPosts: BlogPost[] = [
     title: "An African Literature Starter Shelf for New Readers",
     excerpt:
       "Five entry points into African storytelling, from classic novels to contemporary voices, chosen for readability, range, and lasting conversation.",
-    author: "Kwesi Boateng",
+    author: "Books and You",
     publishedAt: "2026-07-08",
     readingMinutes: 8,
     category: "Guides",
@@ -60,7 +60,7 @@ export const blogPosts: BlogPost[] = [
     title: "Print, Ebook, or Audiobook? How to Choose the Right Format",
     excerpt:
       "Each format wins in different moments. Here’s a simple decision guide so you stop debating and start reading wherever you are.",
-    author: "Nana Owusu",
+    author: "Books and You",
     publishedAt: "2026-06-28",
     readingMinutes: 5,
     category: "Formats",
@@ -81,7 +81,7 @@ export const blogPosts: BlogPost[] = [
     title: "Gift Ideas for Readers Who Already Own Too Many Books",
     excerpt:
       "Skip the generic bookmark. Thoughtful gifts for the friend whose shelves are full, from curated picks to experiences that feel personal.",
-    author: "Efua Addo",
+    author: "Books and You",
     publishedAt: "2026-06-18",
     readingMinutes: 7,
     category: "Gifting",
@@ -102,7 +102,7 @@ export const blogPosts: BlogPost[] = [
     title: "Inside Ghana School Textbooks: What Parents Should Know",
     excerpt:
       "A clear look at curriculum-aligned English and Mathematics titles, and how to choose materials that support Basic and Junior High learners at home.",
-    author: "Dr. Akosua Frimpong",
+    author: "Books and You",
     publishedAt: "2026-06-05",
     readingMinutes: 9,
     category: "Education",
