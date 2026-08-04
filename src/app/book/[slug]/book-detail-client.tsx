@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { LiveInventoryBadge } from "@/components/books/live-inventory-badge";
 import { formatMoney } from "@/data/mock";
 import { useCartStore, useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
-import type { Book, BookFormat } from "@/types";
+import type { Book } from "@/types";
 import { cn } from "@/lib/utils";
 
 export default function BookDetailClient() {
@@ -32,7 +32,6 @@ export default function BookDetailClient() {
   const wished = useWishlistStore((s) => (book ? s.bookIds.includes(book.id) : false));
   const addRecent = useRecentlyViewedStore((s) => s.add);
 
-  const [format, setFormat] = useState<BookFormat | null>(null);
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
@@ -63,9 +62,9 @@ export default function BookDetailClient() {
   }, [book, addRecent]);
 
   const selected = useMemo(() => {
-    if (!book) return null;
-    return book.formats.find((f) => f.format === format) ?? book.formats[0] ?? null;
-  }, [book, format]);
+    if (!book?.formats.length) return null;
+    return book.formats.find((f) => f.inStock > 0) ?? book.formats[0] ?? null;
+  }, [book]);
 
   if (book === undefined) {
     return (
@@ -87,7 +86,7 @@ export default function BookDetailClient() {
   function addToCart(buyNow = false) {
     addItem(book!.id, selected!.format, qty);
     toast.success(buyNow ? "Added — continue to checkout" : "Added to cart", {
-      description: `${book!.title} (${selected!.format})`,
+      description: book!.title,
     });
     if (buyNow) window.location.href = "/checkout";
   }
@@ -135,21 +134,7 @@ export default function BookDetailClient() {
 
           <Separator className="my-6" />
 
-          <div className="flex flex-wrap gap-2">
-            {book.formats.map((f) => (
-              <Button
-                key={f.format}
-                size="sm"
-                variant={(format ?? selected.format) === f.format ? "default" : "outline"}
-                className="capitalize"
-                onClick={() => setFormat(f.format)}
-              >
-                {f.format} · {formatMoney(f.price)}
-              </Button>
-            ))}
-          </div>
-
-          <p className="font-heading mt-6 text-3xl font-bold">{formatMoney(selected.price)}</p>
+          <p className="font-heading text-3xl font-bold">{formatMoney(selected.price)}</p>
           <p className={cn("mt-1 text-sm", stock > 0 ? "text-teal-700" : "text-destructive")}>
             {stock > 0 ? `${stock} in stock` : "Out of stock"}
             {releaseCountdown != null ? ` · Ships in ${releaseCountdown} days` : null}

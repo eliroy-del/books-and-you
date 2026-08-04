@@ -108,8 +108,8 @@ export default function CartPage() {
                       >
                         {book.title}
                       </Link>
-                      <p className="text-muted-foreground mt-1 text-sm capitalize">
-                        {book.authorName} · {format.format}
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        {book.authorName}
                       </p>
                     </div>
                     <p className="font-heading shrink-0 font-semibold">{formatMoney(lineTotal)}</p>

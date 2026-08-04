@@ -84,7 +84,7 @@ export function BookCard({ book, index = 0, className }: BookCardProps) {
         </div>
         <div className="mt-auto flex items-center justify-between pt-2">
           <p className="font-heading text-sm font-semibold">
-            from {formatMoney(lowestPrice(book))}
+            {formatMoney(lowestPrice(book))}
           </p>
           <Button
             size="icon"
