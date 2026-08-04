@@ -45,6 +45,7 @@ export function mapDbBook(row: Record<string, unknown>): Book {
     pages: Number(row.pages ?? 0),
     language: String(row.language ?? "English"),
     publishedAt: String(row.published_at ?? ""),
+    coverUrl: (row.cover_url as string) || undefined,
     coverGradient: String(row.cover_gradient ?? "from-[#0F766E] to-[#134E4A]"),
     coverAccent: String(row.cover_accent ?? "#D4A017"),
     formats: inventory.map((inv) => ({

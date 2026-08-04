@@ -924,6 +924,34 @@ export const books: Book[] = [
     staffPick: true,
     palette: 7,
   }),
+  book({
+    id: "bk-25",
+    slug: "rme-excellence-learners-book-2",
+    title: "Religious & Moral Education",
+    subtitle: "Excellence Series · Learner's Book 2",
+    authorId: "auth-rme-appiah",
+    authorName: "Francis Benjamin Appiah",
+    publisherId: "pub-cec",
+    publisherName: "CEC Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Religious & Moral Education", "Primary 2", "Textbooks"],
+    description:
+      "Excellence Series Religious & Moral Education Learner's Book 2, based on the new GES standards-based curriculum.",
+    synopsis:
+      "A Primary 2 learner's book that introduces faith, values, and moral living through stories, activities, and illustrations aligned with Ghana's standards-based curriculum.",
+    isbn: "978998800RME02",
+    pages: 120,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/rme-excellence-learners-book-2.png",
+    formats: [{ format: "paperback", price: 55, inStock: 80 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["rme", "primary-2", "ges", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [

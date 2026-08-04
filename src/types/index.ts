@@ -66,6 +66,7 @@ export interface Book {
   pages: number;
   language: string;
   publishedAt: string;
+  coverUrl?: string;
   coverGradient: string;
   coverAccent: string;
   formats: {

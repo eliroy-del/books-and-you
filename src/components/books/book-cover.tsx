@@ -1,8 +1,11 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { Book } from "@/types";
 
 interface BookCoverProps {
-  book: Pick<Book, "title" | "authorName" | "coverGradient" | "coverAccent">;
+  book: Pick<Book, "title" | "authorName" | "coverGradient" | "coverAccent"> & {
+    coverUrl?: string | null;
+  };
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
 }
@@ -15,6 +18,34 @@ const sizeClasses = {
 };
 
 export function BookCover({ book, className, size = "md" }: BookCoverProps) {
+  if (book.coverUrl) {
+    return (
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-lg bg-muted shadow-elevated",
+          sizeClasses[size],
+          className
+        )}
+      >
+        <Image
+          src={book.coverUrl}
+          alt={`${book.title} cover`}
+          fill
+          sizes={
+            size === "xl"
+              ? "(max-width: 768px) 90vw, 420px"
+              : size === "lg"
+                ? "192px"
+                : size === "md"
+                  ? "144px"
+                  : "80px"
+          }
+          className="object-cover object-center"
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
