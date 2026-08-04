@@ -4,22 +4,40 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { Check, CreditCard, CircleUserRound, Truck, User } from "lucide-react";
+import {
+  Check,
+  CreditCard,
+  CircleUserRound,
+  Smartphone,
+  Truck,
+  User,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { formatMoney, siteConfig } from "@/data/mock";
+import { formatMoney } from "@/data/mock";
 import { useCartStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
 import type { Book } from "@/types";
 
 type CheckoutMode = "guest" | "account";
 
-const providers = [
-  { id: "moolre", name: "Moolre", hint: "Mobile Money · Cards" },
+const paymentMethods = [
+  {
+    id: "momo",
+    name: "Mobile Money",
+    hint: "MTN · Telecel · AirtelTigo",
+    icon: Smartphone,
+  },
+  {
+    id: "card",
+    name: "Debit / Card",
+    hint: "Visa · Mastercard",
+    icon: CreditCard,
+  },
 ] as const;
 
 const GHANA_REGIONS = [
@@ -49,9 +67,8 @@ function CheckoutInner() {
   const pruneInvalid = useCartStore((s) => s.pruneInvalid);
   const [catalog, setCatalog] = useState<Book[]>([]);
   const [catalogLoaded, setCatalogLoaded] = useState(false);
-  const [provider, setProvider] = useState<(typeof providers)[number]["id"]>("moolre");
-  const [coupon, setCoupon] = useState("");
-  const [discount, setDiscount] = useState(0);
+  const [paymentMethod, setPaymentMethod] =
+    useState<(typeof paymentMethods)[number]["id"]>("momo");
   const [placed, setPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -124,7 +141,7 @@ function CheckoutInner() {
   const staleCart = catalogLoaded && items.length > 0 && lines.length === 0;
 
   const subtotal = useMemo(() => lines.reduce((s, l) => s + l.lineTotal, 0), [lines]);
-  const total = Math.max(0, subtotal + shippingCents - discount);
+  const total = Math.max(0, subtotal + shippingCents);
 
   useEffect(() => {
     let cancelled = false;
@@ -156,7 +173,7 @@ function CheckoutInner() {
   useEffect(() => {
     const paid = searchParams.get("paid");
     const ref = searchParams.get("ref");
-    const payProvider = searchParams.get("provider") as typeof provider | null;
+    const payProvider = searchParams.get("provider") || "moolre";
     if (!paid || !ref) return;
 
     let cancelled = false;
@@ -165,7 +182,7 @@ function CheckoutInner() {
       const res = await fetch("/api/payments/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider: payProvider || provider, reference: ref }),
+        body: JSON.stringify({ provider: payProvider, reference: ref }),
       });
       const data = await res.json();
       if (cancelled) return;
@@ -183,16 +200,7 @@ function CheckoutInner() {
     return () => {
       cancelled = true;
     };
-  }, [searchParams, provider, clear]);
-
-  function applyCoupon() {
-    if (coupon.trim().toUpperCase() === "READMORE") {
-      setDiscount(30);
-      toast.success("Coupon applied", { description: "GH₵30 off" });
-    } else {
-      toast.error("Invalid coupon");
-    }
-  }
+  }, [searchParams, clear]);
 
   async function placeOrder() {
     if (lines.length === 0) {
@@ -246,9 +254,8 @@ function CheckoutInner() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          provider,
-          couponCode: coupon || undefined,
-          discountCedis: discount,
+          provider: "moolre",
+          paymentMethod,
           email: email.trim() || undefined,
           customerName: fullName.trim(),
           phone: phone.trim(),
@@ -294,13 +301,15 @@ function CheckoutInner() {
         return;
       }
 
+      const methodLabel =
+        paymentMethods.find((m) => m.id === paymentMethod)?.name ?? "Moolre";
       setOrderNumber(data.orderNumber ?? null);
       setPlaced(true);
       clear();
       toast.success("Order placed", {
         description: data.demo
           ? `Demo payment captured · ${data.orderNumber}`
-          : `Paid via ${provider} · ${data.orderNumber}`,
+          : `Paid via ${methodLabel} · ${data.orderNumber}`,
       });
     } catch {
       toast.error("Checkout failed");
@@ -353,11 +362,8 @@ function CheckoutInner() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-heading text-3xl font-bold tracking-tight">Checkout</h1>
-      <p className="text-muted-foreground mt-2 text-sm">
-        Free delivery above {formatMoney(siteConfig.freeDeliveryThreshold)}
-      </p>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-12">
+      <div className="mt-8 grid gap-10 lg:grid-cols-12">
         <div className="space-y-8 lg:col-span-7">
           {showModePicker ? (
             <section>
@@ -578,24 +584,28 @@ function CheckoutInner() {
 
           <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
             <h2 className="font-heading text-lg font-semibold">Payment method</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {providers.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setProvider(p.id)}
-                  className={cn(
-                    "rounded-2xl border p-4 text-left transition",
-                    provider === p.id
-                      ? "border-primary bg-primary/5 shadow-glow"
-                      : "border-border hover:border-primary/30"
-                  )}
-                >
-                  <CreditCard className="text-primary mb-2 size-5" />
-                  <p className="text-sm font-semibold">{p.name}</p>
-                  <p className="text-muted-foreground text-xs">{p.hint}</p>
-                </button>
-              ))}
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {paymentMethods.map((method) => {
+                const Icon = method.icon;
+                const selected = paymentMethod === method.id;
+                return (
+                  <button
+                    key={method.id}
+                    type="button"
+                    onClick={() => setPaymentMethod(method.id)}
+                    className={cn(
+                      "rounded-2xl border p-4 text-left transition",
+                      selected
+                        ? "border-primary bg-primary/5 shadow-soft"
+                        : "border-border hover:border-primary/30"
+                    )}
+                  >
+                    <Icon className="text-primary mb-2 size-5" />
+                    <p className="text-sm font-semibold">{method.name}</p>
+                    <p className="text-muted-foreground text-xs">{method.hint}</p>
+                  </button>
+                );
+              })}
             </div>
           </section>
         </div>
@@ -626,16 +636,6 @@ function CheckoutInner() {
                 ))
               )}
             </ul>
-            <div className="mt-4 flex gap-2">
-              <Input
-                placeholder="Coupon code"
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
-              />
-              <Button variant="outline" onClick={applyCoupon}>
-                Apply
-              </Button>
-            </div>
             <Separator className="my-4" />
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -646,12 +646,6 @@ function CheckoutInner() {
                 <span className="text-muted-foreground">Shipping</span>
                 <span>{shippingCents === 0 ? "Free" : formatMoney(shippingCents)}</span>
               </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-success">
-                  <span>Discount</span>
-                  <span>−{formatMoney(discount)}</span>
-                </div>
-              )}
               <div className="flex justify-between text-base font-semibold">
                 <span>Total</span>
                 <span>{formatMoney(total)}</span>
@@ -667,7 +661,7 @@ function CheckoutInner() {
                 ? "Processing…"
                 : checkoutMode === "account" && !user
                   ? `Create account & pay ${formatMoney(total)}`
-                  : `Pay ${formatMoney(total)} with ${providers.find((p) => p.id === provider)?.name}`}
+                  : `Pay ${formatMoney(total)}`}
             </Button>
             {staleCart ? (
               <Button
