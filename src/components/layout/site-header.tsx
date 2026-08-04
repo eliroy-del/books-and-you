@@ -24,7 +24,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CatalogMegaMenu, MobileCatalogNav } from "@/components/layout/catalog-mega-menu";
 import {
   CategoriesDropdown,
   MobileCategoriesNav,
@@ -70,7 +69,18 @@ export function SiteHeader() {
               >
                 Home
               </Link>
-              <MobileCatalogNav onNavigate={() => setOpen(false)} />
+              <Link
+                href="/books"
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
+                  pathname.startsWith("/books")
+                    ? "bg-primary/10 text-primary"
+                    : "hover:bg-muted"
+                )}
+              >
+                Shop
+              </Link>
               <MobileCategoriesNav onNavigate={() => setOpen(false)} />
               {simpleNav.map((item) => (
                 <Link
@@ -121,7 +131,17 @@ export function SiteHeader() {
           >
             Home
           </Link>
-          <CatalogMegaMenu />
+          <Link
+            href="/books"
+            className={cn(
+              "rounded-xl px-3.5 py-2.5 text-[15px] font-medium transition-colors",
+              pathname.startsWith("/books")
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Shop
+          </Link>
           <CategoriesDropdown />
           {simpleNav.map((item) => (
             <Link
