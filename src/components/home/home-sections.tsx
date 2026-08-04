@@ -67,8 +67,9 @@ export function FeaturedCollections() {
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeader
         title="Featured Collections"
-        description="Editorial shelves curated for every kind of reader."
-        href="/books"
+        description="Back to school, exam prep, teacher picks, and more."
+        href="/categories"
+        linkLabel="Browse store"
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {collections.slice(0, 8).map((col, i) => (

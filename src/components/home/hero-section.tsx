@@ -27,7 +27,7 @@ export function HeroSection() {
             transition={{ duration: 0.55, delay: 0.05 }}
             className="font-heading text-4xl leading-[1.05] font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl"
           >
-            Discover Your Next Favorite Book.
+            School books & supplies for every classroom.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 18 }}
@@ -46,7 +46,7 @@ export function HeroSection() {
           >
             <Button size="lg" className="h-12 rounded-xl px-6 text-base shadow-glow" asChild>
               <Link href="/books">
-                Browse Books
+                Shop Books
                 <ArrowRight className="ml-1 size-4" />
               </Link>
             </Button>
@@ -56,7 +56,7 @@ export function HeroSection() {
               className="h-12 rounded-xl border-primary/20 bg-background/60 px-6 text-base backdrop-blur"
               asChild
             >
-              <Link href="/categories">Explore Categories</Link>
+              <Link href="/categories">Browse by Level</Link>
             </Button>
           </motion.div>
         </div>

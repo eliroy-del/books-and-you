@@ -24,10 +24,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { CatalogMegaMenu, MobileCatalogNav } from "@/components/layout/catalog-mega-menu";
 
 const nav = [
-  { href: "/books", label: "Books" },
-  { href: "/categories", label: "Categories" },
+  { href: "/books", label: "All Books" },
+  { href: "/categories", label: "Browse" },
   { href: "/contact", label: "Contact Us" },
   { href: "/blog", label: "Blog" },
   { href: "/library", label: "Library" },
@@ -57,36 +58,39 @@ export function SiteHeader() {
                 <BrandLogo href="/" size="md" showWordmark={false} className="rounded-lg" />
               </SheetTitle>
             </SheetHeader>
-            <nav className="mt-6 flex flex-col gap-1">
-              {nav.map((item) => (
+            <nav className="mt-4 flex flex-col gap-1 overflow-y-auto pb-8">
+              <MobileCatalogNav onNavigate={() => setOpen(false)} />
+              <div className="mt-3 border-t border-border/60 pt-3">
+                {nav.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors block",
+                      pathname.startsWith(item.href)
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-muted"
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
                 <Link
-                  key={item.href}
-                  href={item.href}
+                  href="/dashboard"
                   onClick={() => setOpen(false)}
-                  className={cn(
-                    "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
-                    pathname.startsWith(item.href)
-                      ? "bg-primary/10 text-primary"
-                      : "hover:bg-muted"
-                  )}
+                  className="hover:bg-muted block rounded-xl px-3 py-3 text-[15px] font-medium"
                 >
-                  {item.label}
+                  Dashboard
                 </Link>
-              ))}
-              <Link
-                href="/dashboard"
-                onClick={() => setOpen(false)}
-                className="hover:bg-muted rounded-xl px-3 py-3 text-[15px] font-medium"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/support"
-                onClick={() => setOpen(false)}
-                className="hover:bg-muted rounded-xl px-3 py-3 text-[15px] font-medium"
-              >
-                Support
-              </Link>
+                <Link
+                  href="/support"
+                  onClick={() => setOpen(false)}
+                  className="hover:bg-muted block rounded-xl px-3 py-3 text-[15px] font-medium"
+                >
+                  Support
+                </Link>
+              </div>
             </nav>
           </SheetContent>
         </Sheet>
@@ -94,6 +98,7 @@ export function SiteHeader() {
         <BrandLogo href="/" size="md" showWordmark={false} priority />
 
         <nav className="ml-1 hidden items-center gap-0.5 lg:flex">
+          <CatalogMegaMenu />
           {nav.map((item) => (
             <Link
               key={item.href}

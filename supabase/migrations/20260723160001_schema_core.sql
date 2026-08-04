@@ -204,11 +204,15 @@ create table if not exists public.categories (
   name text not null,
   description text,
   accent text,
+  parent_id uuid references public.categories(id) on delete cascade,
+  depth integer not null default 0,
   sort_order integer not null default 0,
   is_featured boolean not null default false,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );
+
+create index if not exists categories_parent_id_idx on public.categories(parent_id);
 
 create table if not exists public.books (
   id uuid primary key default gen_random_uuid(),

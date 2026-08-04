@@ -13,6 +13,13 @@ import {
   getBooksByAuthor as mockGetBooksByAuthor,
   publishers as mockPublishers,
 } from "@/data/mock";
+import {
+  collectDescendantSlugs,
+  featuredCollectionDefs,
+  findCatalogNode,
+  flattenCatalogNav,
+  accentForSlug,
+} from "@/data/catalog-nav";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -63,13 +70,15 @@ export async function GET(request: Request) {
       let books = ((data || []) as Record<string, unknown>[]).map(mapDbBook);
 
       if (category) {
-        const { data: cat } = await client
+        const node = findCatalogNode(category);
+        const slugs = node ? collectDescendantSlugs(node) : [category];
+        const { data: cats } = await client
           .from("categories")
           .select("id")
-          .eq("slug", category)
-          .maybeSingle();
-        if (cat?.id) {
-          books = books.filter((b) => b.categoryIds.includes(String(cat.id)));
+          .in("slug", slugs);
+        const catIds = new Set((cats || []).map((c: { id: string }) => String(c.id)));
+        if (catIds.size) {
+          books = books.filter((b) => b.categoryIds.some((id) => catIds.has(id)));
         }
       }
 
@@ -109,7 +118,7 @@ export async function GET(request: Request) {
     if (resource === "categories") {
       const { data, error } = await client
         .from("categories")
-        .select("id, slug, name, description, accent, sort_order")
+        .select("id, slug, name, description, accent, sort_order, parent_id, depth")
         .order("sort_order");
       if (error) throw error;
 
@@ -128,6 +137,8 @@ export async function GET(request: Request) {
           name: String(c.name),
           description: String(c.description || ""),
           accent: String(c.accent || "from-teal-700 to-emerald-500"),
+          parentId: c.parent_id ? String(c.parent_id) : null,
+          depth: Number(c.depth ?? 0),
           bookCount: countMap.get(String(c.id)) || 0,
         })),
         source: "supabase",
@@ -274,7 +285,20 @@ function mockPayload(
     }
     return { ok: true, books: list.slice(0, opts.limit), source: "mock" };
   }
-  if (resource === "categories") return { ok: true, categories: mockCategories, source: "mock" };
+  if (resource === "categories") {
+    const cats = flattenCatalogNav().map((c, i) => ({
+      id: `nav-${c.slug}`,
+      slug: c.slug,
+      name: c.name,
+      description: c.description || "",
+      accent: accentForSlug(c.slug),
+      parentId: c.parentSlug ? `nav-${c.parentSlug}` : null,
+      depth: c.depth,
+      bookCount: 0,
+      sortOrder: i,
+    }));
+    return { ok: true, categories: cats.length ? cats : mockCategories, source: "mock" };
+  }
   if (resource === "authors") {
     if (opts.slug) {
       const author = mockAuthors.find((a) => a.slug === opts.slug) ?? null;
@@ -283,7 +307,16 @@ function mockPayload(
     }
     return { ok: true, authors: mockAuthors, source: "mock" };
   }
-  if (resource === "collections") return { ok: true, collections: mockCollections, source: "mock" };
+  if (resource === "collections") {
+    const cols = featuredCollectionDefs.map((c, i) => ({
+      id: `col-${c.slug}`,
+      slug: c.slug,
+      title: c.title,
+      description: c.description,
+      bookIds: mockCollections[i % mockCollections.length]?.bookIds ?? [],
+    }));
+    return { ok: true, collections: cols, source: "mock" };
+  }
   if (resource === "publishers") return { ok: true, publishers: mockPublishers, source: "mock" };
   return { ok: false, error: "Unknown resource", source: "mock" };
 }

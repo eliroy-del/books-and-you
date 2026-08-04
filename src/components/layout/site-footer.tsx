@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { AtSign, Globe2, Share2 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
-import { categories, siteConfig } from "@/data/mock";
+import { siteConfig } from "@/data/mock";
+import { catalogNav, departmentHref, featuredCollectionDefs } from "@/data/catalog-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -13,8 +14,8 @@ export function SiteFooter() {
           <div className="lg:col-span-4">
             <BrandLogo href="/" size="md" showWordmark={false} />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
-              A premium bookstore for curious minds—discover, purchase, and build a library
-              you&apos;ll love.
+              Ghana&apos;s school bookstore — textbooks, stationery, and classroom essentials from
+              Nursery through SHS.
             </p>
             <div className="mt-6 flex gap-3">
               {[Share2, Globe2, AtSign].map((Icon, i) => (
@@ -32,15 +33,20 @@ export function SiteFooter() {
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-5">
             <div>
-              <h3 className="font-heading text-sm font-semibold text-white">Categories</h3>
+              <h3 className="font-heading text-sm font-semibold text-white">Shop</h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
-                {categories.slice(0, 6).map((c) => (
-                  <li key={c.id}>
-                    <Link href={`/categories?c=${c.slug}`} className="hover:text-teal-300">
-                      {c.name}
+                {catalogNav.slice(0, 6).map((d) => (
+                  <li key={d.slug}>
+                    <Link href={departmentHref(d.slug)} className="hover:text-teal-300">
+                      {d.name}
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <Link href={`/books?collection=${featuredCollectionDefs[3]?.slug}`} className="hover:text-teal-300">
+                    Back to School
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>

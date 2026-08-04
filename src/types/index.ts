@@ -33,6 +33,8 @@ export interface Category {
   description: string;
   bookCount: number;
   accent: string;
+  parentId?: string | null;
+  depth?: number;
 }
 
 export interface Review {

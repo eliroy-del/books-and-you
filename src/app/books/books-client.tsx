@@ -5,7 +5,13 @@ import { useSearchParams } from "next/navigation";
 import { BookCard } from "@/components/books/book-card";
 import { SmartSearch } from "@/components/search/smart-search";
 import { Button } from "@/components/ui/button";
-import type { Book, Category, Collection } from "@/types";
+import {
+  catalogBrowseHref,
+  catalogNav,
+  featuredCollectionDefs,
+  findCatalogNode,
+} from "@/data/catalog-nav";
+import type { Book, Collection } from "@/types";
 import { cn } from "@/lib/utils";
 
 export default function BooksClient() {
@@ -17,7 +23,6 @@ export default function BooksClient() {
     "featured"
   );
   const [books, setBooks] = useState<Book[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [source, setSource] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -31,15 +36,13 @@ export default function BooksClient() {
       if (categorySlug) qs.set("category", categorySlug);
       if (collectionSlug) qs.set("collection", collectionSlug);
 
-      const [booksRes, catsRes, colsRes] = await Promise.all([
+      const [booksRes, colsRes] = await Promise.all([
         fetch(`/api/catalog?${qs}`).then((r) => r.json()),
-        fetch("/api/catalog?resource=categories").then((r) => r.json()),
         fetch("/api/catalog?resource=collections").then((r) => r.json()),
       ]);
 
       if (cancelled) return;
       setBooks(booksRes.books || []);
-      setCategories(catsRes.categories || []);
       setCollections(colsRes.collections || []);
       setSource(booksRes.source || "");
       setLoading(false);
@@ -68,19 +71,37 @@ export default function BooksClient() {
   }, [books, sort]);
 
   const activeCollection = collectionSlug
-    ? collections.find((c) => c.slug === collectionSlug)
+    ? collections.find((c) => c.slug === collectionSlug) ??
+      featuredCollectionDefs.find((c) => c.slug === collectionSlug)
     : null;
+  const activeCategory = categorySlug ? findCatalogNode(categorySlug) : null;
+  const sidebarChildren = activeCategory?.children?.length
+    ? activeCategory.children
+    : activeCategory
+      ? []
+      : catalogNav.find((d) => d.slug === "books")?.children ?? [];
+
+  const title =
+    (activeCollection && ("title" in activeCollection ? activeCollection.title : "")) ||
+    activeCategory?.name ||
+    "All Books";
+  const description =
+    (activeCollection &&
+      ("description" in activeCollection ? activeCollection.description : "")) ||
+    activeCategory?.description ||
+    "Textbooks, stationery, and school essentials for every Ghana classroom.";
+
+  const levels = catalogNav.find((d) => d.slug === "by-school-level")?.children ?? [];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="max-w-2xl">
         <p className="text-primary text-sm font-semibold tracking-widest uppercase">Catalog</p>
         <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-          {activeCollection?.title ?? "All Books"}
+          {title}
         </h1>
         <p className="text-muted-foreground mt-3 text-sm sm:text-base">
-          {activeCollection?.description ??
-            "Browse the full shelf—fiction, non-fiction, academic, and more."}
+          {description}
           {source ? (
             <span className="text-primary ml-2 text-xs font-medium">· {source}</span>
           ) : null}
@@ -92,16 +113,33 @@ export default function BooksClient() {
       </div>
 
       <div className="mt-8 flex flex-col gap-6 lg:flex-row">
-        <aside className="w-full shrink-0 space-y-6 lg:w-56">
+        <aside className="w-full shrink-0 space-y-6 lg:w-60">
           <div>
-            <p className="mb-2 text-xs font-semibold tracking-wide uppercase">Collections</p>
+            <p className="mb-2 text-xs font-semibold tracking-wide uppercase">Departments</p>
             <div className="flex flex-wrap gap-2 lg:flex-col">
               <FilterChip href="/books" active={!collectionSlug && !categorySlug}>
                 All
               </FilterChip>
-              {collections.map((c) => (
+              {catalogNav.map((d) => (
                 <FilterChip
-                  key={c.id}
+                  key={d.slug}
+                  href={catalogBrowseHref(d.slug)}
+                  active={categorySlug === d.slug}
+                >
+                  {d.name}
+                </FilterChip>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-2 text-xs font-semibold tracking-wide uppercase">
+              Featured Collections
+            </p>
+            <div className="flex flex-wrap gap-2 lg:flex-col">
+              {featuredCollectionDefs.map((c) => (
+                <FilterChip
+                  key={c.slug}
                   href={`/books?collection=${c.slug}`}
                   active={collectionSlug === c.slug}
                 >
@@ -110,26 +148,46 @@ export default function BooksClient() {
               ))}
             </div>
           </div>
+
           <div>
-            <p className="mb-2 text-xs font-semibold tracking-wide uppercase">Categories</p>
+            <p className="mb-2 text-xs font-semibold tracking-wide uppercase">School Level</p>
             <div className="flex flex-wrap gap-2 lg:flex-col">
-              {categories.map((c) => (
+              {levels.map((level) => (
                 <FilterChip
-                  key={c.id}
-                  href={`/books?category=${c.slug}`}
-                  active={categorySlug === c.slug}
+                  key={level.slug}
+                  href={catalogBrowseHref(level.slug)}
+                  active={categorySlug === level.slug}
                 >
-                  {c.name}
+                  {level.name}
                 </FilterChip>
               ))}
             </div>
           </div>
+
+          {sidebarChildren.length > 0 ? (
+            <div>
+              <p className="mb-2 text-xs font-semibold tracking-wide uppercase">
+                {activeCategory ? activeCategory.name : "Book Sections"}
+              </p>
+              <div className="flex flex-wrap gap-2 lg:flex-col">
+                {sidebarChildren.map((c) => (
+                  <FilterChip
+                    key={c.slug}
+                    href={catalogBrowseHref(c.slug)}
+                    active={categorySlug === c.slug}
+                  >
+                    {c.name}
+                  </FilterChip>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </aside>
 
         <div className="min-w-0 flex-1">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <p className="text-muted-foreground text-sm">
-              {loading ? "Loading…" : `${filtered.length} book${filtered.length === 1 ? "" : "s"}`}
+              {loading ? "Loading…" : `${filtered.length} item${filtered.length === 1 ? "" : "s"}`}
               {q ? ` for “${q}”` : ""}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -162,8 +220,11 @@ export default function BooksClient() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border p-12 text-center">
-              <p className="font-heading text-lg font-semibold">No books found</p>
-              <p className="text-muted-foreground mt-2 text-sm">Try another search or collection.</p>
+              <p className="font-heading text-lg font-semibold">No items found</p>
+              <p className="text-muted-foreground mt-2 text-sm">
+                This shelf is ready — products will appear as inventory is added. Try another
+                category or collection.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-4">
