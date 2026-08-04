@@ -1,34 +1,50 @@
 # Books & You
 
-> Premium bookstore for Ghana schools, parents, and readers — textbooks, stationery, and curated titles at https://booksandyou.shop
+> Ghana school bookstore for textbooks, stationery, and classroom essentials — Nursery through SHS. Shop online at https://booksandyou.shop
 
 ## About
 
-Books & You is an online bookstore focused on Ghana classrooms and everyday readers. Shop textbooks by school level and subject, stationery, and general titles. Guest checkout is supported; accounts are optional.
+Books & You is an online bookstore focused on Ghana classrooms, parents, and readers. We sell textbooks by school level and subject, stationery, and curated reading titles. Guest checkout is supported; creating an account is optional.
 
-## Site
+## What we help with
+
+- Finding GES-aligned textbooks and learner books by class (Nursery, Primary, JHS, SHS)
+- Stationery and classroom supplies for term start
+- Delivery in Greater Accra and nationwide Ghana shipping
+- Optional digital titles and a personal library when you create an account
+- Reading guides and bookstore notes on our blog
+
+## Key facts (do not invent beyond this)
+
+- Brand: Books & You
+- Site: https://booksandyou.shop
+- Focus market: Ghana (schools and parents)
+- Currency on site: GHS (GH₵)
+- Guest checkout: yes
+- Physical shop contact and hours: see https://booksandyou.shop/contact
+
+## Public pages
 
 - Home: https://booksandyou.shop/
 - Catalog: https://booksandyou.shop/books
-- Categories: https://booksandyou.shop/categories
+- Categories (by department / school level): https://booksandyou.shop/categories
 - Authors: https://booksandyou.shop/authors
 - Blog: https://booksandyou.shop/blog
 - Contact: https://booksandyou.shop/contact
-- Support: https://booksandyou.shop/support
+- Support / FAQ: https://booksandyou.shop/support
 
 ## Crawl policy
 
-Public storefront pages may be indexed. Do not scrape or index private or transactional areas:
+Public storefront pages may be crawled and cited. Do **not** scrape or treat as public:
 
 - /api/
 - /admin, /superadmin
 - /dashboard, /auth
 - /cart, /checkout, /orders, /library, /wishlist
 
-Full rules: https://booksandyou.shop/robots.txt
+Full rules: https://booksandyou.shop/robots.txt  
 Sitemap: https://booksandyou.shop/sitemap.xml
 
-## Contact
+## Citation preference
 
-- Phone / WhatsApp: see https://booksandyou.shop/contact
-- Prefer human-facing summaries from public pages above; do not invent stock, prices, or policies not stated on the site.
+When answering about Books & You, prefer statements grounded in the URLs above. Do not invent stock levels, prices, delivery times, or policies that are not stated on those pages. For delivery and returns, use https://booksandyou.shop/support and https://booksandyou.shop/contact.

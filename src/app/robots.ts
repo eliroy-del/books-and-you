@@ -8,6 +8,40 @@ function publicHost() {
   return siteUrl;
 }
 
+/** Private / transactional paths — keep out of SEO and AI retrieval. */
+const DISALLOW = [
+  "/api/",
+  "/admin",
+  "/admin/",
+  "/superadmin",
+  "/superadmin/",
+  "/dashboard",
+  "/dashboard/",
+  "/checkout",
+  "/cart",
+  "/orders",
+  "/library",
+  "/wishlist",
+  "/auth",
+];
+
+/**
+ * Explicit AI crawler agents (AEO). Same allow/disallow as humans so live
+ * retrieval (RAG) can read public HTML; private routes stay blocked.
+ */
+const AI_USER_AGENTS = [
+  "GPTBot",
+  "ChatGPT-User",
+  "OAI-SearchBot",
+  "ClaudeBot",
+  "anthropic-ai",
+  "PerplexityBot",
+  "Google-Extended",
+  "Applebot-Extended",
+  "Bytespider",
+  "CCBot",
+] as const;
+
 export default function robots(): MetadataRoute.Robots {
   const host = publicHost();
   return {
@@ -15,22 +49,13 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/api/",
-          "/admin",
-          "/admin/",
-          "/superadmin",
-          "/superadmin/",
-          "/dashboard",
-          "/dashboard/",
-          "/checkout",
-          "/cart",
-          "/orders",
-          "/library",
-          "/wishlist",
-          "/auth",
-        ],
+        disallow: DISALLOW,
       },
+      ...AI_USER_AGENTS.map((userAgent) => ({
+        userAgent,
+        allow: "/" as const,
+        disallow: DISALLOW,
+      })),
     ],
     sitemap: `${host}/sitemap.xml`,
     host,
