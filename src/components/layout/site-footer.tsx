@@ -83,11 +83,6 @@ export function SiteFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/auth" className="hover:text-teal-300">
-                    Sign In
-                  </Link>
-                </li>
-                <li>
                   <Link href="/dashboard" className="hover:text-teal-300">
                     Dashboard
                   </Link>

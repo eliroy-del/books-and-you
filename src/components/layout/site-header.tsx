@@ -2,19 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Heart,
-  Menu,
-  ShoppingBag,
-  User,
-  X,
-} from "lucide-react";
+import { Heart, Menu, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { HeaderSearch } from "@/components/search/header-search";
-import { useAuth } from "@/components/providers/auth-provider";
 import { useCartStore, useWishlistStore } from "@/stores/commerce";
 import { cn } from "@/lib/utils";
 import {
@@ -36,7 +29,6 @@ const simpleNav = [
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const { user, profile, signOut, loading } = useAuth();
   const cartCount = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
   const wishlistCount = useWishlistStore((s) => s.bookIds.length);
   const [open, setOpen] = useState(false);
@@ -98,13 +90,6 @@ export function SiteHeader() {
                 </Link>
               ))}
               <div className="mt-3 border-t border-border/60 pt-3">
-                <Link
-                  href="/dashboard"
-                  onClick={() => setOpen(false)}
-                  className="hover:bg-muted block rounded-xl px-3 py-3 text-[15px] font-medium"
-                >
-                  Dashboard
-                </Link>
                 <Link
                   href="/support"
                   onClick={() => setOpen(false)}
@@ -182,24 +167,6 @@ export function SiteHeader() {
               )}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="size-11" asChild>
-            <Link href="/dashboard" aria-label="Account">
-              <User className="size-5" />
-            </Link>
-          </Button>
-          {!loading && user ? (
-            <Button
-              variant="outline"
-              className="ml-1 hidden sm:inline-flex"
-              onClick={() => void signOut()}
-            >
-              {profile?.full_name?.split(" ")[0] ?? "Sign out"}
-            </Button>
-          ) : (
-            <Button className="ml-1 hidden sm:inline-flex" asChild>
-              <Link href="/auth">Sign in</Link>
-            </Button>
-          )}
         </div>
       </div>
     </header>
