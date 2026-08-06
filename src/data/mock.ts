@@ -990,7 +990,7 @@ export const books: Book[] = [
         alt: "Golden English Basic 5 product views",
       },
     ],
-    formats: [{ format: "paperback", price: 60, compareAt: 70, inStock: 100 }],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
     rating: 0,
     reviewCount: 0,
     tags: ["english", "primary-5", "nacca", "golden", "textbook", "ghana"],
