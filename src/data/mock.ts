@@ -1036,6 +1036,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-28",
+    slug: "golden-english-basic-2",
+    title: "Golden English Basic 2",
+    subtitle: "Oral Language · Reading · Writing · Grammar",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["English Language", "Primary 2", "Textbooks", "NaCCA"],
+    description:
+      "Golden English Basic 2 is a primary school English language textbook based on the NaCCA syllabus. It covers oral language, reading, writing, and grammar to help pupils succeed in communication.",
+    synopsis:
+      "Developed in accordance with the English syllabus issued by the National Council for Curriculum and Assessment (NaCCA) for Primary School. This Golden series title helps Basic 2 pupils develop listening, speaking, reading, and writing skills.",
+    isbn: "978-9988-2-6613-4",
+    pages: 140,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-english-basic-2/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-english-basic-2/front.jpg",
+        alt: "Golden English Basic 2 front cover",
+      },
+      {
+        url: "/covers/golden-english-basic-2/angle.jpg",
+        alt: "Golden English Basic 2 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["english", "primary-2", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 1,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1051,7 +1089,7 @@ export const collections: Collection[] = [
     slug: "new-arrivals",
     title: "New Arrivals",
     description: "Fresh pages, just shelved.",
-    bookIds: ["bk-5", "bk-11", "bk-12", "bk-16", "bk-19", "bk-26", "bk-27"],
+    bookIds: ["bk-5", "bk-11", "bk-12", "bk-16", "bk-19", "bk-26", "bk-27", "bk-28"],
   },
   {
     id: "col-awards",
