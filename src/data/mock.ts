@@ -952,6 +952,34 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-26",
+    slug: "golden-english-basic-5",
+    title: "Golden English Basic 5",
+    subtitle: "Oral Language · Reading · Writing · Grammar",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["English Language", "Primary 5", "Textbooks", "NaCCA"],
+    description:
+      "Golden English Basic 5 is a primary school English language textbook based on the NaCCA syllabus. It covers oral language, reading, writing, and grammar to help pupils succeed in communication.",
+    synopsis:
+      "Developed in accordance with the English syllabus issued by the National Council for Curriculum and Assessment (NaCCA) for Primary School. This Golden series title helps Basic 5 pupils develop listening, speaking, reading, and writing skills, with attention to grammatical and phonological structures of English.",
+    isbn: "978-9988-2-6616-5",
+    pages: 160,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-english-basic-5.jpg",
+    formats: [{ format: "paperback", price: 60, compareAt: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["english", "primary-5", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 3,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -967,7 +995,7 @@ export const collections: Collection[] = [
     slug: "new-arrivals",
     title: "New Arrivals",
     description: "Fresh pages, just shelved.",
-    bookIds: ["bk-5", "bk-11", "bk-12", "bk-16", "bk-19", "bk-3"],
+    bookIds: ["bk-5", "bk-11", "bk-12", "bk-16", "bk-19", "bk-26"],
   },
   {
     id: "col-awards",
