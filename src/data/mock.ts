@@ -971,7 +971,25 @@ export const books: Book[] = [
     pages: 160,
     language: "English",
     publishedAt: "2024-01-01",
-    coverUrl: "/covers/golden-english-basic-5.jpg",
+    coverUrl: "/covers/golden-english-basic-5/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-english-basic-5/front.jpg",
+        alt: "Golden English Basic 5 front cover",
+      },
+      {
+        url: "/covers/golden-english-basic-5/spine.jpg",
+        alt: "Golden English Basic 5 spine",
+      },
+      {
+        url: "/covers/golden-english-basic-5/angle.jpg",
+        alt: "Golden English Basic 5 angled view",
+      },
+      {
+        url: "/covers/golden-english-basic-5.jpg",
+        alt: "Golden English Basic 5 product views",
+      },
+    ],
     formats: [{ format: "paperback", price: 60, compareAt: 70, inStock: 100 }],
     rating: 0,
     reviewCount: 0,

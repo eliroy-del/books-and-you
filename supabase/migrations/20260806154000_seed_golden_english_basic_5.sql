@@ -116,3 +116,23 @@ cross join public.books b
 where b.slug = 'golden-english-basic-5'
   and c.slug in ('new-arrivals', 'best-sellers')
 on conflict do nothing;
+
+update public.books
+set cover_url = '/covers/golden-english-basic-5/front.jpg',
+    updated_at = timezone('utc', now())
+where slug = 'golden-english-basic-5';
+
+delete from public.book_images
+where book_id = (select id from public.books where slug = 'golden-english-basic-5');
+
+insert into public.book_images (book_id, url, alt_text, sort_order, is_primary)
+select b.id, v.url, v.alt_text, v.sort_order, v.is_primary
+from public.books b
+cross join (
+  values
+    ('/covers/golden-english-basic-5/front.jpg', 'Golden English Basic 5 front cover', 0, true),
+    ('/covers/golden-english-basic-5/spine.jpg', 'Golden English Basic 5 spine', 1, false),
+    ('/covers/golden-english-basic-5/angle.jpg', 'Golden English Basic 5 angled view', 2, false),
+    ('/covers/golden-english-basic-5.jpg', 'Golden English Basic 5 product views', 3, false)
+) as v(url, alt_text, sort_order, is_primary)
+where b.slug = 'golden-english-basic-5';

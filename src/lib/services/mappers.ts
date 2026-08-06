@@ -26,6 +26,17 @@ export function mapDbBook(row: Record<string, unknown>): Book {
   const categories =
     (row.book_categories as { category_id: string }[]) ?? [];
   const tags = (row.book_tags as { tag: string }[]) ?? [];
+  const gallery =
+    (row.book_images as { url: string; alt_text?: string | null; sort_order?: number; is_primary?: boolean }[]) ??
+    [];
+  const sortedGallery = [...gallery].sort(
+    (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0)
+  );
+  const images = sortedGallery.map((img) => ({
+    url: String(img.url),
+    alt: img.alt_text ? String(img.alt_text) : undefined,
+  }));
+  const primaryGallery = sortedGallery.find((img) => img.is_primary)?.url;
 
   return {
     id: String(row.id),
@@ -45,7 +56,8 @@ export function mapDbBook(row: Record<string, unknown>): Book {
     pages: Number(row.pages ?? 0),
     language: String(row.language ?? "English"),
     publishedAt: String(row.published_at ?? ""),
-    coverUrl: (row.cover_url as string) || undefined,
+    coverUrl: (row.cover_url as string) || primaryGallery || undefined,
+    images: images.length ? images : undefined,
     coverGradient: String(row.cover_gradient ?? "from-[#0F766E] to-[#134E4A]"),
     coverAccent: String(row.cover_accent ?? "#D4A017"),
     formats: inventory.map((inv) => ({
@@ -76,6 +88,7 @@ export const bookSelect = `
   book_authors ( is_primary, authors ( id, name, slug ) ),
   book_categories ( category_id ),
   book_tags ( tag ),
+  book_images ( url, alt_text, sort_order, is_primary ),
   book_inventory ( format, price_cents, compare_at_cents, quantity_on_hand, quantity_reserved, is_active )
 `;
 

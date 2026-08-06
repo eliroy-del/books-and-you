@@ -67,6 +67,8 @@ export interface Book {
   language: string;
   publishedAt: string;
   coverUrl?: string;
+  /** Extra product photos (gallery). When present, PDP shows clickable variations. */
+  images?: { url: string; alt?: string }[];
   coverGradient: string;
   coverAccent: string;
   formats: {

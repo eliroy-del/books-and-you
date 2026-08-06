@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Heart, ShoppingBag, Star } from "lucide-react";
 import { toast } from "sonner";
-import { BookCover } from "@/components/books/book-cover";
+import { BookImageGallery } from "@/components/books/book-image-gallery";
 import { BookCard } from "@/components/books/book-card";
 import { Button } from "@/components/ui/button";
 import { useCartStore, useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
@@ -124,11 +124,7 @@ export default function BookDetailClient() {
 
       <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
         <div className="lg:col-span-5">
-          <BookCover
-            book={book}
-            size="xl"
-            className="mx-auto w-full max-w-sm rounded-md shadow-md lg:mx-0"
-          />
+          <BookImageGallery book={book} />
         </div>
 
         <div className="lg:col-span-7">
