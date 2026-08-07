@@ -144,7 +144,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-0.5">
+        <div className="ml-auto flex shrink-0 items-center justify-end gap-0.5">
           <HeaderSearch />
           <ThemeToggle />
           <Button variant="ghost" size="icon" className="relative size-10" asChild>
