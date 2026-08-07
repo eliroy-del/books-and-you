@@ -35,7 +35,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 w-full max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:h-24 lg:gap-5 lg:px-8">
+      <div className="relative mx-auto flex h-20 w-full max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:h-24 lg:gap-5 lg:px-8">
         <BrandLogo href="/" size="md" showWordmark={false} priority />
 
         <Sheet open={open} onOpenChange={setOpen}>
@@ -104,7 +104,7 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <nav className="ml-1 hidden items-center gap-0.5 lg:flex">
+        <nav className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-0.5 lg:flex">
           <Link
             href="/"
             className={cn(
