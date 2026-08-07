@@ -1188,6 +1188,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 5,
   }),
+  book({
+    id: "bk-32",
+    slug: "golden-mathematics-basic-2",
+    title: "Golden Mathematics for Basic Schools 2",
+    subtitle: "Based on the New NaCCA Syllabus",
+    authorId: "auth-kwaku-okyere",
+    authorName: "Kwaku Okyere",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Mathematics", "Primary 2", "Textbooks", "NaCCA"],
+    description:
+      "Golden Mathematics for Basic Schools 2 is a primary school mathematics textbook based on the new NaCCA syllabus. It builds number sense, shapes, fractions, and problem-solving skills for Basic 2 learners.",
+    synopsis:
+      "Aligned with the National Council for Curriculum and Assessment (NaCCA) syllabus for Primary School. This Golden series title supports Basic 2 pupils with counting, operations, shapes, fractions, and everyday maths activities.",
+    isbn: "978-9988-2-6702-5",
+    pages: 160,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-mathematics-basic-2/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-mathematics-basic-2/front.jpg",
+        alt: "Golden Mathematics for Basic Schools 2 front cover",
+      },
+      {
+        url: "/covers/golden-mathematics-basic-2/angle.jpg",
+        alt: "Golden Mathematics for Basic Schools 2 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["mathematics", "primary-2", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 6,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1215,6 +1253,7 @@ export const collections: Collection[] = [
       "bk-29",
       "bk-30",
       "bk-31",
+      "bk-32",
     ],
   },
   {
