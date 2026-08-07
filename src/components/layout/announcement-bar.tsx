@@ -25,7 +25,7 @@ export function AnnouncementBar() {
   return (
     <div className="bg-primary text-primary-foreground relative overflow-hidden">
       <div className="absolute inset-0 opacity-20 editorial-grid" />
-      <div className="relative mx-auto flex h-10 max-w-7xl items-center justify-between gap-4 px-4 text-xs font-medium tracking-wide sm:px-6 sm:text-sm lg:px-8">
+      <div className="relative mx-auto flex h-10 max-w-7xl items-center justify-start gap-4 px-4 text-xs font-medium tracking-wide sm:px-6 sm:text-sm lg:px-8">
         <a
           href={phoneHref}
           className="inline-flex items-center gap-2 transition hover:opacity-90"
@@ -35,7 +35,7 @@ export function AnnouncementBar() {
           <span>{phoneDisplay}</span>
         </a>
 
-        <div className="flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-1">
           <Link
             href={siteConfig.social.facebook}
             target="_blank"
