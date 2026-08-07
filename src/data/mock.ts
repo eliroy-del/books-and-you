@@ -1112,6 +1112,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 0,
   }),
+  book({
+    id: "bk-30",
+    slug: "golden-english-basic-3",
+    title: "Golden English Basic 3",
+    subtitle: "Comprehension · Grammar · Listening and Speaking · Writing",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["English Language", "Primary 3", "Textbooks", "NaCCA"],
+    description:
+      "Golden English Basic 3 is a primary school English language textbook based on the NaCCA syllabus. It covers comprehension, grammar, listening and speaking, and writing to help pupils succeed in communication.",
+    synopsis:
+      "Developed in accordance with the English syllabus issued by the National Council for Curriculum and Assessment (NaCCA) for Primary School. This Golden series title helps Basic 3 pupils strengthen comprehension, grammar, listening and speaking, and writing skills.",
+    isbn: "978-9988-2-6614-1",
+    pages: 148,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-english-basic-3/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-english-basic-3/front.jpg",
+        alt: "Golden English Basic 3 front cover",
+      },
+      {
+        url: "/covers/golden-english-basic-3/angle.jpg",
+        alt: "Golden English Basic 3 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["english", "primary-3", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 4,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1127,7 +1165,7 @@ export const collections: Collection[] = [
     slug: "new-arrivals",
     title: "New Arrivals",
     description: "Fresh pages, just shelved.",
-    bookIds: ["bk-5", "bk-11", "bk-12", "bk-16", "bk-19", "bk-26", "bk-27", "bk-28", "bk-29"],
+    bookIds: ["bk-5", "bk-11", "bk-12", "bk-16", "bk-19", "bk-26", "bk-27", "bk-28", "bk-29", "bk-30"],
   },
   {
     id: "col-awards",
