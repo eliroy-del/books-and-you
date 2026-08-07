@@ -31,20 +31,18 @@ export function BrandLogo({
   priority = false,
 }: BrandLogoProps) {
   const dim = sizes[size];
+  const logoSrc = tone === "inverse" ? "/brand/logo-white.png" : "/brand/logo.png";
 
   const mark = (
     <span
       className={cn(
-        "relative inline-flex shrink-0 items-center overflow-hidden",
+        "relative inline-flex shrink-0 items-center overflow-hidden rounded-md",
         dim.height,
-        tone === "inverse"
-          ? "rounded-lg bg-white px-2 py-1 shadow-soft"
-          : "rounded-md",
         className
       )}
     >
       <Image
-        src="/brand/logo.png"
+        src={logoSrc}
         alt="Books & You"
         width={dim.pxW}
         height={dim.pxH}
