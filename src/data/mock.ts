@@ -1150,6 +1150,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 4,
   }),
+  book({
+    id: "bk-31",
+    slug: "golden-english-basic-4",
+    title: "Golden English Basic 4",
+    subtitle: "Oral Language · Reading · Writing · Grammar",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["English Language", "Primary 4", "Textbooks", "NaCCA"],
+    description:
+      "Golden English Basic 4 is a primary school English language textbook based on the NaCCA syllabus. It covers oral language, reading, writing, and grammar to help pupils succeed in communication.",
+    synopsis:
+      "Developed in accordance with the English syllabus issued by the National Council for Curriculum and Assessment (NaCCA) for Primary School. This Golden series title helps Basic 4 pupils develop listening, speaking, reading, and writing skills.",
+    isbn: "978-9988-2-6615-8",
+    pages: 152,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-english-basic-4/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-english-basic-4/front.jpg",
+        alt: "Golden English Basic 4 front cover",
+      },
+      {
+        url: "/covers/golden-english-basic-4/angle.jpg",
+        alt: "Golden English Basic 4 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["english", "primary-4", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 5,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1165,7 +1203,19 @@ export const collections: Collection[] = [
     slug: "new-arrivals",
     title: "New Arrivals",
     description: "Fresh pages, just shelved.",
-    bookIds: ["bk-5", "bk-11", "bk-12", "bk-16", "bk-19", "bk-26", "bk-27", "bk-28", "bk-29", "bk-30"],
+    bookIds: [
+      "bk-5",
+      "bk-11",
+      "bk-12",
+      "bk-16",
+      "bk-19",
+      "bk-26",
+      "bk-27",
+      "bk-28",
+      "bk-29",
+      "bk-30",
+      "bk-31",
+    ],
   },
   {
     id: "col-awards",
