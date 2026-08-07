@@ -36,7 +36,7 @@ export function BrandLogo({
   const mark = (
     <span
       className={cn(
-        "relative inline-flex shrink-0 items-center overflow-hidden rounded-md",
+        "relative inline-flex shrink-0 items-center bg-transparent",
         dim.height,
         className
       )}
@@ -46,7 +46,7 @@ export function BrandLogo({
         alt="Books & You"
         width={dim.pxW}
         height={dim.pxH}
-        className={cn("h-full w-auto object-contain object-left", dim.height)}
+        className={cn("h-full w-auto bg-transparent object-contain object-left", dim.height)}
         priority={priority}
       />
     </span>
