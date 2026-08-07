@@ -1302,6 +1302,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 0,
   }),
+  book({
+    id: "bk-35",
+    slug: "golden-mathematics-basic-5",
+    title: "Golden Mathematics for Basic Schools 5",
+    subtitle: "Based on the New NaCCA Syllabus",
+    authorId: "auth-kwaku-okyere",
+    authorName: "Kwaku Okyere",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Mathematics", "Primary 5", "Textbooks", "NaCCA"],
+    description:
+      "Golden Mathematics for Basic Schools 5 is a primary school mathematics textbook based on the new NaCCA syllabus. It strengthens number operations, fractions, measurement, and problem-solving for Basic 5 learners.",
+    synopsis:
+      "Aligned with the National Council for Curriculum and Assessment (NaCCA) syllabus for Primary School. This Golden series title supports Basic 5 pupils with calculations, fractions, geometry, and everyday maths practice.",
+    isbn: "978-9988-2-6705-6",
+    pages: 176,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-mathematics-basic-5/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-mathematics-basic-5/front.jpg",
+        alt: "Golden Mathematics for Basic Schools 5 front cover",
+      },
+      {
+        url: "/covers/golden-mathematics-basic-5/angle.jpg",
+        alt: "Golden Mathematics for Basic Schools 5 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["mathematics", "primary-5", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 1,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1332,6 +1370,7 @@ export const collections: Collection[] = [
       "bk-32",
       "bk-33",
       "bk-34",
+      "bk-35",
     ],
   },
   {
