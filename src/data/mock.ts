@@ -1340,6 +1340,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 1,
   }),
+  book({
+    id: "bk-36",
+    slug: "learn-history-of-ghana-learners-book-4",
+    title: "Learn History of Ghana",
+    subtitle: "Learners' Book 4 · Victory Series · New NaCCA Curriculum Compliant",
+    authorId: "auth-dent-augustine-theophilus",
+    authorName: "Dent-Augustine Theophilus",
+    publisherId: "pub-victory-series",
+    publisherName: "Victory Series",
+    categoryIds: ["cat-education"],
+    genres: ["History", "Primary 4", "Textbooks", "NaCCA"],
+    description:
+      "Learn History of Ghana Learners' Book 4 is a Victory Series primary textbook aligned with the new NaCCA curriculum. It introduces Basic 4 learners to Ghana's history through clear lessons and classroom activities.",
+    synopsis:
+      "Part of the Victory Series for primary schools. This learners' book helps Basic 4 pupils explore the history of Ghana with curriculum-compliant content designed for the classroom.",
+    isbn: "978-9988-3-7104-1",
+    pages: 160,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/learn-history-of-ghana-learners-book-4/front.jpg",
+    images: [
+      {
+        url: "/covers/learn-history-of-ghana-learners-book-4/front.jpg",
+        alt: "Learn History of Ghana Learners Book 4 front cover",
+      },
+      {
+        url: "/covers/learn-history-of-ghana-learners-book-4/angle.jpg",
+        alt: "Learn History of Ghana Learners Book 4 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["history", "primary-4", "nacca", "victory-series", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1371,6 +1409,7 @@ export const collections: Collection[] = [
       "bk-33",
       "bk-34",
       "bk-35",
+      "bk-36",
     ],
   },
   {
