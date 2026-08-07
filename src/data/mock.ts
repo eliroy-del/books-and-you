@@ -1264,6 +1264,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 7,
   }),
+  book({
+    id: "bk-34",
+    slug: "golden-computing-basic-5",
+    title: "Golden Computing Basic 5",
+    subtitle: "For Primary Schools · Based on NaCCA Syllabus",
+    authorId: "auth-akosua-animah",
+    authorName: "Akosua Animah & Kwadwo Baafi",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Computing / ICT", "Primary 5", "Textbooks", "NaCCA"],
+    description:
+      "Golden Computing Basic 5 is a primary school computing textbook based on the NaCCA syllabus. It builds digital literacy, computer skills, and foundational ICT knowledge for Basic 5 learners.",
+    synopsis:
+      "Aligned with the National Council for Curriculum and Assessment (NaCCA) syllabus for Primary Schools. This Golden series title helps Basic 5 pupils strengthen computing skills through clear lessons and classroom-ready activities.",
+    isbn: "978-9988-2-6805-3",
+    pages: 144,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-computing-basic-5/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-computing-basic-5/front.jpg",
+        alt: "Golden Computing Basic 5 front cover",
+      },
+      {
+        url: "/covers/golden-computing-basic-5/angle.jpg",
+        alt: "Golden Computing Basic 5 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 60, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["computing", "ict", "primary-5", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 0,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1293,6 +1331,7 @@ export const collections: Collection[] = [
       "bk-31",
       "bk-32",
       "bk-33",
+      "bk-34",
     ],
   },
   {
