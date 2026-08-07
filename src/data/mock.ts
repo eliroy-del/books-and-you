@@ -1226,6 +1226,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 6,
   }),
+  book({
+    id: "bk-33",
+    slug: "golden-computing-basic-4",
+    title: "Golden Computing Basic 4",
+    subtitle: "For Primary Schools · Based on NaCCA Syllabus",
+    authorId: "auth-akosua-animah",
+    authorName: "Akosua Animah & Kwadwo Baafi",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Computing / ICT", "Primary 4", "Textbooks", "NaCCA"],
+    description:
+      "Golden Computing Basic 4 is a primary school computing textbook based on the NaCCA syllabus. It introduces learners to digital literacy, computers, and foundational ICT skills for Basic 4.",
+    synopsis:
+      "Aligned with the National Council for Curriculum and Assessment (NaCCA) syllabus for Primary Schools. This Golden series title helps Basic 4 pupils build computing skills through clear lessons and classroom-ready activities.",
+    isbn: "978-9988-2-6804-6",
+    pages: 144,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-computing-basic-4/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-computing-basic-4/front.jpg",
+        alt: "Golden Computing Basic 4 front cover",
+      },
+      {
+        url: "/covers/golden-computing-basic-4/angle.jpg",
+        alt: "Golden Computing Basic 4 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 60, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["computing", "ict", "primary-4", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 7,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1254,6 +1292,7 @@ export const collections: Collection[] = [
       "bk-30",
       "bk-31",
       "bk-32",
+      "bk-33",
     ],
   },
   {
