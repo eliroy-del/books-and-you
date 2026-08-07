@@ -53,7 +53,7 @@ export const categories: Category[] = [
     name: "Fiction",
     description: "Immersive stories that transport and transform.",
     bookCount: 28,
-    accent: "from-teal-700 to-emerald-500",
+    accent: "from-[#001f3e] to-[#3d5a80]",
   },
   {
     id: "cat-nonfiction",
@@ -77,7 +77,7 @@ export const categories: Category[] = [
     name: "Technology",
     description: "Computing, AI, and the digital frontier.",
     bookCount: 14,
-    accent: "from-cyan-700 to-teal-400",
+    accent: "from-[#0d2136] to-[#efc076]",
   },
   {
     id: "cat-children",
@@ -138,7 +138,7 @@ export const authors: Author[] = [
     nationality: "Ghana",
     bookCount: 4,
     followers: 12840,
-    avatarColor: "#0F766E",
+    avatarColor: "#001F3E",
   },
   {
     id: "auth-2",
@@ -148,7 +148,7 @@ export const authors: Author[] = [
     nationality: "Nigeria",
     bookCount: 5,
     followers: 48200,
-    avatarColor: "#D4A017",
+    avatarColor: "#EFC076",
   },
   {
     id: "auth-3",
@@ -224,14 +224,14 @@ export const publishers: Publisher[] = [
 ];
 
 const coverPalettes = [
-  { gradient: "from-[#0F766E] via-[#0D9488] to-[#134E4A]", accent: "#D4A017" },
-  { gradient: "from-[#1E3A5F] via-[#0F766E] to-[#0B1220]", accent: "#F5E6B8" },
-  { gradient: "from-[#7C2D12] via-[#B45309] to-[#D4A017]", accent: "#FEF3C7" },
-  { gradient: "from-[#312E81] via-[#4338CA] to-[#0F766E]", accent: "#C7D2FE" },
+  { gradient: "from-[#001F3E] via-[#0D2136] to-[#3D5A80]", accent: "#EFC076" },
+  { gradient: "from-[#1E3A5F] via-[#001F3E] to-[#00101F]", accent: "#F5E6B8" },
+  { gradient: "from-[#7C2D12] via-[#B45309] to-[#EFC076]", accent: "#FEF3C7" },
+  { gradient: "from-[#312E81] via-[#4338CA] to-[#001F3E]", accent: "#C7D2FE" },
   { gradient: "from-[#164E63] via-[#0E7490] to-[#14B8A6]", accent: "#ECFEFF" },
   { gradient: "from-[#3F2E1E] via-[#78350F] to-[#A16207]", accent: "#FEF9C3" },
-  { gradient: "from-[#14532D] via-[#166534] to-[#0F766E]", accent: "#BBF7D0" },
-  { gradient: "from-[#1C1917] via-[#44403C] to-[#0F766E]", accent: "#D4A017" },
+  { gradient: "from-[#14532D] via-[#166534] to-[#001F3E]", accent: "#BBF7D0" },
+  { gradient: "from-[#1C1917] via-[#44403C] to-[#001F3E]", accent: "#EFC076" },
 ];
 
 function book(

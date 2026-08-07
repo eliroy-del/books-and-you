@@ -14,15 +14,16 @@ type BrandLogoProps = {
   priority?: boolean;
 };
 
+/** Horizontal lockup heights; width follows the logo aspect ratio. */
 const sizes = {
-  sm: { box: "size-9", px: 36 },
-  md: { box: "size-12", px: 48 },
-  lg: { box: "size-16", px: 64 },
+  sm: { height: "h-9 sm:h-10", pxH: 40, pxW: 164 },
+  md: { height: "h-12", pxH: 48, pxW: 197 },
+  lg: { height: "h-16", pxH: 64, pxW: 263 },
 };
 
 export function BrandLogo({
   href = "/",
-  showWordmark = true,
+  showWordmark = false,
   size = "sm",
   className,
   wordmarkClassName,
@@ -34,17 +35,20 @@ export function BrandLogo({
   const mark = (
     <span
       className={cn(
-        "relative inline-flex shrink-0 overflow-hidden rounded-xl bg-black shadow-soft ring-1 ring-black/20",
-        dim.box,
+        "relative inline-flex shrink-0 items-center overflow-hidden",
+        dim.height,
+        tone === "inverse"
+          ? "rounded-lg bg-white px-2 py-1 shadow-soft"
+          : "rounded-md",
         className
       )}
     >
       <Image
         src="/brand/logo.png"
         alt="Books & You"
-        width={dim.px}
-        height={dim.px}
-        className="object-contain p-0.5"
+        width={dim.pxW}
+        height={dim.pxH}
+        className={cn("h-full w-auto object-contain object-left", dim.height)}
         priority={priority}
       />
     </span>
@@ -62,7 +66,7 @@ export function BrandLogo({
           )}
         >
           Books{" "}
-          <span className={tone === "inverse" ? "text-teal-400" : "text-primary"}>
+          <span className={tone === "inverse" ? "text-gold" : "text-primary"}>
             &
           </span>{" "}
           You

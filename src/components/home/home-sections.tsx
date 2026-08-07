@@ -229,7 +229,7 @@ export function WhyBooksAndYou() {
 
 export function TestimonialsSection() {
   return (
-    <section className="bg-[#0B1220] py-16 text-slate-100">
+    <section className="bg-[#001f3e] py-16 text-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-2xl">
           <h2 className="font-heading text-2xl font-bold sm:text-3xl">Loved by readers</h2>
@@ -263,23 +263,23 @@ export function TestimonialsSection() {
 export function ReferralSection() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-gradient-to-br from-teal-700 via-teal-800 to-slate-900 p-8 text-white shadow-elevated sm:p-12">
+      <div className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-gradient-to-br from-[#001f3e] via-[#0d2136] to-[#00101f] p-8 text-white shadow-elevated sm:p-12">
         <div className="absolute inset-0 editorial-grid opacity-20" />
         <div className="relative grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="text-teal-200 text-sm font-semibold tracking-widest uppercase">
+            <p className="text-gold text-sm font-semibold tracking-widest uppercase">
               For schools & parents
             </p>
             <h2 className="font-heading mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
               Textbooks and supplies, ready for term.
             </h2>
-            <p className="mt-4 max-w-md text-teal-50/80">
+            <p className="mt-4 max-w-md text-white/75">
               Browse by class level, subject, and stationery. Checkout as a guest. No account
               required.
             </p>
           </div>
           <div className="flex flex-wrap gap-3 lg:justify-end">
-            <Button size="lg" className="bg-white text-teal-900 hover:bg-teal-50" asChild>
+            <Button size="lg" className="bg-gold text-gold-foreground hover:bg-[#e8b86d]" asChild>
               <Link href="/books">Shop books</Link>
             </Button>
             <Button

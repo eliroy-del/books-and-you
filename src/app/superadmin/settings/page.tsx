@@ -61,7 +61,7 @@ export default function SuperAdminSettingsPage() {
             />
             <Button
               size="sm"
-              className="mt-3 bg-teal-600 hover:bg-teal-500"
+              className="mt-3 bg-primary hover:bg-primary/90"
               onClick={() => void save(setting)}
             >
               Save

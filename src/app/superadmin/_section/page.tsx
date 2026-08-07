@@ -112,7 +112,7 @@ export default function SuperAdminSectionPage() {
             <SaCard key={p.id} title={p.label}>
               <p className="text-sm text-slate-400">Mode: {p.mode}</p>
               <p className="mt-1 text-sm text-slate-400">Webhook: {p.webhookPath}</p>
-              <Badge className="mt-3 border-0 bg-teal-500/20 text-teal-200">{p.status}</Badge>
+              <Badge className="mt-3 border-0 bg-primary/20 text-gold">{p.status}</Badge>
             </SaCard>
           ))}
         </div>
@@ -124,7 +124,7 @@ export default function SuperAdminSectionPage() {
             (p) => (
               <SaCard key={p.id} title={p.name}>
                 <p className="text-sm text-slate-400">Zones: {p.zones.join(", ")}</p>
-                <Badge className="mt-3 border-0 bg-teal-500/20 text-teal-200">{p.status}</Badge>
+                <Badge className="mt-3 border-0 bg-primary/20 text-gold">{p.status}</Badge>
               </SaCard>
             )
           )}
@@ -153,7 +153,7 @@ export default function SuperAdminSectionPage() {
                   key={String(e.path)}
                   className="flex flex-wrap justify-between gap-2 border-b border-white/10 py-2 last:border-0"
                 >
-                  <span className="font-mono text-teal-200">{String(e.path)}</span>
+                  <span className="font-mono text-gold">{String(e.path)}</span>
                   <span className="text-slate-400">
                     p95 {String(e.p95)}ms · err {String(e.errorRate)}%
                   </span>
@@ -240,7 +240,7 @@ export default function SuperAdminSectionPage() {
           <div className="space-y-3">
             {((data?.entries as Array<Record<string, unknown>>) || []).map((e) => (
               <div key={String(e.id)} className="border-b border-white/10 pb-3 last:border-0">
-                <p className="font-mono text-sm text-teal-200">{String(e.action)}</p>
+                <p className="font-mono text-sm text-gold">{String(e.action)}</p>
                 <p className="mt-1 text-xs text-slate-400">
                   {String(e.actor)} · {String(e.resource_type)} ·{" "}
                   {String(e.created_at).replace("T", " ").slice(0, 16)}
@@ -263,7 +263,7 @@ export default function SuperAdminSectionPage() {
                         ? "text-rose-300"
                         : log.level === "warn"
                           ? "text-amber-300"
-                          : "text-teal-300"
+                          : "text-gold"
                     }
                   >
                     {log.level}

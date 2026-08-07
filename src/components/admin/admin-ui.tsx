@@ -111,7 +111,7 @@ export function BarChart({
           </div>
           <div className="bg-muted h-2 overflow-hidden rounded-full">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-teal-700 to-amber-500 transition-all"
+              className="h-full rounded-full bg-gradient-to-r from-[#001f3e] to-[#efc076] transition-all"
               style={{ width: `${Math.round((item.value / max) * 100)}%` }}
             />
           </div>

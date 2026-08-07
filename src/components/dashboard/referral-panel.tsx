@@ -77,27 +77,27 @@ export function ReferralPanel() {
   if (!stats) return null;
 
   return (
-    <section className="mt-8 overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-teal-700 to-slate-900 p-6 text-white sm:p-8">
+    <section className="mt-8 overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-[#001f3e] to-[#00101f] p-6 text-white sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <Gift className="size-5 text-amber-300" />
             <h2 className="font-heading text-xl font-semibold">Referral rewards</h2>
           </div>
-          <p className="mt-2 max-w-xl text-sm text-teal-50/80">
+          <p className="mt-2 max-w-xl text-sm text-white/75">
             Share code{" "}
             <span className="font-semibold text-amber-300">{stats.code || "-"}</span> and earn{" "}
             {stats.rewardLabel || formatMoney((stats.rewardCents || 5000) / 100)} when friends
             complete their first order.
           </p>
-          <p className="mt-3 text-sm text-teal-100/80">
+          <p className="mt-3 text-sm text-white/70">
             Wallet {formatMoney(stats.walletBalanceCents / 100)} · Lifetime referral earnings{" "}
             {formatMoney(stats.earningsCents / 100)} · {stats.referrals.length} invites
           </p>
         </div>
         {stats.code && (
           <Button
-            className="bg-white text-teal-900 hover:bg-teal-50"
+            className="bg-gold text-gold-foreground hover:bg-[#e8b86d]"
             onClick={async () => {
               await navigator.clipboard.writeText(stats.code!);
               toast.success("Referral code copied");
@@ -119,7 +119,7 @@ export function ReferralPanel() {
             }}
             placeholder="Have a friend's code?"
             className={cn(
-              "border-white/20 bg-white/10 text-white placeholder:text-teal-100/50",
+              "border-white/20 bg-white/10 text-white placeholder:text-white/50",
               error && "border-destructive"
             )}
             aria-invalid={Boolean(error)}

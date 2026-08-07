@@ -17,7 +17,7 @@ function mapAuthor(a: Record<string, unknown>, bookCount: number): Author {
     nationality: String(a.nationality || ""),
     bookCount,
     followers: Number(a.followers_count || 0),
-    avatarColor: String(a.avatar_color || "from-teal-700 to-emerald-500"),
+    avatarColor: String(a.avatar_color || "from-[#001f3e] to-[#3d5a80]"),
   };
 }
 

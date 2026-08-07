@@ -53,86 +53,87 @@
   --radius-4xl: calc(var(--radius) * 2.6);
   --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px rgb(15 23 42 / 0.06);
   --shadow-elevated: 0 4px 6px rgb(15 23 42 / 0.04), 0 20px 40px rgb(15 23 42 / 0.08);
-  --shadow-glow: 0 0 0 1px rgb(15 118 110 / 0.12), 0 12px 40px rgb(15 118 110 / 0.18);
+  --shadow-glow: 0 0 0 1px rgb(0 31 62 / 0.10), 0 12px 40px rgb(0 31 62 / 0.16);
 }
 
 :root {
-  --background: #fafafa;
-  --foreground: #0f172a;
+  /* Books & You logo palette: navy + warm gold on white */
+  --background: #ffffff;
+  --foreground: #001f3e;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #001f3e;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #0f766e;
-  --primary-foreground: #f8fffe;
-  --secondary: #f1f5f4;
-  --secondary-foreground: #134e4a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f8f4ea;
-  --accent-foreground: #7a5b0a;
+  --popover-foreground: #001f3e;
+  --primary: #001f3e;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f5f8;
+  --secondary-foreground: #001f3e;
+  --muted: #f3f5f8;
+  --muted-foreground: #5b6b7c;
+  --accent: #fbf6ec;
+  --accent-foreground: #7a5b1a;
   --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #0f766e;
-  --brand: #0f766e;
-  --brand-foreground: #f8fffe;
-  --gold: #d4a017;
-  --gold-foreground: #1c1505;
-  --success: #10b981;
-  --chart-1: #0f766e;
-  --chart-2: #d4a017;
-  --chart-3: #0d9488;
-  --chart-4: #64748b;
-  --chart-5: #134e4a;
+  --border: #e4e9ef;
+  --input: #e4e9ef;
+  --ring: #001f3e;
+  --brand: #001f3e;
+  --brand-foreground: #ffffff;
+  --gold: #efc076;
+  --gold-foreground: #001f3e;
+  --success: #0f766e;
+  --chart-1: #001f3e;
+  --chart-2: #efc076;
+  --chart-3: #3d5a80;
+  --chart-4: #8b9aab;
+  --chart-5: #c9a24a;
   --radius: 0.75rem;
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #0f766e;
-  --sidebar-primary-foreground: #f8fffe;
-  --sidebar-accent: #f0fdfa;
-  --sidebar-accent-foreground: #134e4a;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #0f766e;
+  --sidebar-foreground: #001f3e;
+  --sidebar-primary: #001f3e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fbf6ec;
+  --sidebar-accent-foreground: #001f3e;
+  --sidebar-border: #e4e9ef;
+  --sidebar-ring: #001f3e;
 }
 
 .dark {
-  --background: #0b1220;
-  --foreground: #f1f5f9;
-  --card: #111827;
-  --card-foreground: #f1f5f9;
-  --popover: #111827;
-  --popover-foreground: #f1f5f9;
-  --primary: #14b8a6;
-  --primary-foreground: #042f2e;
-  --secondary: #1e293b;
-  --secondary-foreground: #e2e8f0;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
+  --background: #00101f;
+  --foreground: #f5f7fa;
+  --card: #061829;
+  --card-foreground: #f5f7fa;
+  --popover: #061829;
+  --popover-foreground: #f5f7fa;
+  --primary: #efc076;
+  --primary-foreground: #001f3e;
+  --secondary: #0d2136;
+  --secondary-foreground: #e8eef5;
+  --muted: #0d2136;
+  --muted-foreground: #9aabbc;
   --accent: #2a2416;
   --accent-foreground: #f5e6b8;
   --destructive: #f87171;
   --border: rgb(255 255 255 / 10%);
   --input: rgb(255 255 255 / 12%);
-  --ring: #14b8a6;
-  --brand: #14b8a6;
-  --brand-foreground: #042f2e;
-  --gold: #e5b82e;
-  --gold-foreground: #1c1505;
+  --ring: #efc076;
+  --brand: #efc076;
+  --brand-foreground: #001f3e;
+  --gold: #efc076;
+  --gold-foreground: #00101f;
   --success: #34d399;
-  --chart-1: #14b8a6;
-  --chart-2: #e5b82e;
-  --chart-3: #2dd4bf;
+  --chart-1: #efc076;
+  --chart-2: #7a9cc6;
+  --chart-3: #c9a24a;
   --chart-4: #94a3b8;
-  --chart-5: #5eead4;
-  --sidebar: #0f172a;
-  --sidebar-foreground: #f1f5f9;
-  --sidebar-primary: #14b8a6;
-  --sidebar-primary-foreground: #042f2e;
-  --sidebar-accent: #134e4a;
-  --sidebar-accent-foreground: #ccfbf1;
+  --chart-5: #e8eef5;
+  --sidebar: #00101f;
+  --sidebar-foreground: #f5f7fa;
+  --sidebar-primary: #efc076;
+  --sidebar-primary-foreground: #001f3e;
+  --sidebar-accent: #0d2136;
+  --sidebar-accent-foreground: #f5e6b8;
   --sidebar-border: rgb(255 255 255 / 10%);
-  --sidebar-ring: #14b8a6;
+  --sidebar-ring: #efc076;
 }
 
 @layer base {
@@ -183,24 +184,24 @@
 
   .gradient-mesh {
     background:
-      radial-gradient(ellipse 80% 60% at 10% 20%, rgb(15 118 110 / 0.14), transparent 55%),
-      radial-gradient(ellipse 70% 50% at 90% 10%, rgb(212 160 23 / 0.12), transparent 50%),
-      radial-gradient(ellipse 60% 40% at 70% 90%, rgb(15 118 110 / 0.08), transparent 55%),
-      linear-gradient(180deg, #fafafa 0%, #f3f7f6 100%);
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgb(0 31 62 / 0.08), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, rgb(239 192 118 / 0.16), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 70% 90%, rgb(0 31 62 / 0.06), transparent 55%),
+      linear-gradient(180deg, #ffffff 0%, #f5f7fa 100%);
   }
 
   .dark .gradient-mesh {
     background:
-      radial-gradient(ellipse 80% 60% at 10% 20%, rgb(20 184 166 / 0.16), transparent 55%),
-      radial-gradient(ellipse 70% 50% at 90% 10%, rgb(229 184 46 / 0.1), transparent 50%),
-      radial-gradient(ellipse 60% 40% at 70% 90%, rgb(20 184 166 / 0.08), transparent 55%),
-      linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgb(239 192 118 / 0.12), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, rgb(61 90 128 / 0.16), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 70% 90%, rgb(239 192 118 / 0.08), transparent 55%),
+      linear-gradient(180deg, #00101f 0%, #061829 100%);
   }
 
   .editorial-grid {
     background-image:
-      linear-gradient(rgb(15 118 110 / 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(15 118 110 / 0.04) 1px, transparent 1px);
+      linear-gradient(rgb(0 31 62 / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(0 31 62 / 0.04) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
+import { Inter, Libre_Baskerville, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ConsentProvider } from "@/components/ConsentProvider";
@@ -23,9 +23,10 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const jakarta = Plus_Jakarta_Sans({
+const baskerville = Libre_Baskerville({
   variable: "--font-jakarta",
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -87,7 +88,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="h-full">
       <body
-        className={`${inter.variable} ${jakarta.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}
+        className={`${inter.variable} ${baskerville.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}
       >
         <Script id="consent-default" strategy="beforeInteractive">
           {`

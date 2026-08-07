@@ -17,9 +17,9 @@ export type FeaturedCollectionDef = {
 };
 
 const accents = [
-  "from-teal-700 to-emerald-500",
+  "from-[#001f3e] to-[#3d5a80]",
   "from-amber-600 to-orange-400",
-  "from-sky-700 to-cyan-500",
+  "from-[#0d2136] to-[#efc076]",
   "from-rose-700 to-pink-500",
   "from-indigo-700 to-violet-500",
   "from-lime-700 to-green-500",

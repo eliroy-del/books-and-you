@@ -60,7 +60,7 @@ export default function SuperAdminFlagsPage() {
                 <Badge
                   className={
                     flag.enabled
-                      ? "border-0 bg-teal-500/20 text-teal-200"
+                      ? "border-0 bg-primary/20 text-gold"
                       : "border-0 bg-slate-500/20 text-slate-300"
                   }
                 >
@@ -68,7 +68,7 @@ export default function SuperAdminFlagsPage() {
                 </Badge>
                 <Button
                   size="sm"
-                  className="bg-teal-600 hover:bg-teal-500"
+                  className="bg-primary hover:bg-primary/90"
                   onClick={() => void toggle(flag)}
                 >
                   Toggle

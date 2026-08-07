@@ -49,7 +49,7 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[230px_1fr] sm:px-6 lg:px-8">
         <aside className="h-fit rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
           <div className="px-2">
-            <Badge className="border-0 bg-teal-500/20 text-teal-200">super_admin</Badge>
+            <Badge className="border-0 bg-primary/20 text-gold">super_admin</Badge>
             <p className="font-heading mt-2 text-sm font-bold text-white">Control plane</p>
             <p className="text-xs text-slate-400">Platform configuration</p>
           </div>
@@ -66,7 +66,7 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
                   className={cn(
                     "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
                     active
-                      ? "bg-teal-600 text-white"
+                      ? "bg-primary text-primary-foreground"
                       : "text-slate-300 hover:bg-white/10 hover:text-white"
                   )}
                 >

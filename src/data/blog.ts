@@ -22,7 +22,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-07-12",
     readingMinutes: 6,
     category: "Reading life",
-    coverGradient: "from-[#0F766E] via-[#0D9488] to-[#134E4A]",
+    coverGradient: "from-[#001F3E] via-[#0D2136] to-[#3D5A80]",
     coverAccent: "#D4A017",
     tags: ["habits", "productivity", "beginners"],
     content: [
@@ -64,7 +64,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-06-28",
     readingMinutes: 5,
     category: "Formats",
-    coverGradient: "from-[#1E3A5F] via-[#0F766E] to-[#0B1220]",
+    coverGradient: "from-[#1E3A5F] via-[#001F3E] to-[#00101F]",
     coverAccent: "#F5E6B8",
     tags: ["ebooks", "audiobooks", "print"],
     content: [
@@ -85,7 +85,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-06-18",
     readingMinutes: 7,
     category: "Gifting",
-    coverGradient: "from-[#312E81] via-[#4338CA] to-[#0F766E]",
+    coverGradient: "from-[#312E81] via-[#4338CA] to-[#001F3E]",
     coverAccent: "#C7D2FE",
     tags: ["gifts", "wishlist", "holidays"],
     content: [
@@ -106,7 +106,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-06-05",
     readingMinutes: 9,
     category: "Education",
-    coverGradient: "from-[#14532D] via-[#166534] to-[#0F766E]",
+    coverGradient: "from-[#14532D] via-[#166534] to-[#001F3E]",
     coverAccent: "#BBF7D0",
     tags: ["textbooks", "ghana", "parents", "education"],
     content: [

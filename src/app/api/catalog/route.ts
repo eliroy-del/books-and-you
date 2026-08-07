@@ -140,7 +140,7 @@ export async function GET(request: Request) {
           slug: String(c.slug),
           name: String(c.name),
           description: String(c.description || ""),
-          accent: String(c.accent || "from-teal-700 to-emerald-500"),
+          accent: String(c.accent || "from-[#001f3e] to-[#3d5a80]"),
           parentId: c.parent_id ? String(c.parent_id) : null,
           depth: Number(c.depth ?? 0),
           bookCount: countMap.get(String(c.id)) || 0,
@@ -263,7 +263,7 @@ function mapAuthor(a: Record<string, unknown>, bookCount: number) {
     nationality: String(a.nationality || ""),
     bookCount,
     followers: Number(a.followers_count || 0),
-    avatarColor: String(a.avatar_color || "from-teal-700 to-emerald-500"),
+    avatarColor: String(a.avatar_color || "from-[#001f3e] to-[#3d5a80]"),
   };
 }
 

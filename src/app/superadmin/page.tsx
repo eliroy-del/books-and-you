@@ -32,13 +32,13 @@ export default function SuperAdminOverviewPage() {
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <SaCard title="RLS coverage">
-          <p className="font-heading text-3xl font-bold text-teal-300">
+          <p className="font-heading text-3xl font-bold text-gold">
             {health?.rlsCoverage ?? "-"}%
           </p>
           <p className="mt-2 text-sm text-slate-400">All public tables enforce row-level security.</p>
         </SaCard>
         <SaCard title="Storage">
-          <p className="font-heading text-3xl font-bold text-teal-300">
+          <p className="font-heading text-3xl font-bold text-gold">
             {health?.storageBuckets ?? "-"}
           </p>
           <p className="mt-2 text-sm text-slate-400">Configured buckets with signed access policies.</p>

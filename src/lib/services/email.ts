@@ -72,7 +72,7 @@ export function renderOrderConfirmationEmail(input: {
         <h1 style="font-size:22px;margin:0 0 12px">Thanks, ${input.customerName}!</h1>
         <p style="margin:0 0 16px;color:#475569">Your order <strong>${input.orderNumber}</strong> is confirmed.</p>
         <p style="margin:0 0 16px">Total paid: <strong>${input.totalLabel}</strong></p>
-        <a href="${input.trackingUrl}" style="display:inline-block;background:#0F766E;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px">Track order</a>
+        <a href="${input.trackingUrl}" style="display:inline-block;background:#001F3E;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px">Track order</a>
         <p style="margin:24px 0 0;font-size:12px;color:#94a3b8">Books & You · Discover your next favorite book.</p>
       </div>
     `,

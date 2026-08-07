@@ -58,8 +58,8 @@ export function mapDbBook(row: Record<string, unknown>): Book {
     publishedAt: String(row.published_at ?? ""),
     coverUrl: (row.cover_url as string) || primaryGallery || undefined,
     images: images.length ? images : undefined,
-    coverGradient: String(row.cover_gradient ?? "from-[#0F766E] to-[#134E4A]"),
-    coverAccent: String(row.cover_accent ?? "#D4A017"),
+    coverGradient: String(row.cover_gradient ?? "from-[#001F3E] to-[#0D2136]"),
+    coverAccent: String(row.cover_accent ?? "#EFC076"),
     formats: inventory.map((inv) => ({
       format: inv.format,
       price: Math.round(inv.price_cents / 100),

@@ -8,11 +8,11 @@ import { NewsletterForm } from "@/components/forms/newsletter-form";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/60 bg-[#0B1220] text-slate-200">
+    <footer className="border-t border-border/60 bg-[#001f3e] text-slate-200">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <BrandLogo href="/" size="md" showWordmark={false} />
+            <BrandLogo href="/" size="md" showWordmark={false} tone="inverse" />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
               Ghana&apos;s school bookstore for textbooks, stationery, and classroom essentials from
               Nursery through SHS.
@@ -22,7 +22,7 @@ export function SiteFooter() {
                 <a
                   key={i}
                   href="#"
-                  className="flex size-9 items-center justify-center rounded-full border border-white/10 text-slate-300 transition hover:border-teal-500/50 hover:text-teal-300"
+                  className="flex size-9 items-center justify-center rounded-full border border-white/10 text-slate-300 transition hover:border-gold/60 hover:text-gold"
                   aria-label="Social link"
                 >
                   <Icon className="size-4" />
@@ -37,13 +37,13 @@ export function SiteFooter() {
               <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
                 {catalogNav.slice(0, 6).map((d) => (
                   <li key={d.slug}>
-                    <Link href={departmentHref(d.slug)} className="hover:text-teal-300">
+                    <Link href={departmentHref(d.slug)} className="hover:text-gold">
                       {d.name}
                     </Link>
                   </li>
                 ))}
                 <li>
-                  <Link href={`/books?collection=${featuredCollectionDefs[3]?.slug}`} className="hover:text-teal-300">
+                  <Link href={`/books?collection=${featuredCollectionDefs[3]?.slug}`} className="hover:text-gold">
                     Back to School
                   </Link>
                 </li>
@@ -53,22 +53,22 @@ export function SiteFooter() {
               <h3 className="font-heading text-sm font-semibold text-white">Help</h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
                 <li>
-                  <Link href="/support" className="hover:text-teal-300">
+                  <Link href="/support" className="hover:text-gold">
                     Support Center
                   </Link>
                 </li>
                 <li>
-                  <Link href="/orders" className="hover:text-teal-300">
+                  <Link href="/orders" className="hover:text-gold">
                     Track Orders
                   </Link>
                 </li>
                 <li>
-                  <Link href="/blog" className="hover:text-teal-300">
+                  <Link href="/blog" className="hover:text-gold">
                     Blog
                   </Link>
                 </li>
                 <li>
-                  <a href={`mailto:${siteConfig.supportEmail}`} className="hover:text-teal-300">
+                  <a href={`mailto:${siteConfig.supportEmail}`} className="hover:text-gold">
                     Email Us
                   </a>
                 </li>
@@ -78,7 +78,7 @@ export function SiteFooter() {
               <h3 className="font-heading text-sm font-semibold text-white">Company</h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
                 <li>
-                  <Link href="/contact" className="hover:text-teal-300">
+                  <Link href="/contact" className="hover:text-gold">
                     Contact Us
                   </Link>
                 </li>
@@ -89,7 +89,7 @@ export function SiteFooter() {
                   <span className="cursor-default">Terms</span>
                 </li>
                 <li>
-                  <CookieSettingsButton className="hover:text-teal-300" />
+                  <CookieSettingsButton className="hover:text-gold" />
                 </li>
               </ul>
             </div>
@@ -103,7 +103,7 @@ export function SiteFooter() {
             <NewsletterForm
               className="mt-4"
               inputClassName="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-              buttonClassName="bg-teal-600 hover:bg-teal-500"
+              buttonClassName="bg-gold text-gold-foreground hover:bg-[#e8b86d]"
             />
           </div>
         </div>

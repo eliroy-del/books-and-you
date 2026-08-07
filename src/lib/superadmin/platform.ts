@@ -76,7 +76,7 @@ const demoFlags: FeatureFlag[] = [
 const demoSettings: SiteSetting[] = [
   {
     key: "brand",
-    value: { name: "Books & You", primary: "#0F766E", accent: "#D4A017" },
+    value: { name: "Books & You", primary: "#001F3E", accent: "#EFC076" },
     description: "Brand tokens",
   },
   {

@@ -57,7 +57,7 @@ export function organizationSchema(): JsonLdObject {
     name: siteName,
     legalName: "Books & You",
     url: base,
-    logo: `${base}/icon.png`,
+    logo: `${base}/brand/logo.png`,
     description: siteDescription,
     email: supportEmail,
     telephone: schemaTelephone(),
@@ -217,7 +217,7 @@ export function blogPostingSchema(input: {
     publisher: {
       "@type": "Organization",
       name: siteName,
-      logo: { "@type": "ImageObject", url: `${base}/icon.png` },
+      logo: { "@type": "ImageObject", url: `${base}/brand/logo.png` },
     },
     ...(input.image ? { image: input.image } : {}),
   };
