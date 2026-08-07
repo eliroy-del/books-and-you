@@ -35,18 +35,13 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:h-24 lg:gap-5 lg:px-8">
-        <BrandLogo href="/" size="md" showWordmark={false} priority className="order-1" />
+      <div className="mx-auto flex h-20 w-full max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:h-24 lg:gap-5 lg:px-8">
+        <BrandLogo href="/" size="md" showWordmark={false} priority />
 
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="order-2 size-10 lg:hidden"
-                aria-label="Open menu"
-              />
+              <Button variant="ghost" size="icon" className="size-10 lg:hidden" aria-label="Open menu" />
             }
           >
             <Menu className="size-5" />
@@ -109,7 +104,7 @@ export function SiteHeader() {
           </SheetContent>
         </Sheet>
 
-        <nav className="order-3 ml-1 hidden items-center gap-0.5 lg:flex">
+        <nav className="ml-1 hidden items-center gap-0.5 lg:flex">
           <Link
             href="/"
             className={cn(
@@ -149,7 +144,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="order-4 ml-auto flex shrink-0 items-center gap-0.5">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-0.5">
           <HeaderSearch />
           <ThemeToggle />
           <Button variant="ghost" size="icon" className="relative size-10" asChild>
