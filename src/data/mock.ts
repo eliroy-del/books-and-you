@@ -1758,6 +1758,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 4,
   }),
+  book({
+    id: "bk-47",
+    slug: "golden-colour-work-for-kg",
+    title: "Golden Colour Work for KG",
+    subtitle: "Kindergarten colouring and activity book",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Colouring", "Kindergarten", "Activity Books", "Early Years"],
+    description:
+      "Golden Colour Work for KG is a kindergarten colouring and activity book that helps young learners practise colouring, observation, and early motor skills through fun pictures and simple exercises.",
+    synopsis:
+      "Part of the Golden series for early years. This KG title supports classroom and home colouring practice with child-friendly illustrations.",
+    isbn: "978-9988-2-7001-8",
+    pages: 64,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-colour-work-for-kg/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-colour-work-for-kg/front.jpg",
+        alt: "Golden Colour Work for KG front cover",
+      },
+      {
+        url: "/covers/golden-colour-work-for-kg/angle.jpg",
+        alt: "Golden Colour Work for KG angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["colouring", "kindergarten", "kg", "golden", "activity", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 5,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1800,6 +1838,7 @@ export const collections: Collection[] = [
       "bk-44",
       "bk-45",
       "bk-46",
+      "bk-47",
     ],
   },
   {
