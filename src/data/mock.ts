@@ -2032,6 +2032,48 @@ export const books: Book[] = [
     newArrival: true,
     palette: 4,
   }),
+  book({
+    id: "bk-54",
+    slug: "golden-english-kg-2",
+    title: "Golden English KG 2",
+    subtitle: "Based on the new NaCCA syllabus",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["English", "Kindergarten", "Literacy", "Early Years"],
+    description:
+      "Golden English KG 2 is a kindergarten English textbook based on the new NaCCA syllabus. It helps young learners build early literacy through letters, sounds, vocabulary, and simple reading and speaking practice.",
+    synopsis:
+      "Part of the Golden series for early years. This KG 2 English title supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7008-7",
+    pages: 96,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-english-kg-2/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-english-kg-2/front.jpg",
+        alt: "Golden English KG 2 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "english",
+      "literacy",
+      "kindergarten",
+      "kg-2",
+      "golden",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 5,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -2081,6 +2123,7 @@ export const collections: Collection[] = [
       "bk-51",
       "bk-52",
       "bk-53",
+      "bk-54",
     ],
   },
   {
