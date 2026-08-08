@@ -1948,6 +1948,48 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-52",
+    slug: "golden-creative-arts-kg-1",
+    title: "Golden Creative Arts KG 1",
+    subtitle: "Based on the new NaCCA syllabus",
+    authorId: "auth-akosua-animah",
+    authorName: "Akosua Animah, Kwadwo Baafi & Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Creative Arts", "Kindergarten", "Art", "Early Years"],
+    description:
+      "Golden Creative Arts KG 1 is a kindergarten creative arts textbook based on the new NaCCA syllabus. It introduces young learners to drawing, colour, music, and simple creative activities through age-appropriate lessons.",
+    synopsis:
+      "Part of the Golden series for early years. This KG 1 Creative Arts title supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7006-3",
+    pages: 80,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-creative-arts-kg-1/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-creative-arts-kg-1/front.jpg",
+        alt: "Golden Creative Arts KG 1 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "creative-arts",
+      "art",
+      "kindergarten",
+      "kg-1",
+      "golden",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 3,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1995,6 +2037,7 @@ export const collections: Collection[] = [
       "bk-49",
       "bk-50",
       "bk-51",
+      "bk-52",
     ],
   },
   {
