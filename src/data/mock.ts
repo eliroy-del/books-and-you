@@ -1416,6 +1416,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 3,
   }),
+  book({
+    id: "bk-38",
+    slug: "golden-history-of-ghana-bs-6",
+    title: "Golden History of Ghana BS 6",
+    subtitle: "Based on the New NaCCA Syllabus",
+    authorId: "auth-mercy-gyaa-adiyiah",
+    authorName: "Mercy Gyaa-Adiyiah",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["History", "Primary 6", "Textbooks", "NaCCA"],
+    description:
+      "Golden History of Ghana BS 6 is a primary school history textbook based on the new NaCCA syllabus. It deepens Basic 6 learners' understanding of Ghana's story, people, and national life through clear lessons and classroom activities.",
+    synopsis:
+      "Aligned with the National Council for Curriculum and Assessment (NaCCA) syllabus for Primary School. This Golden series title helps Basic 6 pupils explore the history of Ghana with age-appropriate content.",
+    isbn: "978-9988-2-6906-4",
+    pages: 160,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-history-of-ghana-bs-6/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-history-of-ghana-bs-6/front.jpg",
+        alt: "Golden History of Ghana BS 6 front cover",
+      },
+      {
+        url: "/covers/golden-history-of-ghana-bs-6/angle.jpg",
+        alt: "Golden History of Ghana BS 6 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 50, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["history", "primary-6", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 4,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1449,6 +1487,7 @@ export const collections: Collection[] = [
       "bk-35",
       "bk-36",
       "bk-37",
+      "bk-38",
     ],
   },
   {
