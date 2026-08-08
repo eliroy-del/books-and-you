@@ -1906,6 +1906,48 @@ export const books: Book[] = [
     newArrival: true,
     palette: 1,
   }),
+  book({
+    id: "bk-51",
+    slug: "golden-our-world-our-people-kg-1",
+    title: "Golden Our World Our People KG 1",
+    subtitle: "Based on the new NaCCA syllabus",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Our World Our People", "Kindergarten", "OWOP", "Early Years"],
+    description:
+      "Golden Our World Our People KG 1 is a kindergarten textbook based on the new NaCCA syllabus. It introduces young learners to their community, environment, and everyday life through simple, age-appropriate lessons.",
+    synopsis:
+      "Part of the Golden series for early years. This KG 1 Our World Our People title supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7005-6",
+    pages: 80,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-our-world-our-people-kg-1/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-our-world-our-people-kg-1/front.jpg",
+        alt: "Golden Our World Our People KG 1 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "owop",
+      "our-world-our-people",
+      "kindergarten",
+      "kg-1",
+      "golden",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1952,6 +1994,7 @@ export const collections: Collection[] = [
       "bk-48",
       "bk-49",
       "bk-50",
+      "bk-51",
     ],
   },
   {
