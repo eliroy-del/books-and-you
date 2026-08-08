@@ -1454,6 +1454,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 4,
   }),
+  book({
+    id: "bk-39",
+    slug: "golden-history-of-ghana-bs-2",
+    title: "Golden History of Ghana BS 2",
+    subtitle: "Based on the New NaCCA Syllabus",
+    authorId: "auth-mercy-gyaa-adiyiah",
+    authorName: "Mercy Gyaa-Adiyiah",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["History", "Primary 2", "Textbooks", "NaCCA"],
+    description:
+      "Golden History of Ghana BS 2 is a primary school history textbook based on the new NaCCA syllabus. It introduces Basic 2 learners to Ghana's story, people, and community life through clear lessons and classroom activities.",
+    synopsis:
+      "Aligned with the National Council for Curriculum and Assessment (NaCCA) syllabus for Primary School. This Golden series title helps Basic 2 pupils explore the history of Ghana with age-appropriate content.",
+    isbn: "978-9988-2-6902-6",
+    pages: 128,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-history-of-ghana-bs-2/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-history-of-ghana-bs-2/front.jpg",
+        alt: "Golden History of Ghana BS 2 front cover",
+      },
+      {
+        url: "/covers/golden-history-of-ghana-bs-2/angle.jpg",
+        alt: "Golden History of Ghana BS 2 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 50, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["history", "primary-2", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 5,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1488,6 +1526,7 @@ export const collections: Collection[] = [
       "bk-36",
       "bk-37",
       "bk-38",
+      "bk-39",
     ],
   },
   {
