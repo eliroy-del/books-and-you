@@ -2074,6 +2074,48 @@ export const books: Book[] = [
     newArrival: true,
     palette: 5,
   }),
+  book({
+    id: "bk-55",
+    slug: "golden-mathematics-kg-2",
+    title: "Golden Mathematics KG 2",
+    subtitle: "Based on the new NaCCA syllabus",
+    authorId: "auth-akosua-animah",
+    authorName: "Akosua Animah",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Mathematics", "Kindergarten", "Numbers", "Early Years"],
+    description:
+      "Golden Mathematics KG 2 is a kindergarten mathematics textbook based on the new NaCCA syllabus. It helps young learners practise counting, simple addition, and early number skills through clear, age-appropriate exercises.",
+    synopsis:
+      "Part of the Golden series for early years. This KG 2 Mathematics title supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7009-4",
+    pages: 96,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-mathematics-kg-2/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-mathematics-kg-2/front.jpg",
+        alt: "Golden Mathematics KG 2 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "mathematics",
+      "maths",
+      "kindergarten",
+      "kg-2",
+      "golden",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 6,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -2124,6 +2166,7 @@ export const collections: Collection[] = [
       "bk-52",
       "bk-53",
       "bk-54",
+      "bk-55",
     ],
   },
   {
