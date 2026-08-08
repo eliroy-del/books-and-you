@@ -2321,6 +2321,47 @@ export const books: Book[] = [
     newArrival: true,
     palette: 3,
   }),
+  book({
+    id: "bk-61",
+    slug: "golden-rme-basic-6",
+    title: "Golden RME Basic 6",
+    subtitle: "Religious and Moral Education · Based on the new NaCCA syllabus",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["RME", "Religious and Moral Education", "Primary 6", "NaCCA"],
+    description:
+      "Golden RME Basic 6 is a primary school Religious and Moral Education textbook based on the new NaCCA syllabus. It helps Basic 6 learners explore faith, values, and responsible living through clear lessons and classroom activities.",
+    synopsis:
+      "Part of the Golden series for primary schools. This Basic 6 RME title supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7015-5",
+    pages: 144,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-rme-basic-6/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-rme-basic-6/front.jpg",
+        alt: "Golden RME Basic 6 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 50, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "rme",
+      "religious-and-moral-education",
+      "primary-6",
+      "golden",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 4,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -2377,6 +2418,7 @@ export const collections: Collection[] = [
       "bk-58",
       "bk-59",
       "bk-60",
+      "bk-61",
     ],
   },
   {
