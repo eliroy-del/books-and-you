@@ -1606,6 +1606,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 0,
   }),
+  book({
+    id: "bk-43",
+    slug: "history-of-ghana-for-basic-schools-book-5",
+    title: "History of Ghana for Basic Schools",
+    subtitle: "Book 5 · Based on the 2019 New Curriculum",
+    authorId: "auth-cyril-k-atipoe",
+    authorName: "Cyril K. Atipoe",
+    publisherId: "pub-masterman",
+    publisherName: "Masterman Publications Ltd.",
+    categoryIds: ["cat-education"],
+    genres: ["History", "Primary 5", "Textbooks", "Curriculum"],
+    description:
+      "History of Ghana for Basic Schools Book 5 from Masterman Publications is aligned with the 2019 new curriculum. It helps Basic 5 learners explore Ghana's history through clear lessons and classroom activities.",
+    synopsis:
+      "Published by Masterman Publications Ltd. This Book 5 title supports primary learners with curriculum-based history content on Ghana's people, independence, and national life.",
+    isbn: "978-9988-3-8205-4",
+    pages: 160,
+    language: "English",
+    publishedAt: "2020-01-01",
+    coverUrl: "/covers/history-of-ghana-for-basic-schools-book-5/front.jpg",
+    images: [
+      {
+        url: "/covers/history-of-ghana-for-basic-schools-book-5/front.jpg",
+        alt: "History of Ghana for Basic Schools Book 5 front cover",
+      },
+      {
+        url: "/covers/history-of-ghana-for-basic-schools-book-5/angle.jpg",
+        alt: "History of Ghana for Basic Schools Book 5 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 50, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["history", "primary-5", "curriculum", "masterman", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 1,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1644,6 +1682,7 @@ export const collections: Collection[] = [
       "bk-40",
       "bk-41",
       "bk-42",
+      "bk-43",
     ],
   },
   {
