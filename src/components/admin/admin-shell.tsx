@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   BarChart3,
@@ -11,6 +11,7 @@ import {
   FileText,
   Gift,
   LayoutDashboard,
+  LogOut,
   MessageSquare,
   Package,
   Percent,
@@ -23,6 +24,7 @@ import {
   Tags,
   Users,
 } from "lucide-react";
+import { useAuth } from "@/components/providers/auth-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,9 +70,23 @@ const DEMO_ROLE_KEY = "bay-demo-role";
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { signOut } = useAuth();
   const [session, setSession] = useState<AdminSessionPayload | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
   const [demoRole, setDemoRole] = useState<RoleKey>("super_admin");
+
+  const handleSignOut = useCallback(async () => {
+    setSigningOut(true);
+    try {
+      await signOut();
+      router.replace("/auth?next=/admin");
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
+  }, [router, signOut]);
 
   const load = useCallback(async (role?: RoleKey) => {
     setLoading(true);
@@ -180,12 +196,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 })}
           </nav>
 
-          <div className="mt-4 border-t border-border/60 pt-3">
+          <div className="mt-4 space-y-1 border-t border-border/60 pt-3">
             <Button asChild variant="ghost" size="sm" className="w-full justify-start">
               <Link href="/superadmin">
                 <Settings2 className="mr-2 size-4" />
                 Super Admin
               </Link>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-muted-foreground hover:text-foreground"
+              disabled={signingOut}
+              onClick={() => void handleSignOut()}
+            >
+              <LogOut className="mr-2 size-4" />
+              {signingOut ? "Signing out…" : "Sign out"}
             </Button>
           </div>
         </aside>

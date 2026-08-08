@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useState, type ReactNode } from "react";
 import {
   Activity,
   Database,
@@ -10,6 +10,7 @@ import {
   Flag,
   HardDrive,
   KeyRound,
+  LogOut,
   ScrollText,
   Server,
   Shield,
@@ -19,6 +20,7 @@ import {
   FileText,
   LayoutDashboard,
 } from "lucide-react";
+import { useAuth } from "@/components/providers/auth-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -43,6 +45,20 @@ const NAV = [
 
 export function SuperAdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { signOut } = useAuth();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = useCallback(async () => {
+    setSigningOut(true);
+    try {
+      await signOut();
+      router.replace("/auth?next=/superadmin");
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
+  }, [router, signOut]);
 
   return (
     <div className="min-h-[calc(100vh-8rem)] bg-[#0B1220] text-slate-100">
@@ -76,7 +92,7 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
-          <div className="mt-4 border-t border-white/10 pt-3">
+          <div className="mt-4 space-y-1 border-t border-white/10 pt-3">
             <Button
               asChild
               variant="ghost"
@@ -84,6 +100,17 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
               className="w-full justify-start text-slate-300 hover:bg-white/10 hover:text-white"
             >
               <Link href="/admin">← Admin ops</Link>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-slate-300 hover:bg-white/10 hover:text-white"
+              disabled={signingOut}
+              onClick={() => void handleSignOut()}
+            >
+              <LogOut className="mr-2 size-4" />
+              {signingOut ? "Signing out…" : "Sign out"}
             </Button>
           </div>
         </aside>
