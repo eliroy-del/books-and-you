@@ -1492,6 +1492,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 5,
   }),
+  book({
+    id: "bk-40",
+    slug: "golden-history-of-ghana-bs-5",
+    title: "Golden History of Ghana BS 5",
+    subtitle: "Based on the New NaCCA Syllabus",
+    authorId: "auth-mercy-gyaa-adiyiah",
+    authorName: "Mercy Gyaa-Adiyiah",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["History", "Primary 5", "Textbooks", "NaCCA"],
+    description:
+      "Golden History of Ghana BS 5 is a primary school history textbook based on the new NaCCA syllabus. It builds Basic 5 learners' understanding of Ghana's story, people, and national life through clear lessons and classroom activities.",
+    synopsis:
+      "Aligned with the National Council for Curriculum and Assessment (NaCCA) syllabus for Primary School. This Golden series title helps Basic 5 pupils explore the history of Ghana with age-appropriate content.",
+    isbn: "978-9988-2-6905-7",
+    pages: 152,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-history-of-ghana-bs-5/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-history-of-ghana-bs-5/front.jpg",
+        alt: "Golden History of Ghana BS 5 front cover",
+      },
+      {
+        url: "/covers/golden-history-of-ghana-bs-5/angle.jpg",
+        alt: "Golden History of Ghana BS 5 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 50, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["history", "primary-5", "nacca", "golden", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 6,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1527,6 +1565,7 @@ export const collections: Collection[] = [
       "bk-37",
       "bk-38",
       "bk-39",
+      "bk-40",
     ],
   },
   {
