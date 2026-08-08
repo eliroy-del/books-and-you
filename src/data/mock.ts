@@ -1830,6 +1830,40 @@ export const books: Book[] = [
     newArrival: true,
     palette: 6,
   }),
+  book({
+    id: "bk-49",
+    slug: "golden-writing-book-kg-1",
+    title: "Golden Writing Book KG 1",
+    subtitle: "Kindergarten handwriting practice book",
+    authorId: "auth-okyere-baafi",
+    authorName: "Okyere Baafi Alexander",
+    publisherId: "pub-new-golden",
+    publisherName: "New Golden Publications",
+    categoryIds: ["cat-education"],
+    genres: ["Handwriting", "Kindergarten", "Writing", "Early Years"],
+    description:
+      "Golden Writing Book KG 1 is a kindergarten handwriting workbook that helps young learners practise letter formation, pencil control, and early writing skills through guided tracing and writing exercises.",
+    synopsis:
+      "Part of the Golden series for early years. This KG 1 title supports classroom and home handwriting practice with child-friendly pages.",
+    isbn: "978-9988-2-7003-2",
+    pages: 64,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/golden-writing-book-kg-1/front.jpg",
+    images: [
+      {
+        url: "/covers/golden-writing-book-kg-1/front.jpg",
+        alt: "Golden Writing Book KG 1 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["handwriting", "writing", "kindergarten", "kg-1", "golden", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 0,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1874,6 +1908,7 @@ export const collections: Collection[] = [
       "bk-46",
       "bk-47",
       "bk-48",
+      "bk-49",
     ],
   },
   {
