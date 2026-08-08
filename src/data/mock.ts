@@ -1682,6 +1682,44 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-45",
+    slug: "history-of-ghana-for-basic-schools-book-2",
+    title: "History of Ghana for Basic Schools",
+    subtitle: "Book 2 · Based on the 2019 New Curriculum",
+    authorId: "auth-cyril-k-atipoe",
+    authorName: "Cyril K. Atipoe",
+    publisherId: "pub-masterman",
+    publisherName: "Masterman Publications Ltd.",
+    categoryIds: ["cat-education"],
+    genres: ["History", "Primary 2", "Textbooks", "Curriculum"],
+    description:
+      "History of Ghana for Basic Schools Book 2 from Masterman Publications is aligned with the 2019 new curriculum. It builds Basic 2 learners' understanding of Ghana's history through clear lessons and classroom activities.",
+    synopsis:
+      "Published by Masterman Publications Ltd. This Book 2 title supports primary learners with curriculum-based history content on Ghana's people, places, and national life.",
+    isbn: "978-9988-3-8202-3",
+    pages: 128,
+    language: "English",
+    publishedAt: "2020-01-01",
+    coverUrl: "/covers/history-of-ghana-for-basic-schools-book-2/front.jpg",
+    images: [
+      {
+        url: "/covers/history-of-ghana-for-basic-schools-book-2/front.jpg",
+        alt: "History of Ghana for Basic Schools Book 2 front cover",
+      },
+      {
+        url: "/covers/history-of-ghana-for-basic-schools-book-2/angle.jpg",
+        alt: "History of Ghana for Basic Schools Book 2 angled view",
+      },
+    ],
+    formats: [{ format: "paperback", price: 50, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["history", "primary-2", "curriculum", "masterman", "textbook", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 3,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -1722,6 +1760,7 @@ export const collections: Collection[] = [
       "bk-42",
       "bk-43",
       "bk-44",
+      "bk-45",
     ],
   },
   {
