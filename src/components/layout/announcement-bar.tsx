@@ -25,7 +25,7 @@ export function AnnouncementBar() {
   return (
     <div className="bg-primary text-primary-foreground relative overflow-hidden">
       <div className="absolute inset-0 opacity-20 editorial-grid" />
-      <div className="relative mx-auto flex h-10 w-full max-w-7xl items-center px-4 text-xs font-medium tracking-wide sm:px-6 sm:text-sm lg:px-8">
+      <div className="relative mx-auto flex h-8 w-full max-w-7xl items-center px-4 text-[11px] font-medium tracking-wide sm:px-6 sm:text-xs lg:px-8">
         <a
           href={phoneHref}
           className="inline-flex items-center gap-2 transition hover:opacity-90"

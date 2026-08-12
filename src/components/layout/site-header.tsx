@@ -35,29 +35,29 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/75 backdrop-blur-xl">
-      <div className="relative mx-auto flex h-20 w-full max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:h-24 lg:gap-5 lg:px-8">
-        <BrandLogo href="/" size="md" showWordmark={false} priority />
+      <div className="relative mx-auto flex h-14 w-full max-w-7xl items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:h-16 lg:px-8">
+        <BrandLogo href="/" size="sm" showWordmark={false} priority />
 
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={
-              <Button variant="ghost" size="icon" className="size-10 lg:hidden" aria-label="Open menu" />
+              <Button variant="ghost" size="icon" className="size-8 lg:hidden" aria-label="Open menu" />
             }
           >
-            <Menu className="size-5" />
+            <Menu className="size-4" />
           </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[340px]">
+          <SheetContent side="left" className="w-[280px] sm:w-[300px]">
             <SheetHeader>
               <SheetTitle className="font-heading text-left">
-                <BrandLogo href="/" size="md" showWordmark={false} className="rounded-lg" />
+                <BrandLogo href="/" size="sm" showWordmark={false} className="rounded-lg" />
               </SheetTitle>
             </SheetHeader>
-            <nav className="mt-4 flex flex-col gap-1 overflow-y-auto pb-8">
+            <nav className="mt-3 flex flex-col gap-0.5 overflow-y-auto pb-6">
               <Link
                 href="/"
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
+                  "rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
                   pathname === "/" ? "bg-primary/10 text-primary" : "hover:bg-muted"
                 )}
               >
@@ -67,7 +67,7 @@ export function SiteHeader() {
                 href="/books"
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
+                  "rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
                   pathname.startsWith("/books")
                     ? "bg-primary/10 text-primary"
                     : "hover:bg-muted"
@@ -82,7 +82,7 @@ export function SiteHeader() {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
+                    "rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
                     pathname.startsWith(item.href)
                       ? "bg-primary/10 text-primary"
                       : "hover:bg-muted"
@@ -91,11 +91,11 @@ export function SiteHeader() {
                   {item.label}
                 </Link>
               ))}
-              <div className="mt-3 border-t border-border/60 pt-3">
+              <div className="mt-2 border-t border-border/60 pt-2">
                 <Link
                   href="/support"
                   onClick={() => setOpen(false)}
-                  className="hover:bg-muted block rounded-xl px-3 py-3 text-[15px] font-medium"
+                  className="hover:bg-muted block rounded-lg px-2.5 py-2 text-sm font-medium"
                 >
                   Support
                 </Link>
@@ -108,7 +108,7 @@ export function SiteHeader() {
           <Link
             href="/"
             className={cn(
-              "rounded-xl px-3.5 py-2.5 text-[15px] font-medium transition-colors",
+              "rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors",
               pathname === "/"
                 ? "text-primary"
                 : "text-muted-foreground hover:text-foreground"
@@ -119,7 +119,7 @@ export function SiteHeader() {
           <Link
             href="/books"
             className={cn(
-              "rounded-xl px-3.5 py-2.5 text-[15px] font-medium transition-colors",
+              "rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors",
               pathname.startsWith("/books")
                 ? "text-primary"
                 : "text-muted-foreground hover:text-foreground"
@@ -133,7 +133,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               className={cn(
-                "rounded-xl px-3.5 py-2.5 text-[15px] font-medium transition-colors",
+                "rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors",
                 pathname.startsWith(item.href)
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
@@ -147,21 +147,21 @@ export function SiteHeader() {
         <div className="ml-auto flex shrink-0 items-center justify-end gap-0.5">
           <HeaderSearch />
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="relative size-10" asChild>
+          <Button variant="ghost" size="icon" className="relative size-8" asChild>
             <Link href="/wishlist" aria-label="Wishlist">
-              <Heart className="size-5" />
+              <Heart className="size-4" />
               {wishlistCount > 0 && (
-                <span className="bg-gold text-gold-foreground absolute top-0.5 right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold">
+                <span className="bg-gold text-gold-foreground absolute top-0 right-0 flex size-3.5 items-center justify-center rounded-full text-[9px] font-bold">
                   {wishlistCount}
                 </span>
               )}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="relative size-10" asChild>
+          <Button variant="ghost" size="icon" className="relative size-8" asChild>
             <Link href="/cart" aria-label="Cart">
-              <ShoppingBag className="size-5" />
+              <ShoppingBag className="size-4" />
               {cartCount > 0 && (
-                <span className="bg-primary text-primary-foreground absolute top-0.5 right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold">
+                <span className="bg-primary text-primary-foreground absolute top-0 right-0 flex size-3.5 items-center justify-center rounded-full text-[9px] font-bold">
                   {cartCount}
                 </span>
               )}

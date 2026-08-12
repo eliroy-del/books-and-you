@@ -61,15 +61,15 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
   }, [router, signOut]);
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] bg-[#0B1220] text-slate-100">
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[230px_1fr] sm:px-6 lg:px-8">
-        <aside className="h-fit rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <div className="px-2">
-            <Badge className="border-0 bg-primary/20 text-gold">super_admin</Badge>
-            <p className="font-heading mt-2 text-sm font-bold text-white">Control plane</p>
-            <p className="text-xs text-slate-400">Platform configuration</p>
+    <div className="min-h-[calc(100vh-6rem)] bg-[#0B1220] text-slate-100">
+      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-5 lg:grid-cols-[200px_1fr] sm:px-6 lg:px-8">
+        <aside className="h-fit rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur">
+          <div className="px-1.5">
+            <Badge className="border-0 bg-primary/20 text-[10px] text-gold">super_admin</Badge>
+            <p className="font-heading mt-1.5 text-xs font-bold text-white">Control plane</p>
+            <p className="text-[11px] text-slate-400">Platform configuration</p>
           </div>
-          <nav className="mt-4 max-h-[65vh] space-y-0.5 overflow-y-auto pr-1">
+          <nav className="mt-3 max-h-[65vh] space-y-0.5 overflow-y-auto pr-1">
             {NAV.map((item) => {
               const active =
                 item.href === "/superadmin"
@@ -80,24 +80,24 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
+                    "flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium transition",
                     active
                       ? "bg-primary text-primary-foreground"
                       : "text-slate-300 hover:bg-white/10 hover:text-white"
                   )}
                 >
-                  <item.icon className="size-4 shrink-0" />
+                  <item.icon className="size-3.5 shrink-0" />
                   {item.label}
                 </Link>
               );
             })}
           </nav>
-          <div className="mt-4 space-y-1 border-t border-white/10 pt-3">
+          <div className="mt-3 space-y-0.5 border-t border-white/10 pt-2">
             <Button
               asChild
               variant="ghost"
               size="sm"
-              className="w-full justify-start text-slate-300 hover:bg-white/10 hover:text-white"
+              className="h-8 w-full justify-start text-xs text-slate-300 hover:bg-white/10 hover:text-white"
             >
               <Link href="/admin">← Admin ops</Link>
             </Button>
@@ -105,11 +105,11 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
               type="button"
               variant="ghost"
               size="sm"
-              className="w-full justify-start text-slate-300 hover:bg-white/10 hover:text-white"
+              className="h-8 w-full justify-start text-xs text-slate-300 hover:bg-white/10 hover:text-white"
               disabled={signingOut}
               onClick={() => void handleSignOut()}
             >
-              <LogOut className="mr-2 size-4" />
+              <LogOut className="mr-1.5 size-3.5" />
               {signingOut ? "Signing out…" : "Sign out"}
             </Button>
           </div>

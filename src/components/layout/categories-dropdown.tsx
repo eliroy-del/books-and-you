@@ -37,7 +37,7 @@ export function CategoriesDropdown() {
       <button
         type="button"
         className={cn(
-          "inline-flex items-center gap-1 rounded-xl px-3.5 py-2.5 text-[15px] font-medium transition-colors",
+          "inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors",
           open ? "text-primary" : "text-muted-foreground hover:text-foreground"
         )}
         aria-expanded={open}
@@ -114,7 +114,7 @@ export function MobileCategoriesNav({ onNavigate }: { onNavigate: () => void }) 
     <div>
       <button
         type="button"
-        className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-[15px] font-medium hover:bg-muted"
+        className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-sm font-medium hover:bg-muted"
         onClick={() => setOpen((v) => !v)}
       >
         Categories

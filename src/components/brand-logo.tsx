@@ -16,9 +16,9 @@ type BrandLogoProps = {
 
 /** Horizontal lockup heights; width follows the logo aspect ratio. */
 const sizes = {
-  sm: { height: "h-9 sm:h-10", pxH: 40, pxW: 164 },
-  md: { height: "h-12", pxH: 48, pxW: 197 },
-  lg: { height: "h-16", pxH: 64, pxW: 263 },
+  sm: { height: "h-7 sm:h-8", pxH: 32, pxW: 131 },
+  md: { height: "h-9", pxH: 36, pxW: 148 },
+  lg: { height: "h-12", pxH: 48, pxW: 197 },
 };
 
 export function BrandLogo({

@@ -86,7 +86,7 @@
   --chart-3: #3d5a80;
   --chart-4: #8b9aab;
   --chart-5: #c9a24a;
-  --radius: 0.75rem;
+  --radius: 0.625rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #001f3e;
   --sidebar-primary: #001f3e;
@@ -143,10 +143,11 @@
 
   html {
     @apply scroll-smooth;
+    font-size: 93.75%; /* 15px base — tighter type & spacing scale */
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased text-sm;
   }
 
   h1,

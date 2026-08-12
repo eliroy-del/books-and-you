@@ -116,7 +116,7 @@ export function HeroSection() {
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative mx-auto grid min-h-[calc(100vh-7.5rem)] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8 lg:py-20">
+      <div className="relative mx-auto grid min-h-[calc(100vh-5.5rem)] max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-12 lg:gap-6 lg:px-8 lg:py-14">
         <div className="lg:col-span-6 xl:col-span-5">
           <AnimatePresence mode="wait">
             <motion.div
@@ -126,39 +126,39 @@ export function HeroSection() {
               exit={{ opacity: 0, y: -14 }}
               transition={{ duration: 0.45 }}
               className={cn(
-                "rounded-[1.75rem] border border-white/15 p-6 text-white shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-md sm:p-8",
+                "rounded-2xl border border-white/15 p-5 text-white shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-md sm:p-6",
                 slide.panel
               )}
             >
               <p
                 className={cn(
-                  "font-heading mb-4 text-sm font-semibold tracking-[0.18em] uppercase",
+                  "font-heading mb-3 text-xs font-semibold tracking-[0.18em] uppercase",
                   slide.accent
                 )}
               >
                 {slide.eyebrow}
               </p>
-              <h1 className="font-heading text-4xl leading-[1.05] font-bold tracking-tight text-balance sm:text-5xl lg:text-[3.25rem]">
+              <h1 className="font-heading text-3xl leading-[1.05] font-bold tracking-tight text-balance sm:text-4xl lg:text-[2.75rem]">
                 {slide.title}
               </h1>
-              <p className="mt-5 max-w-lg text-base leading-relaxed text-white/85 sm:text-lg">
+              <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/85 sm:text-base">
                 {slide.description}
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-2.5">
                 <Button
-                  size="lg"
-                  className="h-12 rounded-xl bg-white px-6 text-base text-slate-900 shadow-glow hover:bg-white/90"
+                  size="default"
+                  className="h-10 rounded-lg bg-white px-5 text-sm text-slate-900 shadow-glow hover:bg-white/90"
                   asChild
                 >
                   <Link href={slide.primary.href}>
                     {slide.primary.label}
-                    <ArrowRight className="ml-1 size-4" />
+                    <ArrowRight className="ml-1 size-3.5" />
                   </Link>
                 </Button>
                 <Button
-                  size="lg"
+                  size="default"
                   variant="outline"
-                  className="h-12 rounded-xl border-white/35 bg-white/10 px-6 text-base text-white backdrop-blur hover:bg-white/20 hover:text-white"
+                  className="h-10 rounded-lg border-white/35 bg-white/10 px-5 text-sm text-white backdrop-blur hover:bg-white/20 hover:text-white"
                   asChild
                 >
                   <Link href={slide.secondary.href}>{slide.secondary.label}</Link>

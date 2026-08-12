@@ -123,34 +123,34 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, [session]);
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] bg-secondary/40">
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[250px_1fr] sm:px-6 lg:px-8">
-        <aside className="h-fit rounded-3xl border border-border/70 bg-card p-4 shadow-soft">
-          <div className="px-2">
-            <p className="font-heading text-sm font-bold">Admin</p>
-            <p className="text-muted-foreground text-xs">
+    <div className="min-h-[calc(100vh-6rem)] bg-secondary/40">
+      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-5 lg:grid-cols-[210px_1fr] sm:px-6 lg:px-8">
+        <aside className="h-fit rounded-2xl border border-border/70 bg-card p-3 shadow-soft">
+          <div className="px-1.5">
+            <p className="font-heading text-xs font-bold">Admin</p>
+            <p className="text-muted-foreground text-[11px]">
               {session?.demo ? "Demo RBAC" : "Staff console"}
             </p>
           </div>
 
           {session && (
-            <div className="mt-3 rounded-2xl border border-primary/15 bg-primary/5 px-3 py-2">
-              <Badge variant="secondary" className="mb-1">
+            <div className="mt-2 rounded-xl border border-primary/15 bg-primary/5 px-2.5 py-1.5">
+              <Badge variant="secondary" className="mb-0.5 text-[10px]">
                 {roleLabel(session.role)}
               </Badge>
-              <p className="text-muted-foreground truncate text-[11px]">
+              <p className="text-muted-foreground truncate text-[10px]">
                 {session.email || "staff"}
               </p>
             </div>
           )}
 
           {session?.demo && (
-            <div className="mt-3 px-1">
-              <p className="text-muted-foreground mb-1 text-[11px] uppercase tracking-wide">
+            <div className="mt-2 px-0.5">
+              <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-wide">
                 Impersonate role
               </p>
               <select
-                className="border-border bg-background w-full rounded-xl border px-2 py-1.5 text-xs"
+                className="border-border bg-background w-full rounded-lg border px-2 py-1 text-[11px]"
                 value={demoRole}
                 onChange={(e) => {
                   const role = e.target.value as RoleKey;
@@ -167,10 +167,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </div>
           )}
 
-          <nav className="mt-4 max-h-[60vh] space-y-0.5 overflow-y-auto pr-1">
+          <nav className="mt-3 max-h-[60vh] space-y-0.5 overflow-y-auto pr-1">
             {loading
               ? Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="bg-muted/60 mb-1 h-8 animate-pulse rounded-xl" />
+                  <div key={i} className="bg-muted/60 mb-1 h-7 animate-pulse rounded-lg" />
                 ))
               : modules.map((m) => {
                   const Icon = ICONS[m.id as AdminModuleId] || LayoutDashboard;
@@ -183,23 +183,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
                       key={m.id}
                       href={m.href}
                       className={cn(
-                        "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
+                        "flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium transition",
                         active
                           ? "bg-primary text-primary-foreground"
                           : "hover:bg-muted text-foreground"
                       )}
                     >
-                      <Icon className="size-4 shrink-0" />
+                      <Icon className="size-3.5 shrink-0" />
                       {m.label}
                     </Link>
                   );
                 })}
           </nav>
 
-          <div className="mt-4 space-y-1 border-t border-border/60 pt-3">
-            <Button asChild variant="ghost" size="sm" className="w-full justify-start">
+          <div className="mt-3 space-y-0.5 border-t border-border/60 pt-2">
+            <Button asChild variant="ghost" size="sm" className="h-8 w-full justify-start text-xs">
               <Link href="/superadmin">
-                <Settings2 className="mr-2 size-4" />
+                <Settings2 className="mr-1.5 size-3.5" />
                 Super Admin
               </Link>
             </Button>
@@ -207,11 +207,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
               type="button"
               variant="ghost"
               size="sm"
-              className="w-full justify-start text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground h-8 w-full justify-start text-xs"
               disabled={signingOut}
               onClick={() => void handleSignOut()}
             >
-              <LogOut className="mr-2 size-4" />
+              <LogOut className="mr-1.5 size-3.5" />
               {signingOut ? "Signing out…" : "Sign out"}
             </Button>
           </div>
