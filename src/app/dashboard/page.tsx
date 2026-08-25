@@ -26,7 +26,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-24 text-center text-sm text-muted-foreground">
+      <div className="mx-auto max-w-site px-4 py-24 text-center text-sm text-muted-foreground">
         Loading…
       </div>
     );
@@ -58,7 +58,7 @@ export default function DashboardPage() {
     "Reader";
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-site px-4 py-10 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-primary text-sm font-semibold tracking-widest uppercase">

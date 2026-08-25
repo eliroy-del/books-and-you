@@ -124,7 +124,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-[calc(100vh-6rem)] bg-secondary/40">
-      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-5 lg:grid-cols-[210px_1fr] sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-site gap-4 px-4 py-5 lg:grid-cols-[210px_1fr] sm:px-6 lg:px-8">
         <aside className="h-fit rounded-2xl border border-border/70 bg-card p-3 shadow-soft">
           <div className="px-1.5">
             <p className="font-heading text-xs font-bold">Admin</p>

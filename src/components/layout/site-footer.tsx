@@ -9,7 +9,7 @@ import { NewsletterForm } from "@/components/forms/newsletter-form";
 export function SiteFooter() {
   return (
     <footer className="border-t border-border/60 bg-[#001f3e] text-slate-200">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-site px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <BrandLogo href="/" size="sm" showWordmark={false} tone="inverse" />

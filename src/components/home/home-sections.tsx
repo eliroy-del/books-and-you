@@ -64,7 +64,7 @@ export function FeaturedCollections() {
   const byId = useMemo(() => new Map(books.map((b) => [b.id, b])), [books]);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-site px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeader
         title="Featured Collections"
         description="Back to school, exam prep, teacher picks, and more."
@@ -128,7 +128,7 @@ export function SmartRecommendations() {
 
   return (
     <section className="border-y border-border/50 bg-secondary/40 py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="Popular picks"
           description="Staff picks, bestsellers, and titles shoppers are browsing now."
@@ -150,7 +150,7 @@ export function BestsellersShelf() {
   const bestsellers = books.filter((b) => b.bestseller).slice(0, 6);
   const shelf = bestsellers.length ? bestsellers : books.slice(0, 6);
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-site px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeader
         title="Best Sellers"
         description="Trusted favorites flying off the shelf."
@@ -200,7 +200,7 @@ export function WhyBooksAndYou() {
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-site px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeader
         title="Why Books & You"
         description="A bookstore engineered like a premium product."
@@ -230,7 +230,7 @@ export function WhyBooksAndYou() {
 export function TestimonialsSection() {
   return (
     <section className="bg-[#001f3e] py-16 text-slate-100">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-2xl">
           <h2 className="font-heading text-2xl font-bold sm:text-3xl">Loved by readers</h2>
           <p className="mt-2 text-slate-400">
@@ -262,7 +262,7 @@ export function TestimonialsSection() {
 
 export function ReferralSection() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-site px-4 py-16 sm:px-6 lg:px-8">
       <div className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-gradient-to-br from-[#001f3e] via-[#0d2136] to-[#00101f] p-8 text-white shadow-elevated sm:p-12">
         <div className="absolute inset-0 editorial-grid opacity-20" />
         <div className="relative grid gap-8 lg:grid-cols-2 lg:items-center">

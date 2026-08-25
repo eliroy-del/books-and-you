@@ -116,7 +116,7 @@ export function HeroSection() {
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative mx-auto grid min-h-[calc(100vh-5.5rem)] max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-12 lg:gap-6 lg:px-8 lg:py-14">
+      <div className="relative mx-auto grid min-h-[calc(100vh-5.5rem)] max-w-site items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-12 lg:gap-6 lg:px-8 lg:py-14">
         <div className="lg:col-span-6 xl:col-span-5">
           <AnimatePresence mode="wait">
             <motion.div

@@ -94,7 +94,7 @@ export default function BooksClient() {
   const levels = catalogNav.find((d) => d.slug === "by-school-level")?.children ?? [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-site px-4 py-10 sm:px-6 lg:px-8">
       <div className="max-w-2xl">
         <p className="text-primary text-sm font-semibold tracking-widest uppercase">Catalog</p>
         <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight sm:text-4xl">

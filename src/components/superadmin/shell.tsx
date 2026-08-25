@@ -62,7 +62,7 @@ export function SuperAdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-[calc(100vh-6rem)] bg-[#0B1220] text-slate-100">
-      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-5 lg:grid-cols-[200px_1fr] sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-site gap-4 px-4 py-5 lg:grid-cols-[200px_1fr] sm:px-6 lg:px-8">
         <aside className="h-fit rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur">
           <div className="px-1.5">
             <Badge className="border-0 bg-primary/20 text-[10px] text-gold">super_admin</Badge>
