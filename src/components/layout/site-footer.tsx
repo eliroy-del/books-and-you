@@ -110,7 +110,17 @@ export function SiteFooter() {
 
         <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-          <p>Made for readers in Ghana, shipping worldwide.</p>
+          <p>
+            Powered By{" "}
+            <a
+              href="https://www.solveek.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 transition hover:text-gold"
+            >
+              Solveek
+            </a>
+          </p>
         </div>
       </div>
     </footer>
