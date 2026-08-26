@@ -3458,6 +3458,47 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-88",
+    slug: "nataraj-quality-tape",
+    title: "Nataraj Quality Tape",
+    subtitle: "Packing / sealing adhesive tape",
+    authorId: "auth-nataraj",
+    authorName: "Nataraj",
+    publisherId: "pub-nataraj",
+    publisherName: "Nataraj",
+    categoryIds: ["cat-academic"],
+    genres: ["Stationery", "Tape", "Office Supplies", "School Essentials"],
+    description:
+      "Nataraj Quality Tape is a clear amber adhesive packing tape for sealing boxes, parcels, and school project work. Strong hold with smooth unwind for home, school, and office use.",
+    synopsis:
+      "Single roll of Nataraj Quality Tape — amber clear packing tape for sealing and crafts.",
+    isbn: "NATARAJ-QUALITY-TAPE",
+    pages: 0,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/nataraj-quality-tape/front.jpg",
+    images: [
+      {
+        url: "/covers/nataraj-quality-tape/front.jpg",
+        alt: "Nataraj Quality Tape roll front",
+      },
+    ],
+    formats: [{ format: "paperback", price: 35, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "stationery",
+      "tape",
+      "packing-tape",
+      "nataraj",
+      "office",
+      "school",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -3541,6 +3582,7 @@ export const collections: Collection[] = [
       "bk-85",
       "bk-86",
       "bk-87",
+      "bk-88",
     ],
   },
   {
