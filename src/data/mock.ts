@@ -2775,6 +2775,92 @@ export const books: Book[] = [
     newArrival: true,
     palette: 6,
   }),
+  book({
+    id: "bk-72",
+    slug: "excellence-ghanaian-language-akuapem-twi-for-ghana-schools-1",
+    title: "Excellence Ghanaian Language Akuapem Twi for Ghana Schools 1",
+    subtitle: "Based on the New NaCCA Standards-Based Curriculum",
+    authorId: "auth-francis-benjamin-appiah",
+    authorName: "Francis Benjamin Appiah & Nsafoah Dennis",
+    publisherId: "pub-excellence",
+    publisherName: "Excellence",
+    categoryIds: ["cat-education"],
+    genres: ["Ghanaian Language", "Akuapem Twi", "Primary 1", "NaCCA"],
+    description:
+      "Excellence Ghanaian Language Akuapem Twi for Ghana Schools 1 is a primary school Akuapem Twi textbook based on the new NaCCA Standards-Based Curriculum. It builds listening, speaking, reading, and writing skills in Akuapem Twi through clear lessons and classroom activities.",
+    synopsis:
+      "Part of the Excellence Ghanaian Language series. This Book 1 supports classroom learning in Akuapem Twi aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7026-1",
+    pages: 112,
+    language: "Akuapem Twi",
+    publishedAt: "2024-01-01",
+    coverUrl:
+      "/covers/excellence-ghanaian-language-akuapem-twi-for-ghana-schools-1/front.jpg",
+    images: [
+      {
+        url: "/covers/excellence-ghanaian-language-akuapem-twi-for-ghana-schools-1/front.jpg",
+        alt: "Excellence Ghanaian Language Akuapem Twi for Ghana Schools 1 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "akuapem-twi",
+      "ghanaian-language",
+      "twi",
+      "primary-1",
+      "excellence",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
+  book({
+    id: "bk-73",
+    slug: "excellence-ghanaian-language-akuapem-twi-for-ghana-schools-2",
+    title: "Excellence Ghanaian Language Akuapem Twi for Ghana Schools 2",
+    subtitle: "Based on the New NaCCA Standards-Based Curriculum",
+    authorId: "auth-francis-benjamin-appiah",
+    authorName: "Francis Benjamin Appiah & Nsafoah Dennis",
+    publisherId: "pub-excellence",
+    publisherName: "Excellence",
+    categoryIds: ["cat-education"],
+    genres: ["Ghanaian Language", "Akuapem Twi", "Primary 2", "NaCCA"],
+    description:
+      "Excellence Ghanaian Language Akuapem Twi for Ghana Schools 2 is a primary school Akuapem Twi textbook based on the new NaCCA Standards-Based Curriculum. It builds listening, speaking, reading, and writing skills in Akuapem Twi through clear lessons and classroom activities.",
+    synopsis:
+      "Part of the Excellence Ghanaian Language series. This Book 2 supports classroom learning in Akuapem Twi aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7027-8",
+    pages: 112,
+    language: "Akuapem Twi",
+    publishedAt: "2024-01-01",
+    coverUrl:
+      "/covers/excellence-ghanaian-language-akuapem-twi-for-ghana-schools-2/front.jpg",
+    images: [
+      {
+        url: "/covers/excellence-ghanaian-language-akuapem-twi-for-ghana-schools-2/front.jpg",
+        alt: "Excellence Ghanaian Language Akuapem Twi for Ghana Schools 2 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 55, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "akuapem-twi",
+      "ghanaian-language",
+      "twi",
+      "primary-2",
+      "excellence",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 0,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -2842,6 +2928,8 @@ export const collections: Collection[] = [
       "bk-69",
       "bk-70",
       "bk-71",
+      "bk-72",
+      "bk-73",
     ],
   },
   {
