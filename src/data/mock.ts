@@ -2362,6 +2362,41 @@ export const books: Book[] = [
     newArrival: true,
     palette: 4,
   }),
+  book({
+    id: "bk-62",
+    slug: "science-for-basic-schools-learners-book-3",
+    title: "Science for Basic Schools Learner's Book 3",
+    subtitle:
+      "Based on the New NaCCA Standards-Based Curriculum · Revised Edition",
+    authorId: "auth-francis-benjamin-appiah",
+    authorName: "Francis Benjamin Appiah & Derrick Appiah",
+    publisherId: "pub-eps",
+    publisherName: "EPS",
+    categoryIds: ["cat-education"],
+    genres: ["Science", "Primary 3", "NaCCA", "Basic Schools"],
+    description:
+      "Science for Basic Schools Learner's Book 3 is a primary school science textbook based on the new NaCCA Standards-Based Curriculum. It helps Basic 3 learners explore everyday science through clear lessons, activities, and illustrations.",
+    synopsis:
+      "Part of the Science for Basic Schools series. This Learner's Book 3 supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7016-2",
+    pages: 120,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/science-for-basic-schools-learners-book-3/front.jpg",
+    images: [
+      {
+        url: "/covers/science-for-basic-schools-learners-book-3/front.jpg",
+        alt: "Science for Basic Schools Learner's Book 3 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 60, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["science", "primary-3", "basic-3", "eps", "nacca", "ghana"],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -2419,6 +2454,7 @@ export const collections: Collection[] = [
       "bk-59",
       "bk-60",
       "bk-61",
+      "bk-62",
     ],
   },
   {
