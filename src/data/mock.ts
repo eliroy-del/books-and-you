@@ -3374,6 +3374,48 @@ export const books: Book[] = [
     newArrival: true,
     palette: 7,
   }),
+  book({
+    id: "bk-86",
+    slug: "nataraj-neon-eraser-tipped-hb-pencils-12",
+    title: "Nataraj Neon Eraser tipped HB Pencils",
+    subtitle: "12 units · Free sharpener · Clear and smooth writing",
+    authorId: "auth-nataraj",
+    authorName: "Nataraj",
+    publisherId: "pub-nataraj",
+    publisherName: "Nataraj",
+    categoryIds: ["cat-academic"],
+    genres: ["Stationery", "Pencils", "Writing Supplies", "School Essentials"],
+    description:
+      "Nataraj Neon eraser-tipped HB pencils in a pack of 12. Bright neon barrels, HB graphite for clear smooth writing, and a free sharpener included — ideal for school, homework, and everyday notes.",
+    synopsis:
+      "Pack of 12 Nataraj Neon HB pencils with eraser tips. Includes a free sharpener.",
+    isbn: "NATARAJ-NEON-HB-12",
+    pages: 0,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/nataraj-neon-eraser-tipped-hb-pencils-12/front.jpg",
+    images: [
+      {
+        url: "/covers/nataraj-neon-eraser-tipped-hb-pencils-12/front.jpg",
+        alt: "Nataraj Neon Eraser tipped HB Pencils 12-pack front",
+      },
+    ],
+    formats: [{ format: "paperback", price: 16, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "stationery",
+      "pencils",
+      "nataraj",
+      "hb",
+      "neon",
+      "school",
+      "writing",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -3455,6 +3497,7 @@ export const collections: Collection[] = [
       "bk-83",
       "bk-84",
       "bk-85",
+      "bk-86",
     ],
   },
   {
