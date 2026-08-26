@@ -3416,6 +3416,48 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-87",
+    slug: "nataraj-neon-hb-pencil",
+    title: "Nataraj Neon HB Pencil",
+    subtitle: "Eraser tipped · Clear and smooth writing",
+    authorId: "auth-nataraj",
+    authorName: "Nataraj",
+    publisherId: "pub-nataraj",
+    publisherName: "Nataraj",
+    categoryIds: ["cat-academic"],
+    genres: ["Stationery", "Pencils", "Writing Supplies", "School Essentials"],
+    description:
+      "Single Nataraj Neon HB pencil with eraser tip. Bright neon barrel and HB graphite for clear, smooth writing — ideal for school and everyday notes.",
+    synopsis: "Individual Nataraj Neon HB pencil with eraser tip. Sold singly.",
+    isbn: "NATARAJ-NEON-HB-1",
+    pages: 0,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/nataraj-neon-hb-pencil/front.jpg",
+    images: [
+      {
+        url: "/covers/nataraj-neon-hb-pencil/front.jpg",
+        alt: "Nataraj Neon HB Pencil front",
+      },
+    ],
+    formats: [{ format: "paperback", price: 2, inStock: 500 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "stationery",
+      "pencils",
+      "nataraj",
+      "hb",
+      "neon",
+      "school",
+      "writing",
+      "single",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -3498,6 +3540,7 @@ export const collections: Collection[] = [
       "bk-84",
       "bk-85",
       "bk-86",
+      "bk-87",
     ],
   },
   {
