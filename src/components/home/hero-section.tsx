@@ -2,15 +2,33 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BookCover } from "@/components/books/book-cover";
+import { formatMoney } from "@/data/mock";
 import { cn } from "@/lib/utils";
+import type { Book } from "@/types";
 
 const AUTO_MS = 5500;
+const SLIDE_LIMIT = 8;
 
-const slides = [
+type HeroSlide = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  primary: { href: string; label: string };
+  secondary: { href: string; label: string };
+  book: Book | null;
+  overlay: string;
+  accent: string;
+  panel: string;
+  glow: string;
+};
+
+const FALLBACK_SLIDES: HeroSlide[] = [
   {
     id: "textbooks",
     eyebrow: "Books & You",
@@ -19,52 +37,75 @@ const slides = [
       "Nursery through SHS textbooks, workbooks, and past questions trusted by Ghana parents and teachers.",
     primary: { href: "/books", label: "Shop Books" },
     secondary: { href: "/categories?dept=by-school-level", label: "Shop by Level" },
-    background: "/brand/hero-textbooks-collage.jpg",
-    foreground: null,
-    foregroundAlt: "",
+    book: null,
     overlay: "from-[#00101f]/85 via-[#001f3e]/60 to-[#061829]/40",
     accent: "text-gold",
     panel: "bg-[#00101f]/45",
     glow: "from-[#efc076]/25 via-[#3d5a80]/15 to-transparent",
   },
-  {
-    id: "stationery",
-    eyebrow: "Back to School",
-    title: "Stationery that keeps the whole term on track.",
-    description:
-      "Exercise books, pens, mathematical sets, art supplies, and everyday classroom essentials.",
-    primary: { href: "/categories?dept=stationery", label: "Shop Stationery" },
-    secondary: { href: "/books?collection=back-to-school", label: "Back to School Picks" },
-    background: "/brand/hero-stationery.jpg",
-    foreground: null,
-    foregroundAlt: "",
-    overlay: "from-[#4a2808]/85 via-[#8a4b16]/55 to-[#1c1208]/45",
-    accent: "text-amber-200",
-    panel: "bg-[#3a1f08]/40",
-    glow: "from-amber-300/35 via-orange-200/10 to-transparent",
-  },
-  {
-    id: "exams",
-    eyebrow: "Exam Ready",
-    title: "BECE & WASSCE prep, ready when you are.",
-    description:
-      "Past questions, practice books, and teacher-recommended titles for confident exam seasons.",
-    primary: { href: "/books?collection=exam-preparation", label: "Exam Preparation" },
-    secondary: { href: "/categories?dept=books", label: "Browse Subjects" },
-    background: "/brand/hero-exam-prep.jpg",
-    foreground: null,
-    foregroundAlt: "",
-    overlay: "from-[#1a2248]/82 via-[#24306a]/55 to-[#0b1220]/40",
-    accent: "text-sky-200",
-    panel: "bg-[#151c3a]/45",
-    glow: "from-sky-300/25 via-indigo-200/10 to-transparent",
-  },
-] as const;
+];
+
+function pickHeroBooks(books: Book[]): Book[] {
+  const withCover = books.filter((b) => Boolean(b.coverUrl));
+  const featured = withCover.filter((b) => b.featured || b.newArrival || b.bestseller);
+  const pool = featured.length >= 3 ? featured : withCover;
+  return pool.slice(0, SLIDE_LIMIT);
+}
+
+function slidesFromBooks(books: Book[]): HeroSlide[] {
+  return books.map((book, i) => {
+    return {
+      id: book.id || book.slug || `book-${i}`,
+      eyebrow: book.newArrival ? "New Arrival" : book.bestseller ? "Best Seller" : "Featured",
+      title: book.title,
+      description:
+        book.subtitle ||
+        book.synopsis ||
+        book.description ||
+        `By ${book.authorName}. In stock at Books & You.`,
+      primary: { href: `/book/${book.slug}`, label: "View book" },
+      secondary: { href: "/books", label: "Shop all" },
+      book,
+      overlay: "from-[#00101f]/88 via-[#001f3e]/70 to-[#061829]/45",
+      accent: "text-gold",
+      panel: "bg-[#00101f]/50",
+      glow: "from-[#efc076]/25 via-[#3d5a80]/15 to-transparent",
+    };
+  });
+}
 
 export function HeroSection() {
+  const [books, setBooks] = useState<Book[]>([]);
   const [index, setIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const slide = slides[index] ?? slides[0];
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/catalog?resource=books&limit=48")
+      .then((r) => r.json())
+      .then((json) => {
+        if (cancelled) return;
+        setBooks(Array.isArray(json.books) ? json.books : []);
+      })
+      .catch(() => {
+        if (!cancelled) setBooks([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const slides = useMemo(() => {
+    const fromDb = slidesFromBooks(pickHeroBooks(books));
+    return fromDb.length ? fromDb : FALLBACK_SLIDES;
+  }, [books]);
+
+  // Reset index when slide set changes length
+  useEffect(() => {
+    setIndex(0);
+  }, [slides.length]);
+
+  const slide = slides[index] ?? slides[0]!;
 
   useEffect(() => {
     setProgress(0);
@@ -80,11 +121,14 @@ export function HeroSection() {
       window.clearInterval(tick);
       window.clearTimeout(advance);
     };
-  }, [index]);
+  }, [index, slides.length]);
 
   function go(next: number) {
     setIndex((next + slides.length) % slides.length);
   }
+
+  const price = slide.book?.formats[0]?.price;
+  const coverSrc = slide.book?.coverUrl;
 
   return (
     <section className="relative min-h-[calc(100vh-7.5rem)] overflow-hidden">
@@ -97,14 +141,21 @@ export function HeroSection() {
           transition={{ duration: 0.9, ease: "easeOut" }}
           className="absolute inset-0"
         >
-          <Image
-            src={slide.background}
-            alt=""
-            fill
-            priority={index === 0}
-            sizes="100vw"
-            className="object-cover"
-          />
+          {coverSrc ? (
+            <>
+              <Image
+                src={coverSrc}
+                alt=""
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                className="object-cover object-center scale-110 blur-2xl opacity-50"
+              />
+              <div className="absolute inset-0 bg-[#00101f]/75" />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-[#00101f] via-[#001f3e] to-[#0d2136]" />
+          )}
           <div className={cn("absolute inset-0 bg-gradient-to-r", slide.overlay)} />
           <div
             className={cn(
@@ -141,7 +192,18 @@ export function HeroSection() {
               <h1 className="font-heading text-3xl leading-[1.05] font-bold tracking-tight text-balance sm:text-4xl lg:text-[2.75rem]">
                 {slide.title}
               </h1>
-              <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/85 sm:text-base">
+              {slide.book ? (
+                <p className="mt-2 text-sm text-white/75">
+                  {slide.book.authorName}
+                  {typeof price === "number" ? (
+                    <>
+                      {" · "}
+                      <span className="text-gold font-semibold">{formatMoney(price)}</span>
+                    </>
+                  ) : null}
+                </p>
+              ) : null}
+              <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/85 sm:text-base line-clamp-3">
                 {slide.description}
               </p>
               <div className="mt-6 flex flex-wrap gap-2.5">
@@ -189,7 +251,9 @@ export function HeroSection() {
                   <span
                     className={cn(
                       "absolute inset-y-0 left-0 rounded-full bg-white transition-all",
-                      i === index ? "opacity-100" : "w-0 opacity-0 group-hover:w-full group-hover:opacity-40"
+                      i === index
+                        ? "opacity-100"
+                        : "w-0 opacity-0 group-hover:w-full group-hover:opacity-40"
                     )}
                     style={i === index ? { width: `${progress}%` } : undefined}
                   />
@@ -207,34 +271,26 @@ export function HeroSection() {
           </div>
         </div>
 
-        {slide.foreground ? (
-          <div className="relative lg:col-span-6 xl:col-span-7">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={slide.id + "-fg"}
-                initial={{ opacity: 0, y: 24, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -12, scale: 1.02 }}
-                transition={{ duration: 0.55 }}
-                className="relative mx-auto w-full max-w-[640px] lg:ml-auto lg:max-w-none"
-              >
-                <Image
-                  src={slide.foreground}
-                  alt={slide.foregroundAlt}
-                  width={984}
-                  height={512}
-                  priority={index === 0}
-                  sizes="(max-width: 1024px) 92vw, 50vw"
-                  className="h-auto w-full select-none object-contain"
-                  style={{
-                    filter:
-                      "drop-shadow(0 28px 40px rgba(0,0,0,0.35)) drop-shadow(0 8px 14px rgba(0,0,0,0.2))",
-                  }}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        ) : null}
+        <div className="relative lg:col-span-6 xl:col-span-7">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slide.id + "-fg"}
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 1.02 }}
+              transition={{ duration: 0.55 }}
+              className="relative mx-auto flex w-full max-w-[420px] justify-center lg:ml-auto lg:max-w-[480px]"
+            >
+              {slide.book ? (
+                <Link href={`/book/${slide.book.slug}`} className="block w-full max-w-[320px] sm:max-w-[360px]">
+                  <BookCover book={slide.book} size="xl" className="w-full shadow-[0_28px_60px_rgba(0,0,0,0.45)]" />
+                </Link>
+              ) : (
+                <div className="aspect-[2/3] w-full max-w-[320px] rounded-lg bg-white/10" />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
