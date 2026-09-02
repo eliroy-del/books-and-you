@@ -1,7 +1,6 @@
 import { HeroSection } from "@/components/home/hero-section";
 import {
   BestsellersShelf,
-  FeaturedCollections,
   NewsletterSection,
   ReferralSection,
   SmartRecommendations,
@@ -13,7 +12,6 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <FeaturedCollections />
       <BestsellersShelf />
       <SmartRecommendations />
       <WhyBooksAndYou />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Gift, Headphones, Lock, Package, ShieldCheck, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
@@ -9,7 +9,7 @@ import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { Button } from "@/components/ui/button";
 import { testimonials } from "@/data/mock";
 import { useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
-import type { Book, Collection } from "@/types";
+import type { Book } from "@/types";
 
 function SectionHeader({
   title,
@@ -44,67 +44,16 @@ function SectionHeader({
 
 function useCatalogBooks() {
   const [books, setBooks] = useState<Book[]>([]);
-  const [collections, setCollections] = useState<Collection[]>([]);
 
   useEffect(() => {
-    void Promise.all([
-      fetch("/api/catalog?resource=books&limit=100").then((r) => r.json()),
-      fetch("/api/catalog?resource=collections").then((r) => r.json()),
-    ]).then(([booksJson, colsJson]) => {
-      setBooks(booksJson.books || []);
-      setCollections(colsJson.collections || []);
-    });
+    void fetch("/api/catalog?resource=books&limit=100")
+      .then((r) => r.json())
+      .then((booksJson) => {
+        setBooks(booksJson.books || []);
+      });
   }, []);
 
-  return { books, collections };
-}
-
-export function FeaturedCollections() {
-  const { books, collections } = useCatalogBooks();
-  const byId = useMemo(() => new Map(books.map((b) => [b.id, b])), [books]);
-
-  return (
-    <section className="mx-auto max-w-site px-4 py-16 sm:px-6 lg:px-8">
-      <SectionHeader
-        title="Featured Collections"
-        description="Back to school, exam prep, teacher picks, and more."
-        href="/categories"
-        linkLabel="Browse store"
-      />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {collections.slice(0, 8).map((col, i) => (
-          <motion.div
-            key={col.id}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.04 }}
-          >
-            <Link
-              href={`/books?collection=${col.slug}`}
-              className="group block overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-soft transition hover:-translate-y-0.5 hover:shadow-elevated"
-            >
-              <div className="mb-4 flex -space-x-3">
-                {col.bookIds.slice(0, 3).map((id) => {
-                  const b = byId.get(id);
-                  if (!b) return null;
-                  return (
-                    <div
-                      key={id}
-                      className={`size-12 rounded-lg border-2 border-card bg-gradient-to-br ${b.coverGradient}`}
-                    />
-                  );
-                })}
-              </div>
-              <h3 className="font-heading font-semibold group-hover:text-primary">{col.title}</h3>
-              <p className="text-muted-foreground mt-1 text-sm">{col.description}</p>
-              <p className="text-muted-foreground mt-3 text-xs">{col.bookIds.length} titles</p>
-            </Link>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
+  return { books };
 }
 
 export function SmartRecommendations() {
