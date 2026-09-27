@@ -22,8 +22,8 @@ export const siteConfig = {
   supportPhone: "0247140856",
   whatsapp: "233247140856",
   social: {
-    facebook: "https://www.facebook.com/",
-    instagram: "https://www.instagram.com/",
+    facebook: "https://www.facebook.com/booksandyough",
+    instagram: "https://www.instagram.com/booksandyough",
   },
   address: {
     line1: "Books & You Bookstore",
