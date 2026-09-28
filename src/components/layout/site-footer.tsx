@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AtSign, Globe2, Share2 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { CookieSettingsButton } from "@/components/CookieConsentBanner";
 import { siteConfig } from "@/data/mock";
@@ -18,16 +17,28 @@ export function SiteFooter() {
               Nursery through SHS.
             </p>
             <div className="mt-6 flex gap-3">
-              {[Share2, Globe2, AtSign].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="flex size-9 items-center justify-center rounded-full border border-white/10 text-slate-300 transition hover:border-gold/60 hover:text-gold"
-                  aria-label="Social link"
-                >
-                  <Icon className="size-4" />
-                </a>
-              ))}
+              <a
+                href={siteConfig.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="flex size-9 items-center justify-center rounded-full border border-white/10 text-slate-300 transition hover:border-gold/60 hover:text-gold"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="size-4" aria-hidden>
+                  <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14C17.17 2.09 16.02 2 14.79 2 12.06 2 10 3.72 10 7.05V9.5H7.5v4H10V22h4v-8.5z" />
+                </svg>
+              </a>
+              <a
+                href={siteConfig.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="flex size-9 items-center justify-center rounded-full border border-white/10 text-slate-300 transition hover:border-gold/60 hover:text-gold"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="size-4" aria-hidden>
+                  <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9zm9.25 1.75a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+                </svg>
+              </a>
             </div>
           </div>
 
