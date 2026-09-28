@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import {
   BarChart3,
   BookOpen,
+  CirclePlus,
   Boxes,
   Building2,
   FileText,
@@ -40,6 +41,7 @@ const ICONS: Record<AdminModuleId, typeof LayoutDashboard> = {
   dashboard: LayoutDashboard,
   inventory: Boxes,
   books: BookOpen,
+  "add-product": CirclePlus,
   authors: Users,
   publishers: Building2,
   categories: Tags,

@@ -106,6 +106,7 @@ export type AdminModuleId =
   | "dashboard"
   | "inventory"
   | "books"
+  | "add-product"
   | "authors"
   | "publishers"
   | "categories"
@@ -139,6 +140,12 @@ export const ADMIN_MODULES: AdminModule[] = [
     anyOf: ["inventory.read"],
   },
   { id: "books", label: "Books", href: "/admin/books", anyOf: ["catalog.read"] },
+  {
+    id: "add-product",
+    label: "Add product",
+    href: "/admin/add-product",
+    anyOf: ["catalog.write"],
+  },
   {
     id: "authors",
     label: "Authors",
