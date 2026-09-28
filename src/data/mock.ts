@@ -3499,6 +3499,48 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-89",
+    slug: "best-brain-english-language-for-basic-schools-5",
+    title: "Best Brain English Language for Basic Schools Basic 5",
+    subtitle: "Based on the New NaCCA Standards-Based Curriculum",
+    authorId: "auth-mavis-baah-yeboah",
+    authorName: "Mavis Baah-Yeboah & Albert Mcphiliphy Anamuah",
+    publisherId: "pub-best-brain",
+    publisherName: "Best Brain",
+    categoryIds: ["cat-education"],
+    genres: ["English Language", "Primary 5", "NaCCA", "Basic Schools"],
+    description:
+      "Best Brain English Language for Basic Schools Basic 5 is a primary school English textbook based on the new NaCCA Standards-Based Curriculum. It builds grammar, reading, writing, and oral language through clear lessons and classroom activities.",
+    synopsis:
+      "Part of the Best Brain English Language series. This Basic 5 title supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7040-7",
+    pages: 144,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/best-brain-english-language-for-basic-schools-5/front.jpg",
+    images: [
+      {
+        url: "/covers/best-brain-english-language-for-basic-schools-5/front.jpg",
+        alt: "Best Brain English Language for Basic Schools Basic 5 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: [
+      "english",
+      "english-language",
+      "primary-5",
+      "basic-5",
+      "best-brain",
+      "nacca",
+      "ghana",
+    ],
+    featured: true,
+    newArrival: true,
+    palette: 3,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -3583,6 +3625,7 @@ export const collections: Collection[] = [
       "bk-86",
       "bk-87",
       "bk-88",
+      "bk-89",
     ],
   },
   {
