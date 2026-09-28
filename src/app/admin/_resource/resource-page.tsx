@@ -2,8 +2,10 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { AdminPageHeader, AdminPanel, AdminTable } from "@/components/admin/admin-ui";
 
 const RESOURCE_META: Record<
@@ -159,7 +161,17 @@ export default function AdminCatalogResourcePage() {
 
   return (
     <div>
-      <AdminPageHeader title={meta.title} description={meta.description} />
+      <AdminPageHeader
+        title={meta.title}
+        description={meta.description}
+        action={
+          resource === "books" ? (
+            <Button asChild>
+              <Link href="/admin/add-product">Add product</Link>
+            </Button>
+          ) : null
+        }
+      />
       <AdminPanel>
         {error ? (
           <p className="text-destructive text-sm">{error}</p>
