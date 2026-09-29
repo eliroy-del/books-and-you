@@ -4793,6 +4793,35 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-131",
+    slug: "don-series-french-premier-textbook-2",
+    title: "Don Series French Premier Textbook 2",
+    subtitle: "For Basic Schools · NaCCA Approved Standard Based Curriculum",
+    authorId: "auth-donsimon-quarshie-attipoe",
+    authorName: "Donsimon Quarshie Attipoe & Raphael Awindaniko",
+    publisherId: "pub-don-series",
+    publisherName: "Don Series",
+    categoryIds: ["cat-education"],
+    genres: ["French", "Primary 2", "Don Series", "NaCCA"],
+    description:
+      "Don Series French Premier Textbook 2 is a Don Series primary French textbook based on the NaCCA approved standard based curriculum. It builds dialogue, comprehension, vocabulary, grammar, and composition for Basic 2.",
+    synopsis:
+      "Part of the Don Series Premier French range for basic schools. This Basic 2 textbook supports classroom learning aligned with the NaCCA curriculum.",
+    isbn: "978-9988-2-7082-7",
+    pages: 144,
+    language: "French",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/don-series-french-premier-textbook-2/front.jpg",
+    images: [{ url: "/covers/don-series-french-premier-textbook-2/front.jpg", alt: "Don Series French Premier Textbook 2 front cover" }],
+    formats: [{ format: "paperback", price: 65, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["don-series", "french", "primary-2", "nacca", "ghana", "textbook"],
+    featured: true,
+    newArrival: true,
+    palette: 5,
+  }),
 ];
 
 export const collections: Collection[] = [
