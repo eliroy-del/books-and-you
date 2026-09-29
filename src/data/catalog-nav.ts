@@ -106,7 +106,13 @@ export const catalogNav: CatalogNavNode[] = [
         slug: "junior-high-school",
         name: "Junior High School (JHS 1–3)",
         description: "JHS course books, literature, and BECE prep.",
-        children: leaves(
+        children: [
+          {
+            slug: "jhs-combined",
+            name: "Combined (Basics 7–9)",
+            description: "One book covering JHS 1, 2 and 3.",
+          },
+          ...leaves(
           [
             "English Language",
             "Mathematics",
@@ -125,12 +131,19 @@ export const catalogNav: CatalogNavNode[] = [
           ],
           "jhs"
         ),
+        ],
       },
       {
         slug: "senior-high-school",
         name: "Senior High School (SHS 1–3)",
         description: "SHS core & elective texts plus WASSCE prep.",
-        children: leaves(
+        children: [
+          {
+            slug: "shs-combined",
+            name: "Combined (SHS 1–3)",
+            description: "One book covering SHS 1, 2 and 3.",
+          },
+          ...leaves(
           [
             "Core Mathematics",
             "English Language",
@@ -158,11 +171,12 @@ export const catalogNav: CatalogNavNode[] = [
             "French",
             "Christian Religious Studies",
             "Islamic Religious Studies",
-            "WASSCE Preparation",
-            "Past Questions",
+          "WASSCE Preparation",
+          "Past Questions",
           ],
           "shs"
         ),
+        ],
       },
     ],
   },
@@ -309,9 +323,19 @@ export const catalogNav: CatalogNavNode[] = [
       { slug: "level-jhs-1", name: "JHS 1", description: "JHS 1 books & supplies." },
       { slug: "level-jhs-2", name: "JHS 2", description: "JHS 2 books & supplies." },
       { slug: "level-jhs-3", name: "JHS 3", description: "JHS 3 books & supplies." },
+      {
+        slug: "level-jhs-combined",
+        name: "JHS Combined",
+        description: "Books that cover Basics 7, 8 and 9 together.",
+      },
       { slug: "level-shs-1", name: "SHS 1", description: "SHS 1 books & supplies." },
       { slug: "level-shs-2", name: "SHS 2", description: "SHS 2 books & supplies." },
       { slug: "level-shs-3", name: "SHS 3", description: "SHS 3 books & supplies." },
+      {
+        slug: "level-shs-combined",
+        name: "SHS Combined",
+        description: "Books that cover SHS 1, 2 and 3 together.",
+      },
     ],
   },
 ];
