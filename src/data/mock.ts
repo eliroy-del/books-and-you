@@ -3711,6 +3711,75 @@ export const books: Book[] = [
     newArrival: true,
     palette: 3,
   }),
+  book({
+    id: "bk-95",
+    slug: "best-brain-creative-arts-and-design-for-basics-7-8-9",
+    title: "Best Brain Creative Arts and Design for Basics 7, 8 & 9",
+    subtitle: "New Standard-Based Curriculum · NaCCA",
+    authorId: "auth-emmanuel-yeboah",
+    authorName: "Emmanuel Yeboah & Matthias Nsiah Opoku",
+    publisherId: "pub-best-brain",
+    publisherName: "Best Brain",
+    categoryIds: ["cat-education"],
+    genres: ["Creative Arts and Design", "JHS", "NaCCA", "Combined"],
+    description:
+      "Best Brain Creative Arts and Design for Basics 7, 8 & 9 is a combined junior high textbook for the new NaCCA standard-based curriculum. It covers drawing, design, and creative practice across JHS 1 to JHS 3.",
+    synopsis:
+      "Combined Best Brain title for Basics 7, 8 and 9, aligned with the new NaCCA standard-based curriculum.",
+    isbn: "978-9988-2-7046-9",
+    pages: 240,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl:
+      "/covers/best-brain-creative-arts-and-design-for-basics-7-8-9/front.jpg",
+    images: [
+      {
+        url: "/covers/best-brain-creative-arts-and-design-for-basics-7-8-9/front.jpg",
+        alt: "Best Brain Creative Arts and Design for Basics 7, 8 & 9 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 150, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["best-brain", "jhs", "combined", "nacca", "ghana", "basics-7-8-9"],
+    featured: true,
+    newArrival: true,
+    palette: 6,
+  }),
+  book({
+    id: "bk-96",
+    slug: "best-brain-mathematics-for-basics-7-8-9",
+    title: "Best Brain Mathematics for Basics 7, 8 & 9",
+    subtitle: "New Standard-Based Curriculum · NaCCA",
+    authorId: "auth-henric-atta-baah-yeboah",
+    authorName: "Henric Atta Baah-Yeboah",
+    publisherId: "pub-best-brain",
+    publisherName: "Best Brain",
+    categoryIds: ["cat-education"],
+    genres: ["Mathematics", "JHS", "NaCCA", "Combined"],
+    description:
+      "Best Brain Mathematics for Basics 7, 8 & 9 is a combined junior high textbook for the new NaCCA standard-based curriculum. It covers number, algebra, geometry, and data across JHS 1 to JHS 3, with objective tests and theory questions.",
+    synopsis:
+      "Combined Best Brain title for Basics 7, 8 and 9, aligned with the new NaCCA standard-based curriculum.",
+    isbn: "978-9988-2-7047-6",
+    pages: 240,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/best-brain-mathematics-for-basics-7-8-9/front.jpg",
+    images: [
+      {
+        url: "/covers/best-brain-mathematics-for-basics-7-8-9/front.jpg",
+        alt: "Best Brain Mathematics for Basics 7, 8 & 9 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 150, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["best-brain", "jhs", "combined", "nacca", "ghana", "basics-7-8-9"],
+    featured: true,
+    newArrival: true,
+    palette: 0,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -3801,6 +3870,8 @@ export const collections: Collection[] = [
       "bk-92",
       "bk-93",
       "bk-94",
+      "bk-95",
+      "bk-96",
     ],
   },
   {
