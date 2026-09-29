@@ -62,7 +62,11 @@ export async function GET(request: Request) {
         });
       }
 
+      const uploadedOnly = searchParams.get("uploaded") === "1";
       let query = client.from("books").select(bookSelect).limit(limit);
+      if (uploadedOnly) {
+        query = query.like("cover_url", "/covers/%").order("created_at", { ascending: false });
+      }
       if (q?.trim()) {
         query = query.or(
           `title.ilike.%${q}%,isbn.ilike.%${q}%,description.ilike.%${q}%`

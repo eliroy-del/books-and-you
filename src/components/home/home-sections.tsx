@@ -95,9 +95,20 @@ export function SmartRecommendations() {
 }
 
 export function BestsellersShelf() {
-  const { books } = useCatalogBooks();
-  const bestsellers = books.filter((b) => b.bestseller).slice(0, 6);
-  const shelf = bestsellers.length ? bestsellers : books.slice(0, 6);
+  const [shelf, setShelf] = useState<Book[]>([]);
+
+  useEffect(() => {
+    void fetch("/api/catalog?resource=books&uploaded=1&limit=80")
+      .then((r) => r.json())
+      .then((json) => {
+        const uploaded = ((json.books || []) as Book[]).filter((book) =>
+          book.coverUrl?.startsWith("/covers/")
+        );
+        const shuffled = [...uploaded].sort(() => Math.random() - 0.5);
+        setShelf(shuffled.slice(0, 6));
+      });
+  }, []);
+
   return (
     <section className="mx-auto max-w-site px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeader
