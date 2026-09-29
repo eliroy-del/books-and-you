@@ -24,7 +24,6 @@ export default function BooksClient() {
   );
   const [books, setBooks] = useState<Book[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [source, setSource] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export default function BooksClient() {
       if (cancelled) return;
       setBooks(booksRes.books || []);
       setCollections(colsRes.collections || []);
-      setSource(booksRes.source || "");
       setLoading(false);
     }
     void load();
@@ -100,12 +98,7 @@ export default function BooksClient() {
         <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
           {title}
         </h1>
-        <p className="text-muted-foreground mt-3 text-sm sm:text-base">
-          {description}
-          {source ? (
-            <span className="text-primary ml-2 text-xs font-medium">· {source}</span>
-          ) : null}
-        </p>
+        <p className="text-muted-foreground mt-3 text-sm sm:text-base">{description}</p>
       </div>
 
       <div className="mt-8 max-w-xl">
