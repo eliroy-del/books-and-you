@@ -147,20 +147,22 @@ export function mapOrder(row: Record<string, unknown>): Order {
   };
 }
 
+export function isUploadedBook(book: { coverUrl?: string | null }) {
+  return Boolean(book.coverUrl?.startsWith("/covers/"));
+}
+
 export function mockFallbackBooks() {
-  return mockBooks;
+  return mockBooks.filter(isUploadedBook);
 }
 
 export function mockFallbackBook(idOrSlug: string) {
-  return (
-    mockGetBookById(idOrSlug) ||
-    mockBooks.find((b) => b.slug === idOrSlug) ||
-    null
-  );
+  const book =
+    mockGetBookById(idOrSlug) || mockBooks.find((b) => b.slug === idOrSlug) || null;
+  return book && isUploadedBook(book) ? book : null;
 }
 
 export function mockFallbackSearch(q: string) {
-  return mockSearch(q);
+  return mockSearch(q).filter(isUploadedBook);
 }
 
 export function mockFallbackOrders() {

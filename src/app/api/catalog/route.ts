@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   const category = searchParams.get("category") || undefined;
   const collection = searchParams.get("collection") || undefined;
   const authorSlug = searchParams.get("author") || undefined;
-  const limit = Math.min(Math.max(Number(searchParams.get("limit") || 100) || 100, 1), 100);
+  const limit = Math.min(Math.max(Number(searchParams.get("limit") || 200) || 200, 1), 500);
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(mockPayload(resource, { slug, q, category, collection, authorSlug, limit }));
@@ -53,6 +53,7 @@ export async function GET(request: Request) {
           .from("books")
           .select(bookSelect)
           .eq("slug", slug)
+          .like("cover_url", "/covers/%")
           .maybeSingle();
         if (error) throw error;
         return NextResponse.json({
@@ -62,11 +63,12 @@ export async function GET(request: Request) {
         });
       }
 
-      const uploadedOnly = searchParams.get("uploaded") === "1";
-      let query = client.from("books").select(bookSelect).limit(limit);
-      if (uploadedOnly) {
-        query = query.like("cover_url", "/covers/%").order("created_at", { ascending: false });
-      }
+      let query = client
+        .from("books")
+        .select(bookSelect)
+        .like("cover_url", "/covers/%")
+        .order("created_at", { ascending: false })
+        .limit(limit);
       if (q?.trim()) {
         query = query.or(
           `title.ilike.%${q}%,isbn.ilike.%${q}%,description.ilike.%${q}%`
@@ -169,7 +171,11 @@ export async function GET(request: Request) {
           .eq("author_id", data.id);
         const ids = (links || []).map((l: { book_id: string }) => l.book_id);
         const { data: bookRows } = ids.length
-          ? await client.from("books").select(bookSelect).in("id", ids)
+          ? await client
+              .from("books")
+              .select(bookSelect)
+              .in("id", ids)
+              .like("cover_url", "/covers/%")
           : { data: [] };
 
         return NextResponse.json({
@@ -182,18 +188,25 @@ export async function GET(request: Request) {
 
       const { data, error } = await client.from("authors").select("*").order("name").limit(limit);
       if (error) throw error;
-      const { data: links } = await client.from("book_authors").select("author_id");
+      const { data: links } = await client
+        .from("books")
+        .select("book_authors(author_id)")
+        .like("cover_url", "/covers/%");
       const countMap = new Map<string, number>();
       for (const row of links || []) {
-        const id = (row as { author_id: string }).author_id;
-        countMap.set(id, (countMap.get(id) || 0) + 1);
+        const authors = (row as { book_authors?: { author_id: string }[] }).book_authors || [];
+        for (const link of authors) {
+          countMap.set(link.author_id, (countMap.get(link.author_id) || 0) + 1);
+        }
       }
 
       return NextResponse.json({
         ok: true,
-        authors: (data || []).map((a: Record<string, unknown>) =>
-          mapAuthor(a, countMap.get(String(a.id)) || 0)
-        ),
+        authors: (data || [])
+          .map((a: Record<string, unknown>) =>
+            mapAuthor(a, countMap.get(String(a.id)) || 0)
+          )
+          .filter((author) => author.bookCount > 0),
         source: "supabase",
       });
     }
@@ -204,6 +217,11 @@ export async function GET(request: Request) {
         .select("id, slug, title, description, collection_books(book_id)")
         .order("sort_order");
       if (error) throw error;
+      const { data: uploadedRows } = await client
+        .from("books")
+        .select("id")
+        .like("cover_url", "/covers/%");
+      const uploadedIds = new Set((uploadedRows || []).map((row: { id: string }) => row.id));
       return NextResponse.json({
         ok: true,
         collections: (data || []).map((c: Record<string, unknown>) => ({
@@ -211,7 +229,9 @@ export async function GET(request: Request) {
           slug: String(c.slug),
           title: String(c.title),
           description: String(c.description || ""),
-          bookIds: ((c.collection_books as { book_id: string }[]) || []).map((b) => b.book_id),
+          bookIds: ((c.collection_books as { book_id: string }[]) || [])
+            .map((b) => b.book_id)
+            .filter((id) => uploadedIds.has(id)),
         })),
         source: "supabase",
       });
@@ -230,6 +250,7 @@ export async function GET(request: Request) {
         .from("books")
         .select(bookSelect)
         .eq("id", id)
+        .like("cover_url", "/covers/%")
         .maybeSingle();
       if (error) throw error;
       return NextResponse.json({
@@ -284,12 +305,19 @@ function mockPayload(
 ) {
   if (resource === "books") {
     if (opts.slug) {
-      return { ok: true, book: mockGetBookBySlug(opts.slug) ?? null, source: "mock" };
+      const book = mockGetBookBySlug(opts.slug);
+      return {
+        ok: true,
+        book: book?.coverUrl?.startsWith("/covers/") ? book : null,
+        source: "mock",
+      };
     }
-    let list = [...mockBooks];
+    let list = mockBooks.filter((b) => b.coverUrl?.startsWith("/covers/"));
     if (opts.authorSlug) {
       const author = mockAuthors.find((a) => a.slug === opts.authorSlug);
-      if (author) list = mockGetBooksByAuthor(author.id);
+      if (author) {
+        list = mockGetBooksByAuthor(author.id).filter((b) => b.coverUrl?.startsWith("/covers/"));
+      }
     }
     return { ok: true, books: list.slice(0, opts.limit), source: "mock" };
   }
@@ -310,10 +338,15 @@ function mockPayload(
   if (resource === "authors") {
     if (opts.slug) {
       const author = mockAuthors.find((a) => a.slug === opts.slug) ?? null;
-      const books = author ? mockGetBooksByAuthor(author.id) : [];
+      const books = author
+        ? mockGetBooksByAuthor(author.id).filter((b) => b.coverUrl?.startsWith("/covers/"))
+        : [];
       return { ok: true, author, books, source: "mock" };
     }
-    return { ok: true, authors: mockAuthors, source: "mock" };
+    const authors = mockAuthors.filter((author) =>
+      mockGetBooksByAuthor(author.id).some((b) => b.coverUrl?.startsWith("/covers/"))
+    );
+    return { ok: true, authors, source: "mock" };
   }
   if (resource === "collections") {
     const cols = featuredCollectionDefs.map((c, i) => ({

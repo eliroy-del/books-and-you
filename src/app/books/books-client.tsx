@@ -31,7 +31,7 @@ export default function BooksClient() {
     let cancelled = false;
     async function load() {
       setLoading(true);
-      const qs = new URLSearchParams({ resource: "books", limit: "100" });
+      const qs = new URLSearchParams({ resource: "books", limit: "200" });
       if (q) qs.set("q", q);
       if (categorySlug) qs.set("category", categorySlug);
       if (collectionSlug) qs.set("collection", collectionSlug);

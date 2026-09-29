@@ -29,7 +29,11 @@ async function fetchSlugs(): Promise<{
       try {
         const supabase = createClient(env.url, env.anonKey);
         const [books, authors, categories] = await Promise.all([
-          supabase.from("books").select("slug, updated_at").limit(5000),
+          supabase
+            .from("books")
+            .select("slug, updated_at")
+            .like("cover_url", "/covers/%")
+            .limit(5000),
           supabase.from("authors").select("slug").limit(2000),
           supabase.from("categories").select("slug").limit(500),
         ]);
@@ -46,7 +50,7 @@ async function fetchSlugs(): Promise<{
     }
   }
   return {
-    books: mockBooks.map((b) => ({ slug: b.slug })),
+    books: mockBooks.filter((b) => b.coverUrl?.startsWith("/covers/")).map((b) => ({ slug: b.slug })),
     authors: mockAuthors.map((a) => ({ slug: a.slug })),
     categories: mockCategories.map((c) => ({ slug: c.slug })),
   };

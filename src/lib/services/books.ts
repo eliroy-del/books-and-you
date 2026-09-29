@@ -3,6 +3,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { Book } from "@/types";
 import {
   bookSelect,
+  isUploadedBook,
   mapDbBook,
   mockFallbackBook,
   mockFallbackBooks,
@@ -24,7 +25,11 @@ export async function listBooks(options?: {
   const supabase = browserDb();
   if (!supabase) return mockFallbackBooks();
 
-  let query = supabase.from("books").select(bookSelect).limit(options?.limit ?? 100);
+  let query = supabase
+    .from("books")
+    .select(bookSelect)
+    .like("cover_url", "/covers/%")
+    .limit(options?.limit ?? 100);
 
   if (options?.q?.trim()) {
     query = query.or(
@@ -38,7 +43,7 @@ export async function listBooks(options?: {
     return mockFallbackBooks();
   }
 
-  let books = (data as Record<string, unknown>[]).map(mapDbBook);
+  let books = (data as Record<string, unknown>[]).map(mapDbBook).filter(isUploadedBook);
 
   if (options?.categorySlug) {
     const { data: cat } = await supabase
@@ -78,12 +83,14 @@ export async function getBookBySlug(slug: string): Promise<Book | null> {
     .from("books")
     .select(bookSelect)
     .eq("slug", slug)
+    .like("cover_url", "/covers/%")
     .maybeSingle();
 
   if (error || !data) {
     return mockFallbackBook(slug);
   }
-  return mapDbBook(data as Record<string, unknown>);
+  const book = mapDbBook(data as Record<string, unknown>);
+  return isUploadedBook(book) ? book : null;
 }
 
 export async function getBookById(id: string): Promise<Book | null> {
@@ -96,10 +103,12 @@ export async function getBookById(id: string): Promise<Book | null> {
     .from("books")
     .select(bookSelect)
     .eq("id", id)
+    .like("cover_url", "/covers/%")
     .maybeSingle();
 
   if (error || !data) return mockFallbackBook(id);
-  return mapDbBook(data as Record<string, unknown>);
+  const book = mapDbBook(data as Record<string, unknown>);
+  return isUploadedBook(book) ? book : null;
 }
 
 export async function searchBooks(q: string): Promise<Book[]> {

@@ -5,7 +5,7 @@ import {
   getBooksByAuthor,
 } from "@/data/mock";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/supabase/env";
-import { bookSelect, mapDbBook } from "@/lib/services/mappers";
+import { bookSelect, isUploadedBook, mapDbBook } from "@/lib/services/mappers";
 import type { Author, Book } from "@/types";
 
 function mapAuthor(a: Record<string, unknown>, bookCount: number): Author {
@@ -33,15 +33,21 @@ export async function listAuthors(limit = 50): Promise<Author[]> {
           .order("name")
           .limit(limit);
         if (!error && data) {
-          const { data: links } = await supabase.from("book_authors").select("author_id");
+          const { data: links } = await supabase
+            .from("books")
+            .select("book_authors(author_id)")
+            .like("cover_url", "/covers/%");
           const countMap = new Map<string, number>();
           for (const row of links || []) {
-            const id = (row as { author_id: string }).author_id;
-            countMap.set(id, (countMap.get(id) || 0) + 1);
+            const authors =
+              (row as { book_authors?: { author_id: string }[] }).book_authors || [];
+            for (const link of authors) {
+              countMap.set(link.author_id, (countMap.get(link.author_id) || 0) + 1);
+            }
           }
-          return data.map((a) =>
-            mapAuthor(a as Record<string, unknown>, countMap.get(String(a.id)) || 0)
-          );
+          return data
+            .map((a) => mapAuthor(a as Record<string, unknown>, countMap.get(String(a.id)) || 0))
+            .filter((author) => author.bookCount > 0);
         }
       } catch {
         // fall through
@@ -71,11 +77,17 @@ export async function getAuthorWithBooks(
             .eq("author_id", data.id);
           const ids = (links || []).map((l: { book_id: string }) => l.book_id);
           const { data: bookRows } = ids.length
-            ? await supabase.from("books").select(bookSelect).in("id", ids)
+            ? await supabase
+                .from("books")
+                .select(bookSelect)
+                .in("id", ids)
+                .like("cover_url", "/covers/%")
             : { data: [] as Record<string, unknown>[] };
           return {
-            author: mapAuthor(data as Record<string, unknown>, ids.length),
-            books: ((bookRows || []) as Record<string, unknown>[]).map(mapDbBook),
+            author: mapAuthor(data as Record<string, unknown>, (bookRows || []).length),
+            books: ((bookRows || []) as Record<string, unknown>[])
+              .map(mapDbBook)
+              .filter(isUploadedBook),
           };
         }
         if (!error && !data) return null;
@@ -87,5 +99,6 @@ export async function getAuthorWithBooks(
 
   const author = getAuthorBySlug(slug);
   if (!author) return null;
-  return { author, books: getBooksByAuthor(author.id) };
+  const books = getBooksByAuthor(author.id).filter(isUploadedBook);
+  return { author: { ...author, bookCount: books.length }, books };
 }

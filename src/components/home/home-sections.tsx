@@ -46,7 +46,7 @@ function useCatalogBooks() {
   const [books, setBooks] = useState<Book[]>([]);
 
   useEffect(() => {
-    void fetch("/api/catalog?resource=books&limit=100")
+    void fetch("/api/catalog?resource=books&limit=200")
       .then((r) => r.json())
       .then((booksJson) => {
         setBooks(booksJson.books || []);

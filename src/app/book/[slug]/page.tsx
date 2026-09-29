@@ -35,6 +35,7 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
             "title, subtitle, description, synopsis, cover_url, rating_avg, review_count, book_authors ( is_primary, authors ( name ) ), book_inventory ( format, price_cents, quantity_on_hand, is_active )"
           )
           .eq("slug", slug)
+          .like("cover_url", "/covers/%")
           .maybeSingle();
         if (data) {
           const authors = (data.book_authors ?? []) as Array<{
@@ -97,14 +98,20 @@ export async function generateStaticParams() {
     if (env) {
       try {
         const supabase = createClient(env.url, env.anonKey);
-        const { data } = await supabase.from("books").select("slug").limit(500);
+        const { data } = await supabase
+          .from("books")
+          .select("slug")
+          .like("cover_url", "/covers/%")
+          .limit(500);
         if (data?.length) return data.map((b) => ({ slug: String(b.slug) }));
       } catch {
         // fall through
       }
     }
   }
-  return mockBooks.map((b) => ({ slug: b.slug }));
+  return mockBooks
+    .filter((b) => b.coverUrl?.startsWith("/covers/"))
+    .map((b) => ({ slug: b.slug }));
 }
 
 export async function generateMetadata({
