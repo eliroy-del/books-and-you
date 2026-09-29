@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { slugify, type CoverDraft } from "@/lib/catalog/identify-cover";
+import { imageExtension, slugify, type CoverDraft } from "@/lib/catalog/identify-cover";
 
 function adminClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -18,11 +18,28 @@ async function uniqueSlug(supabase: SupabaseClient, base: string) {
   return `${base}-${Date.now()}`;
 }
 
+async function uploadProductImage(
+  supabase: SupabaseClient,
+  slug: string,
+  index: number,
+  bytes: Buffer,
+  mime: string
+) {
+  const ext = imageExtension(mime);
+  const filename = index === 0 ? `front.${ext}` : `image-${index + 1}.${ext}`;
+  const path = `${slug}/${filename}`;
+  const upload = await supabase.storage.from("product-covers").upload(path, bytes, {
+    contentType: mime,
+    upsert: true,
+  });
+  if (upload.error) throw new Error(upload.error.message);
+  return supabase.storage.from("product-covers").getPublicUrl(path).data.publicUrl;
+}
+
 export async function publishProduct(input: {
   draft: CoverDraft;
   priceCedis: number;
-  bytes: Buffer;
-  mime: string;
+  images: { bytes: Buffer; mime: string }[];
 }) {
   const supabase = adminClient();
   const title = input.draft.title.trim();
@@ -30,17 +47,14 @@ export async function publishProduct(input: {
   if (!Number.isFinite(input.priceCedis) || input.priceCedis <= 0) {
     throw new Error("Enter a price in cedis.");
   }
+  if (!input.images.length) throw new Error("Choose at least one product image.");
 
   const slug = await uniqueSlug(supabase, slugify(title));
-  const ext = input.mime === "image/png" ? "png" : input.mime === "image/webp" ? "webp" : "jpg";
-  const path = `${slug}/front.${ext}`;
-
-  const upload = await supabase.storage.from("product-covers").upload(path, input.bytes, {
-    contentType: input.mime,
-    upsert: true,
-  });
-  if (upload.error) throw new Error(upload.error.message);
-  const coverUrl = supabase.storage.from("product-covers").getPublicUrl(path).data.publicUrl;
+  const uploadedUrls: string[] = [];
+  for (const [index, image] of input.images.entries()) {
+    uploadedUrls.push(await uploadProductImage(supabase, slug, index, image.bytes, image.mime));
+  }
+  const coverUrl = uploadedUrls[0]!;
 
   let publisherId: string | null = null;
   const publisherName = input.draft.publisher.trim();
@@ -132,13 +146,16 @@ export async function publishProduct(input: {
   );
   if (inventoryError) throw new Error(inventoryError.message);
 
-  await supabase.from("book_images").insert({
-    book_id: book.id,
-    url: coverUrl,
-    alt_text: `${title} front cover`,
-    sort_order: 0,
-    is_primary: true,
-  });
+  const { error: imagesError } = await supabase.from("book_images").insert(
+    uploadedUrls.map((url, index) => ({
+      book_id: book.id,
+      url,
+      alt_text: index === 0 ? `${title} front cover` : `${title} image ${index + 1}`,
+      sort_order: index,
+      is_primary: index === 0,
+    }))
+  );
+  if (imagesError) throw new Error(imagesError.message);
 
   const { data: collection } = await supabase
     .from("collections")
@@ -154,5 +171,5 @@ export async function publishProduct(input: {
       );
   }
 
-  return { slug: book.slug as string, coverUrl };
+  return { slug: book.slug as string, coverUrl, imageCount: uploadedUrls.length };
 }

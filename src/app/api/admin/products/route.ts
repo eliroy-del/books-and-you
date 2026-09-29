@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin/guard";
-import { assertImage, type CoverDraft } from "@/lib/catalog/identify-cover";
+import {
+  assertImage,
+  MAX_PRODUCT_IMAGES,
+  type CoverDraft,
+} from "@/lib/catalog/identify-cover";
 import { publishProduct } from "@/lib/catalog/publish-product";
 
 export const runtime = "nodejs";
+
+function collectImageFiles(form: FormData): File[] {
+  const fromList = form.getAll("images").filter((value): value is File => value instanceof File);
+  if (fromList.length) return fromList;
+  const single = form.get("image");
+  return single instanceof File ? [single] : [];
+}
 
 export async function POST(request: Request) {
   const auth = await requireAdmin("catalog.write");
@@ -11,11 +22,17 @@ export async function POST(request: Request) {
 
   try {
     const form = await request.formData();
-    const file = form.get("image");
-    if (!(file instanceof File)) {
+    const files = collectImageFiles(form);
+    if (!files.length) {
       return NextResponse.json({ ok: false, error: "Choose a product image." }, { status: 400 });
     }
-    assertImage(file);
+    if (files.length > MAX_PRODUCT_IMAGES) {
+      return NextResponse.json(
+        { ok: false, error: `You can add up to ${MAX_PRODUCT_IMAGES} images.` },
+        { status: 400 }
+      );
+    }
+    for (const file of files) assertImage(file);
 
     const authors = String(form.get("authors") || "")
       .split("\n")
@@ -35,12 +52,16 @@ export async function POST(request: Request) {
       language: String(form.get("language") || "English").trim() || "English",
     };
     const priceCedis = Number(form.get("price"));
-    const bytes = Buffer.from(await file.arrayBuffer());
+    const images = await Promise.all(
+      files.map(async (file) => ({
+        bytes: Buffer.from(await file.arrayBuffer()),
+        mime: file.type,
+      }))
+    );
     const product = await publishProduct({
       draft,
       priceCedis,
-      bytes,
-      mime: file.type,
+      images,
     });
 
     return NextResponse.json({ ok: true, ...product });

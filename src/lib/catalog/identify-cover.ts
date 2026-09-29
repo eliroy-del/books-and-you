@@ -10,6 +10,8 @@ export type CoverDraft = {
 
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+export const MAX_PRODUCT_IMAGES = 8;
+
 export function slugify(value: string) {
   return value
     .toLowerCase()
@@ -26,6 +28,12 @@ export function assertImage(file: File) {
   if (file.size > 6 * 1024 * 1024) {
     throw new Error("Image must be 6 MB or smaller.");
   }
+}
+
+export function imageExtension(mime: string) {
+  if (mime === "image/png") return "png";
+  if (mime === "image/webp") return "webp";
+  return "jpg";
 }
 
 function parseDraft(raw: unknown, allowed: Set<string>): CoverDraft {

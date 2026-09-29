@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Star, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AdminPageHeader, AdminPanel } from "@/components/admin/admin-ui";
-import type { CoverDraft } from "@/lib/catalog/identify-cover";
+import {
+  assertImage,
+  MAX_PRODUCT_IMAGES,
+  type CoverDraft,
+} from "@/lib/catalog/identify-cover";
 
 const emptyDraft: CoverDraft = {
   title: "",
@@ -19,30 +24,92 @@ const emptyDraft: CoverDraft = {
   language: "English",
 };
 
+type SelectedImage = {
+  id: string;
+  file: File;
+  preview: string;
+};
+
 export default function AddProductPage() {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState("");
+  const [images, setImages] = useState<SelectedImage[]>([]);
   const [price, setPrice] = useState("");
   const [draft, setDraft] = useState<CoverDraft>(emptyDraft);
   const [identifying, setIdentifying] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState("");
+  const imagesRef = useRef<SelectedImage[]>([]);
+  const cover = images[0] ?? null;
+  imagesRef.current = images;
 
-  function onFile(next: File | null) {
-    setFile(next);
+  useEffect(() => {
+    return () => {
+      imagesRef.current.forEach((image) => URL.revokeObjectURL(image.preview));
+    };
+  }, []);
+
+  function addFiles(list: FileList | null) {
+    if (!list?.length) return;
     setPublishedSlug("");
-    setPreview(next ? URL.createObjectURL(next) : "");
+    const incoming: SelectedImage[] = [];
+    for (const file of Array.from(list)) {
+      try {
+        assertImage(file);
+        incoming.push({
+          id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
+          file,
+          preview: URL.createObjectURL(file),
+        });
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Invalid image");
+      }
+    }
+    if (!incoming.length) return;
+    setImages((current) => {
+      const room = MAX_PRODUCT_IMAGES - current.length;
+      if (room <= 0) {
+        incoming.forEach((image) => URL.revokeObjectURL(image.preview));
+        toast.error(`You can add up to ${MAX_PRODUCT_IMAGES} images.`);
+        return current;
+      }
+      const kept = incoming.slice(0, room);
+      incoming.slice(room).forEach((image) => URL.revokeObjectURL(image.preview));
+      if (incoming.length > room) {
+        toast.error(`You can add up to ${MAX_PRODUCT_IMAGES} images.`);
+      }
+      return [...current, ...kept];
+    });
+  }
+
+  function removeImage(id: string) {
+    setImages((current) => {
+      const next = current.filter((image) => image.id !== id);
+      current
+        .filter((image) => image.id === id)
+        .forEach((image) => URL.revokeObjectURL(image.preview));
+      return next;
+    });
+  }
+
+  function makeCover(id: string) {
+    setImages((current) => {
+      const index = current.findIndex((image) => image.id === id);
+      if (index <= 0) return current;
+      const next = [...current];
+      const [picked] = next.splice(index, 1);
+      if (!picked) return current;
+      return [picked, ...next];
+    });
   }
 
   async function identify() {
-    if (!file) {
-      toast.error("Choose a product image first.");
+    if (!cover) {
+      toast.error("Choose a cover image first.");
       return;
     }
     setIdentifying(true);
     try {
       const body = new FormData();
-      body.set("image", file);
+      body.set("image", cover.file);
       const res = await fetch("/api/admin/products/identify", { method: "POST", body });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || "Identification failed");
@@ -57,14 +124,14 @@ export default function AddProductPage() {
 
   async function publish(event: React.FormEvent) {
     event.preventDefault();
-    if (!file) {
-      toast.error("Choose a product image first.");
+    if (!images.length) {
+      toast.error("Choose at least one product image.");
       return;
     }
     setPublishing(true);
     try {
       const body = new FormData();
-      body.set("image", file);
+      for (const image of images) body.append("images", image.file);
       body.set("title", draft.title);
       body.set("subtitle", draft.subtitle);
       body.set("description", draft.description);
@@ -77,7 +144,11 @@ export default function AddProductPage() {
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || "Publish failed");
       setPublishedSlug(json.slug);
-      toast.success("Product is live on the store.");
+      toast.success(
+        json.imageCount > 1
+          ? `Product is live with ${json.imageCount} images.`
+          : "Product is live on the store."
+      );
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Publish failed");
     } finally {
@@ -89,32 +160,75 @@ export default function AddProductPage() {
     <div>
       <AdminPageHeader
         title="Add product"
-        description="Upload a cover, set the price, and let AI read the title, authors, and categories."
+        description="Upload a cover and extra photos, set the price, and let AI read the title, authors, and categories."
         action={
           <Button variant="outline" asChild>
             <Link href="/admin/books">Back to books</Link>
           </Button>
         }
       />
-      <form onSubmit={publish} className="grid gap-6 lg:grid-cols-[280px_1fr]">
+      <form onSubmit={publish} className="grid gap-6 lg:grid-cols-[320px_1fr]">
         <AdminPanel>
-          <Label htmlFor="cover">Product image</Label>
+          <Label htmlFor="cover">Product images</Label>
+          <p className="text-muted-foreground mt-1 text-xs">
+            First image is the cover. Add more angles, the back, or close-ups. Up to{" "}
+            {MAX_PRODUCT_IMAGES}.
+          </p>
           <Input
             id="cover"
             type="file"
             accept="image/jpeg,image/png,image/webp"
+            multiple
             className="mt-2"
-            onChange={(event) => onFile(event.target.files?.[0] || null)}
+            onChange={(event) => {
+              addFiles(event.target.files);
+              event.target.value = "";
+            }}
           />
-          {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview} alt="Selected cover" className="mt-4 w-full rounded-lg border" />
+          {images.length ? (
+            <ul className="mt-4 grid grid-cols-2 gap-2">
+              {images.map((image, index) => (
+                <li key={image.id} className="relative overflow-hidden rounded-lg border bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.preview}
+                    alt={index === 0 ? "Cover image" : `Product image ${index + 1}`}
+                    className="aspect-[2/3] w-full object-cover"
+                  />
+                  {index === 0 ? (
+                    <span className="absolute top-2 left-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium tracking-wide text-primary-foreground uppercase">
+                      Cover
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => makeCover(image.id)}
+                      className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white hover:bg-black/75"
+                    >
+                      <Star className="size-3" />
+                      Cover
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeImage(image.id)}
+                    className="absolute top-2 right-2 inline-flex size-6 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/75"
+                    aria-label={`Remove image ${index + 1}`}
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
           ) : null}
+          <p className="text-muted-foreground mt-2 text-xs">
+            {images.length} of {MAX_PRODUCT_IMAGES} selected
+          </p>
           <Button
             type="button"
             variant="secondary"
             className="mt-4 w-full"
-            disabled={!file || identifying}
+            disabled={!cover || identifying}
             onClick={identify}
           >
             {identifying ? "Reading cover…" : "Identify with AI"}
@@ -204,7 +318,7 @@ export default function AddProductPage() {
                 className="border-input mt-2 min-h-28 w-full rounded-lg border bg-transparent px-3 py-2 text-sm"
               />
             </div>
-            <Button type="submit" disabled={publishing}>
+            <Button type="submit" disabled={publishing || !images.length}>
               {publishing ? "Publishing…" : "Publish product"}
             </Button>
             {publishedSlug ? (
