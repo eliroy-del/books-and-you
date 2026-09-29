@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { testimonials } from "@/data/mock";
 import { useRecentlyViewedStore, useWishlistStore } from "@/stores/commerce";
 import type { Book } from "@/types";
+import { isUploadedBook } from "@/lib/services/mappers";
 
 function SectionHeader({
   title,
@@ -101,9 +102,7 @@ export function BestsellersShelf() {
     void fetch("/api/catalog?resource=books&uploaded=1&limit=80")
       .then((r) => r.json())
       .then((json) => {
-        const uploaded = ((json.books || []) as Book[]).filter((book) =>
-          book.coverUrl?.startsWith("/covers/")
-        );
+        const uploaded = ((json.books || []) as Book[]).filter(isUploadedBook);
         const shuffled = [...uploaded].sort(() => Math.random() - 0.5);
         setShelf(shuffled.slice(0, 6));
       });

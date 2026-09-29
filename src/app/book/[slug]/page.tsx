@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/supabase/env";
 import { books as mockBooks, getBookBySlug } from "@/data/mock";
+import { isUploadedBook } from "@/lib/services/mappers";
 import { siteUrl } from "@/lib/seo";
 import { JsonLd } from "@/components/structured-data";
 import {
@@ -10,6 +11,9 @@ import {
   schemaBaseUrl,
 } from "@/lib/structured-data";
 import BookDetailClient from "./book-detail-client";
+
+export const dynamicParams = true;
+export const revalidate = 0;
 
 type BookMeta = {
   title: string;
@@ -35,7 +39,7 @@ async function fetchBookMeta(slug: string): Promise<BookMeta | null> {
             "title, subtitle, description, synopsis, cover_url, rating_avg, review_count, book_authors ( is_primary, authors ( name ) ), book_inventory ( format, price_cents, quantity_on_hand, is_active )"
           )
           .eq("slug", slug)
-          .like("cover_url", "/covers/%")
+          .not("cover_url", "is", null)
           .maybeSingle();
         if (data) {
           const authors = (data.book_authors ?? []) as Array<{
@@ -101,7 +105,7 @@ export async function generateStaticParams() {
         const { data } = await supabase
           .from("books")
           .select("slug")
-          .like("cover_url", "/covers/%")
+          .not("cover_url", "is", null)
           .limit(500);
         if (data?.length) return data.map((b) => ({ slug: String(b.slug) }));
       } catch {
@@ -109,9 +113,7 @@ export async function generateStaticParams() {
       }
     }
   }
-  return mockBooks
-    .filter((b) => b.coverUrl?.startsWith("/covers/"))
-    .map((b) => ({ slug: b.slug }));
+  return mockBooks.filter(isUploadedBook).map((b) => ({ slug: b.slug }));
 }
 
 export async function generateMetadata({

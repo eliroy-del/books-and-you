@@ -28,7 +28,7 @@ export async function listBooks(options?: {
   let query = supabase
     .from("books")
     .select(bookSelect)
-    .like("cover_url", "/covers/%")
+    .not("cover_url", "is", null)
     .limit(options?.limit ?? 100);
 
   if (options?.q?.trim()) {
@@ -83,7 +83,7 @@ export async function getBookBySlug(slug: string): Promise<Book | null> {
     .from("books")
     .select(bookSelect)
     .eq("slug", slug)
-    .like("cover_url", "/covers/%")
+    .not("cover_url", "is", null)
     .maybeSingle();
 
   if (error || !data) {
@@ -103,7 +103,7 @@ export async function getBookById(id: string): Promise<Book | null> {
     .from("books")
     .select(bookSelect)
     .eq("id", id)
-    .like("cover_url", "/covers/%")
+    .not("cover_url", "is", null)
     .maybeSingle();
 
   if (error || !data) return mockFallbackBook(id);

@@ -36,7 +36,7 @@ export async function listAuthors(limit = 50): Promise<Author[]> {
           const { data: links } = await supabase
             .from("books")
             .select("book_authors(author_id)")
-            .like("cover_url", "/covers/%");
+            .not("cover_url", "is", null);
           const countMap = new Map<string, number>();
           for (const row of links || []) {
             const authors =
@@ -81,7 +81,7 @@ export async function getAuthorWithBooks(
                 .from("books")
                 .select(bookSelect)
                 .in("id", ids)
-                .like("cover_url", "/covers/%")
+                .not("cover_url", "is", null)
             : { data: [] as Record<string, unknown>[] };
           return {
             author: mapAuthor(data as Record<string, unknown>, (bookRows || []).length),

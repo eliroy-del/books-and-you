@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/supabase/env";
 import { authors as mockAuthors, books as mockBooks, categories as mockCategories } from "@/data/mock";
+import { isUploadedBook } from "@/lib/services/mappers";
 import { getAllBlogPosts } from "@/data/blog";
 import { PRODUCTION_SITE_URL } from "@/lib/seo";
 
@@ -32,7 +33,7 @@ async function fetchSlugs(): Promise<{
           supabase
             .from("books")
             .select("slug, updated_at")
-            .like("cover_url", "/covers/%")
+            .not("cover_url", "is", null)
             .limit(5000),
           supabase.from("authors").select("slug").limit(2000),
           supabase.from("categories").select("slug").limit(500),
@@ -50,7 +51,7 @@ async function fetchSlugs(): Promise<{
     }
   }
   return {
-    books: mockBooks.filter((b) => b.coverUrl?.startsWith("/covers/")).map((b) => ({ slug: b.slug })),
+    books: mockBooks.filter(isUploadedBook).map((b) => ({ slug: b.slug })),
     authors: mockAuthors.map((a) => ({ slug: a.slug })),
     categories: mockCategories.map((c) => ({ slug: c.slug })),
   };

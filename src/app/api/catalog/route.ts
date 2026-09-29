@@ -3,7 +3,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { tryCreateClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured, getSupabaseEnv } from "@/lib/supabase/env";
 import { db } from "@/lib/supabase/typed";
-import { bookSelect, mapDbBook } from "@/lib/services/mappers";
+import { bookSelect, isUploadedBook, mapDbBook } from "@/lib/services/mappers";
 import {
   authors as mockAuthors,
   books as mockBooks,
@@ -22,6 +22,8 @@ import {
 } from "@/data/catalog-nav";
 import { searchQuerySchema } from "@/lib/validation";
 import { sanitize } from "@/lib/sanitize";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -53,12 +55,13 @@ export async function GET(request: Request) {
           .from("books")
           .select(bookSelect)
           .eq("slug", slug)
-          .like("cover_url", "/covers/%")
+          .not("cover_url", "is", null)
           .maybeSingle();
         if (error) throw error;
+        const book = data ? mapDbBook(data as Record<string, unknown>) : null;
         return NextResponse.json({
           ok: true,
-          book: data ? mapDbBook(data as Record<string, unknown>) : null,
+          book: book && isUploadedBook(book) ? book : null,
           source: "supabase",
         });
       }
@@ -66,7 +69,7 @@ export async function GET(request: Request) {
       let query = client
         .from("books")
         .select(bookSelect)
-        .like("cover_url", "/covers/%")
+        .not("cover_url", "is", null)
         .order("created_at", { ascending: false })
         .limit(limit);
       if (q?.trim()) {
@@ -77,7 +80,9 @@ export async function GET(request: Request) {
       const { data, error } = await query;
       if (error) throw error;
 
-      let books = ((data || []) as Record<string, unknown>[]).map(mapDbBook);
+      let books = ((data || []) as Record<string, unknown>[])
+        .map(mapDbBook)
+        .filter(isUploadedBook);
 
       if (category) {
         const node = findCatalogNode(category);
@@ -175,13 +180,15 @@ export async function GET(request: Request) {
               .from("books")
               .select(bookSelect)
               .in("id", ids)
-              .like("cover_url", "/covers/%")
+              .not("cover_url", "is", null)
           : { data: [] };
 
         return NextResponse.json({
           ok: true,
           author: mapAuthor(data as Record<string, unknown>, ids.length),
-          books: ((bookRows || []) as Record<string, unknown>[]).map(mapDbBook),
+          books: ((bookRows || []) as Record<string, unknown>[])
+            .map(mapDbBook)
+            .filter(isUploadedBook),
           source: "supabase",
         });
       }
@@ -191,7 +198,7 @@ export async function GET(request: Request) {
       const { data: links } = await client
         .from("books")
         .select("book_authors(author_id)")
-        .like("cover_url", "/covers/%");
+        .not("cover_url", "is", null);
       const countMap = new Map<string, number>();
       for (const row of links || []) {
         const authors = (row as { book_authors?: { author_id: string }[] }).book_authors || [];
@@ -220,7 +227,7 @@ export async function GET(request: Request) {
       const { data: uploadedRows } = await client
         .from("books")
         .select("id")
-        .like("cover_url", "/covers/%");
+        .not("cover_url", "is", null);
       const uploadedIds = new Set((uploadedRows || []).map((row: { id: string }) => row.id));
       return NextResponse.json({
         ok: true,
@@ -250,12 +257,13 @@ export async function GET(request: Request) {
         .from("books")
         .select(bookSelect)
         .eq("id", id)
-        .like("cover_url", "/covers/%")
+        .not("cover_url", "is", null)
         .maybeSingle();
       if (error) throw error;
+      const book = data ? mapDbBook(data as Record<string, unknown>) : null;
       return NextResponse.json({
         ok: true,
-        book: data ? mapDbBook(data as Record<string, unknown>) : null,
+        book: book && isUploadedBook(book) ? book : null,
         source: "supabase",
       });
     }
@@ -308,15 +316,15 @@ function mockPayload(
       const book = mockGetBookBySlug(opts.slug);
       return {
         ok: true,
-        book: book?.coverUrl?.startsWith("/covers/") ? book : null,
+        book: book && isUploadedBook(book) ? book : null,
         source: "mock",
       };
     }
-    let list = mockBooks.filter((b) => b.coverUrl?.startsWith("/covers/"));
+    let list = mockBooks.filter(isUploadedBook);
     if (opts.authorSlug) {
       const author = mockAuthors.find((a) => a.slug === opts.authorSlug);
       if (author) {
-        list = mockGetBooksByAuthor(author.id).filter((b) => b.coverUrl?.startsWith("/covers/"));
+        list = mockGetBooksByAuthor(author.id).filter(isUploadedBook);
       }
     }
     return { ok: true, books: list.slice(0, opts.limit), source: "mock" };
@@ -339,12 +347,12 @@ function mockPayload(
     if (opts.slug) {
       const author = mockAuthors.find((a) => a.slug === opts.slug) ?? null;
       const books = author
-        ? mockGetBooksByAuthor(author.id).filter((b) => b.coverUrl?.startsWith("/covers/"))
+        ? mockGetBooksByAuthor(author.id).filter(isUploadedBook)
         : [];
       return { ok: true, author, books, source: "mock" };
     }
     const authors = mockAuthors.filter((author) =>
-      mockGetBooksByAuthor(author.id).some((b) => b.coverUrl?.startsWith("/covers/"))
+      mockGetBooksByAuthor(author.id).some(isUploadedBook)
     );
     return { ok: true, authors, source: "mock" };
   }

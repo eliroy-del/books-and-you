@@ -148,7 +148,8 @@ export function mapOrder(row: Record<string, unknown>): Order {
 }
 
 export function isUploadedBook(book: { coverUrl?: string | null }) {
-  return Boolean(book.coverUrl?.startsWith("/covers/"));
+  const url = book.coverUrl ?? "";
+  return url.startsWith("/covers/") || url.includes("/product-covers/");
 }
 
 export function mockFallbackBooks() {
