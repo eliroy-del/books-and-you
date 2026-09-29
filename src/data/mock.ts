@@ -4076,6 +4076,41 @@ export const books: Book[] = [
     newArrival: true,
     palette: 3,
   }),
+  book({
+    id: "bk-107",
+    slug: "excellence-akuapem-twi-for-junior-high-schools-1-3",
+    title: "Excellence Akuapem Twi for Junior High Schools (JHS 1–3)",
+    subtitle: "Excellence Series · Based on the Common Core Programme",
+    authorId: "auth-francis-benjamin-appiah",
+    authorName:
+      "Francis Benjamin Appiah, Nana Amma Oppongwaa Ghartey & Banful Ghartey Ghartey",
+    publisherId: "pub-excellence",
+    publisherName: "Excellence",
+    categoryIds: ["cat-education"],
+    genres: ["Ghanaian Language", "Akuapem Twi", "JHS", "Common Core", "Combined"],
+    description:
+      "Excellence Akuapem Twi for Junior High Schools is a combined JHS 1–3 textbook from the Excellence Series, based on the Common Core Programme. It builds Akuapem Twi listening, speaking, reading, and writing across junior high.",
+    synopsis:
+      "Combined Excellence Series Akuapem Twi title for JHS 1 to JHS 3, aligned with the Common Core Programme.",
+    isbn: "978-9988-2-7058-2",
+    pages: 240,
+    language: "Akuapem Twi",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/excellence-akuapem-twi-for-junior-high-schools-1-3/front.jpg",
+    images: [
+      {
+        url: "/covers/excellence-akuapem-twi-for-junior-high-schools-1-3/front.jpg",
+        alt: "Excellence Akuapem Twi for Junior High Schools JHS 1–3 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 150, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["excellence", "akuapem-twi", "ghanaian-language", "jhs", "combined", "common-core", "ghana", "jhs-1-3"],
+    featured: true,
+    newArrival: true,
+    palette: 1,
+  }),
 ];
 
 export const collections: Collection[] = [
