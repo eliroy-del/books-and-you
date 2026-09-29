@@ -18,20 +18,15 @@ export async function POST(request: Request) {
     assertImage(file);
 
     const supabase = createServiceClient();
-    const { data: categories, error } = await supabase
-      .from("categories")
-      .select("slug, name")
-      .order("name");
+    const { data, error } = await supabase.from("categories").select("slug, name").order("name");
     if (error) throw new Error(error.message);
+    const categories = (data || []) as { slug: string; name: string }[];
 
     const bytes = Buffer.from(await file.arrayBuffer());
     const draft = await identifyCover({
       bytes,
       mime: file.type,
-      categories: (categories || []).map((c) => ({
-        slug: String(c.slug),
-        name: String(c.name),
-      })),
+      categories: categories.map((c) => ({ slug: c.slug, name: c.name })),
     });
 
     return NextResponse.json({ ok: true, draft });
