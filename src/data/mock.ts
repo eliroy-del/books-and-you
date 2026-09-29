@@ -3780,6 +3780,41 @@ export const books: Book[] = [
     newArrival: true,
     palette: 0,
   }),
+  book({
+    id: "bk-97",
+    slug: "best-brain-career-technology-for-basics-7-8-9",
+    title: "Best Brain Career Technology for Basics 7, 8 & 9",
+    subtitle: "New Standard-Based Curriculum · NaCCA",
+    authorId: "auth-angelina-anima-kwarkye",
+    authorName:
+      "Angelina Anima Kwarkye, Ophelia Baah Ampomah & Henric Atta Baah-Yeboah",
+    publisherId: "pub-best-brain",
+    publisherName: "Best Brain",
+    categoryIds: ["cat-education"],
+    genres: ["Career Technology", "JHS", "NaCCA", "Combined"],
+    description:
+      "Best Brain Career Technology for Basics 7, 8 & 9 is a combined junior high textbook for the new NaCCA standard-based curriculum. It covers practical skills, design, and technology across JHS 1 to JHS 3.",
+    synopsis:
+      "Combined Best Brain title for Basics 7, 8 and 9, aligned with the new NaCCA standard-based curriculum.",
+    isbn: "978-9988-2-7048-3",
+    pages: 240,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/best-brain-career-technology-for-basics-7-8-9/front.jpg",
+    images: [
+      {
+        url: "/covers/best-brain-career-technology-for-basics-7-8-9/front.jpg",
+        alt: "Best Brain Career Technology for Basics 7, 8 & 9 front cover",
+      },
+    ],
+    formats: [{ format: "paperback", price: 150, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["best-brain", "jhs", "combined", "nacca", "ghana", "basics-7-8-9"],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
@@ -3872,6 +3907,7 @@ export const collections: Collection[] = [
       "bk-94",
       "bk-95",
       "bk-96",
+      "bk-97",
     ],
   },
   {
