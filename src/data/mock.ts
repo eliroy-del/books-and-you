@@ -5292,6 +5292,35 @@ export const books: Book[] = [
     newArrival: true,
     palette: 3,
   }),
+  book({
+    id: "bk-148",
+    slug: "teachers-notebook-blue",
+    title: "Teacher's Notebook",
+    subtitle: "Blue cover · Name, subject, and date fields",
+    authorId: "auth-school-essentials",
+    authorName: "School Essentials",
+    publisherId: "pub-school-essentials",
+    publisherName: "School Essentials",
+    categoryIds: ["cat-academic"],
+    genres: ["Stationery", "Notebooks", "Teacher", "School Essentials"],
+    description:
+      "A hard-cover Teacher's Notebook with a blue patterned cover. The front label has spaces for name, subject, and date commenced — suited to lesson notes and classroom records.",
+    synopsis:
+      "Hard-cover teacher notebook with a blue cover and labelled name, subject, and date fields.",
+    isbn: "TEACHERS-NOTEBOOK-BLUE",
+    pages: 0,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/teachers-notebook-blue/front.jpg",
+    images: [{ url: "/covers/teachers-notebook-blue/front.jpg", alt: "Teacher's Notebook blue cover" }],
+    formats: [{ format: "paperback", price: 50, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["stationery", "notebook", "teacher", "ghana", "school"],
+    featured: true,
+    newArrival: true,
+    palette: 3,
+  }),
 ];
 
 export const collections: Collection[] = [
