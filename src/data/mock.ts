@@ -5202,6 +5202,38 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-145",
+    slug: "foolscap-notebook-pink",
+    title: "Foolscap Notebook",
+    subtitle: "Pink cover · Name, subject, and date fields",
+    authorId: "auth-school-essentials",
+    authorName: "School Essentials",
+    publisherId: "pub-school-essentials",
+    publisherName: "School Essentials",
+    categoryIds: ["cat-academic"],
+    genres: ["Stationery", "Notebooks", "Foolscap", "School Essentials"],
+    description:
+      "A hard-cover foolscap notebook with a pink geometric cover. The front label has spaces for name, subject, and date commenced — suited to school notes and classroom work.",
+    synopsis:
+      "Hard-cover foolscap notebook with a pink patterned cover and labelled name, subject, and date fields.",
+    isbn: "FOOLSCAP-NOTEBOOK-PINK",
+    pages: 0,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/foolscap-notebook-pink/front.jpg",
+    images: [
+      { url: "/covers/foolscap-notebook-pink/front.jpg", alt: "Foolscap Notebook pink cover" },
+      { url: "/covers/foolscap-notebook-pink/edge.jpg", alt: "Foolscap Notebook page edge" },
+    ],
+    formats: [{ format: "paperback", price: 45, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["stationery", "notebook", "foolscap", "ghana", "school"],
+    featured: true,
+    newArrival: true,
+    palette: 1,
+  }),
 ];
 
 export const collections: Collection[] = [
