@@ -34,6 +34,7 @@ export default function AddProductPage() {
   const [images, setImages] = useState<SelectedImage[]>([]);
   const [price, setPrice] = useState("");
   const [draft, setDraft] = useState<CoverDraft>(emptyDraft);
+  const [categoriesText, setCategoriesText] = useState("");
   const [identifying, setIdentifying] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState("");
@@ -113,7 +114,9 @@ export default function AddProductPage() {
       const res = await fetch("/api/admin/products/identify", { method: "POST", body });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || "Identification failed");
-      setDraft(json.draft as CoverDraft);
+      const next = json.draft as CoverDraft;
+      setDraft(next);
+      setCategoriesText(next.categorySlugs.join(", "));
       toast.success("Details filled from the cover. Review them before publishing.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Identification failed");
@@ -137,7 +140,7 @@ export default function AddProductPage() {
       body.set("description", draft.description);
       body.set("authors", draft.authors.join("\n"));
       body.set("publisher", draft.publisher);
-      body.set("categorySlugs", draft.categorySlugs.join(","));
+      body.set("categorySlugs", categoriesText);
       body.set("language", draft.language);
       body.set("price", price);
       const res = await fetch("/api/admin/products", { method: "POST", body });
@@ -295,16 +298,18 @@ export default function AddProductPage() {
               <Label htmlFor="categories">Category slugs (comma separated)</Label>
               <Input
                 id="categories"
-                value={draft.categorySlugs.join(", ")}
-                onChange={(event) =>
+                value={categoriesText}
+                onChange={(event) => {
+                  const text = event.target.value;
+                  setCategoriesText(text);
                   setDraft({
                     ...draft,
-                    categorySlugs: event.target.value
+                    categorySlugs: text
                       .split(",")
                       .map((slug) => slug.trim())
                       .filter(Boolean),
-                  })
-                }
+                  });
+                }}
                 className="mt-2"
                 placeholder="primary-school, primary-english-language, level-primary-5"
               />
