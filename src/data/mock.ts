@@ -5466,6 +5466,35 @@ export const books: Book[] = [
     newArrival: true,
     palette: 3,
   }),
+  book({
+    id: "bk-154",
+    slug: "aki-ola-english-language-with-literature-jhs-1-2-3",
+    title: "Aki-Ola Series English Language with Literature",
+    subtitle: "For Junior High Schools Form 1, 2 & 3 · New Edition",
+    authorId: "auth-f-n-john",
+    authorName: "F. N. John",
+    publisherId: "pub-aki-ola",
+    publisherName: "Aki-Ola Publications",
+    categoryIds: ["cat-education"],
+    genres: ["English", "Literature", "JHS", "Combined", "Aki-Ola"],
+    description:
+      "Aki-Ola Series English Language with Literature is a combined JHS Form 1–3 textbook covering grammar, synonyms and antonyms, idioms, comprehension, and composition, with objective tests and sample essay topics.",
+    synopsis:
+      "Combined Aki-Ola Series English Language with Literature title for junior high Form 1, 2 and 3. New edition, distributed by Aki-Ola Publications.",
+    isbn: "978-9988-2-7095-7",
+    pages: 240,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/aki-ola-english-language-with-literature-jhs-1-2-3/front.jpg",
+    images: [{ url: "/covers/aki-ola-english-language-with-literature-jhs-1-2-3/front.jpg", alt: "Aki-Ola Series English Language with Literature JHS 1–3 front cover" }],
+    formats: [{ format: "paperback", price: 150, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["aki-ola", "english", "literature", "jhs", "combined", "ghana", "jhs-1-2-3"],
+    featured: true,
+    newArrival: true,
+    palette: 1,
+  }),
 ];
 
 export const collections: Collection[] = [
