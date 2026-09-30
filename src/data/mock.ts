@@ -5170,6 +5170,38 @@ export const books: Book[] = [
     newArrival: true,
     palette: 2,
   }),
+  book({
+    id: "bk-144",
+    slug: "teachers-notebook-kente",
+    title: "Teacher's Notebook",
+    subtitle: "Kente cover · Name, subject, and date fields",
+    authorId: "auth-school-essentials",
+    authorName: "School Essentials",
+    publisherId: "pub-school-essentials",
+    publisherName: "School Essentials",
+    categoryIds: ["cat-academic"],
+    genres: ["Stationery", "Notebooks", "Teacher", "School Essentials"],
+    description:
+      "A hard-cover Teacher's Notebook with a Ghana kente-pattern cover. The front label has spaces for name, subject, and date commenced — suited to lesson notes and classroom records.",
+    synopsis:
+      "Hard-cover teacher notebook with kente cover and labelled name, subject, and date fields.",
+    isbn: "TEACHERS-NOTEBOOK-KENTE",
+    pages: 0,
+    language: "English",
+    publishedAt: "2024-01-01",
+    coverUrl: "/covers/teachers-notebook-kente/front.jpg",
+    images: [
+      { url: "/covers/teachers-notebook-kente/front.jpg", alt: "Teacher's Notebook kente cover" },
+      { url: "/covers/teachers-notebook-kente/edge.jpg", alt: "Teacher's Notebook page edge" },
+    ],
+    formats: [{ format: "paperback", price: 40, inStock: 100 }],
+    rating: 0,
+    reviewCount: 0,
+    tags: ["stationery", "notebook", "teacher", "kente", "ghana", "school"],
+    featured: true,
+    newArrival: true,
+    palette: 2,
+  }),
 ];
 
 export const collections: Collection[] = [
