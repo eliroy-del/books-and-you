@@ -98,7 +98,7 @@ const demoSettings: SiteSetting[] = [
     value: {
       default_country: "GH",
       timezone: "Africa/Accra",
-      support_email: process.env.ADMIN_EMAIL || "hello@booksandyou.shop",
+      support_email: "info@booksandyou.com",
     },
     description: "Locale & support",
   },

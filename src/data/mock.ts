@@ -18,9 +18,9 @@ export const siteConfig = {
   currency: "GHS",
   currencySymbol: "GH₵",
   freeDeliveryThreshold: 300,
-  supportEmail: process.env.ADMIN_EMAIL || "hello@booksandyou.shop",
+  supportEmail: "info@booksandyou.com",
   supportPhone: "0247140856",
-  whatsapp: "233247140856",
+  whatsapp: "+233247140856",
   social: {
     facebook: "https://www.facebook.com/booksandyough",
     instagram: "https://www.instagram.com/booksandyough",
