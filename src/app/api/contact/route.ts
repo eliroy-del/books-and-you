@@ -3,7 +3,7 @@ import { contactFormSchema, getFieldErrors } from "@/lib/validation";
 import { sanitize, sanitizeEmail, sanitizePhone } from "@/lib/sanitize";
 import { corsPreflight, jsonWithCors } from "@/lib/security/cors";
 import { clientIpFromHeaders, rateLimit } from "@/lib/security/rate-limit";
-import { sendEmail } from "@/lib/services/email";
+import { customerMessageInbox, sendEmail } from "@/lib/services/email";
 
 export async function OPTIONS(request: Request) {
   return corsPreflight(request);
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       message: sanitize(validationResult.data.message),
     };
 
-    const to = process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL || "";
+    const to = customerMessageInbox();
     if (to) {
       await sendEmail({
         to,

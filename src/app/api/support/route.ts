@@ -3,7 +3,7 @@ import { getFieldErrors, supportTicketSchema } from "@/lib/validation";
 import { sanitize, sanitizeEmail } from "@/lib/sanitize";
 import { corsPreflight, jsonWithCors } from "@/lib/security/cors";
 import { clientIpFromHeaders, rateLimit } from "@/lib/security/rate-limit";
-import { sendEmail } from "@/lib/services/email";
+import { customerMessageInbox, sendEmail } from "@/lib/services/email";
 import { tryCreateClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { db } from "@/lib/supabase/typed";
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const to = process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL || "";
+    const to = customerMessageInbox();
     if (to) {
       await sendEmail({
         to,

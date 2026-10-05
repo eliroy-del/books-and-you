@@ -25,6 +25,11 @@ export function isEmailConfigured() {
   return Boolean(process.env.RESEND_API_KEY);
 }
 
+/** Inbox for contact and support form submissions. */
+export function customerMessageInbox() {
+  return process.env.CONTACT_EMAIL?.trim() || "booksandyough@gmail.com";
+}
+
 export async function sendEmail(payload: EmailPayload): Promise<EmailResult> {
   const from =
     process.env.RESEND_FROM_EMAIL ||
