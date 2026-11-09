@@ -6502,7 +6502,7 @@ export const books: Book[] = [
     publishedAt: "2024-01-01",
     coverUrl: "/covers/sinarline-ruled-paper-33x42-200/front.jpg",
     images: [{ url: "/covers/sinarline-ruled-paper-33x42-200/front.jpg", alt: "Sinarline Ruled Paper 200 sheets" }],
-    formats: [{ format: "paperback", price: 70, inStock: 100 }],
+    formats: [{ format: "paperback", price: 80, inStock: 100 }],
     rating: 0,
     reviewCount: 0,
     tags: ["stationery", "paper", "ruled", "ghana", "school"],
